@@ -1,91 +1,86 @@
 <template>
-  <div>
-    <header-bar></header-bar>
-    <div class="job-form">
-      <h1>Cadastro de Vagas</h1>
-      <form @submit.prevent="submitForm">
-        <div class="input-group">
-          <input type="text" id="title" v-model="job.title" required  placeholder="Título da Vaga">
-        </div>
+  <n-form
+    ref="formRef"
+    :model="model"
+    :rules="rules"
+    :show-label=false
+  >
+  <n-grid :span="100" :x-gap="24">
+    <n-form-item-gi :span="12" :label="inputLabel" prop="inputValue">
+      <n-input v-model:value="model.inputValue" placeholder="Título da Vaga" />
+    </n-form-item-gi>
 
-        <div class="form-group">
-          <select id="level" v-model="job.level" required>
-            <option disabled selected value="">Nível</option>
-            <option value="Junior">Junior</option>
-            <option value="Pleno">Pleno</option>
-            <option value="Senior">Senior</option>
-          </select>
-        </div>
+    <n-form-item-gi :span="12" :label="selectLabel" prop="selectValue">
+      <n-select
+        v-model:value="model.selectValue"
+        placeholder="Nível"
+        :options="selectOptions"
+      />
+    </n-form-item-gi>
 
-        <div class="form-group">
-          <textarea id="description" v-model="job.description" required placeholder="Descrição da Vaga"></textarea>
-        </div>
-
-        <div class="button-group">
-          <button class="cancel-button" @click="cancelForm">Cancelar</button>
-          <button class="register-button" type="submit">Cadastrar</button>
-        </div>
-        
-      </form>
+    <n-form-item-gi :span="24" label="Textarea" path="textareaValue">
+      <n-input
+        v-model:value="model.textareaValue"
+        placeholder="Descrição da Vaga"
+        type="textarea"
+        :autosize="{
+          minRows: 3,
+          maxRows: 5
+        }"
+      />
+    </n-form-item-gi>
+    </n-grid>
+    <div class="button-group" style="display: flex; justify-content: flex-end">
+      <n-button color ="#bdbdbd" class="cancel-button" @click="cancelForm">Cancelar</n-button>
+      <n-button color="#7ef0c0" class="register-button" type="submit">Cadastrar</n-button>
     </div>
-  </div>
+  </n-form>
 </template>
 
 <script>
-import HeaderBar from './HeaderBar.vue';
+import { defineComponent, ref } from 'vue'
+import { FormInst } from 'naive-ui'
 
-export default {
-  components: {
-    HeaderBar
-  },
-  data() {
+export default defineComponent({
+  setup () {
+    const formRef = ref<FormInst | null>(null)
     return {
-      job: {
-        title: '',
-        level: '',
-        description: ''
-      }
-    };
-  },
-  methods: {
-    submitForm() {
-      console.log('Dados do formulário:', this.job); //add ação de envio do form
-    },
-    cancelForm() {
-      //inserir rota para retornar
+      formRef,
+      model: ref({
+        inputValue: null,
+        textareaValue: null,
+        selectValue: null,
+      }),
+      inputLabel: 'Input Label',
+      textareaLabel: 'Textarea Label',
+      selectLabel: 'Select Label',
+      selectOptions: ['Júnior', 'Pleno', 'Sênior'].map((v) => ({
+        label: v,
+        value: v
+      })),
+      rules: {
+        inputValue: {
+          required: true,
+          trigger: ['blur', 'input'],
+          message: 'Por favor, insira o título'
+        },
+        textareaValue: {
+          required: true,
+          trigger: ['blur', 'input'],
+          message: 'Por favor, insira a descrição'
+        },
+        selectValue: {
+          required: true,
+          trigger: ['blur', 'change'],
+          message: 'Por favor, insira o nível'
+        },
+      },
     }
   }
-};
+})
 </script>
 
 <style scoped>
-.job-form {
-  margin: 20px;
-}
-
-.form-group {
-  margin-bottom: 20px;
-  flex: 1;
-}
-
-.input-group {
-  display: flex;
-  justify-content: space-between;
-}
-
-label {
-  display: block;
-  font-weight: bold;
-}
-
-input[type="text"],
-select,
-textarea {
-  width: 100%;
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-}
 
 .button-group {
   display: flex;
@@ -95,7 +90,7 @@ textarea {
 
 .cancel-button {
   background-color: #bdbdbd;
-  color: #fff;
+  color: #000000;
   border: none;
   border-radius: 4px;
   padding: 10px 20px;
@@ -105,7 +100,7 @@ textarea {
 
 .register-button {
   background-color: #7ef0c0;
-  color: #fff;
+  color: #000000;
   border: none;
   border-radius: 4px;
   padding: 10px 20px;
