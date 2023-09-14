@@ -7,7 +7,6 @@
           <h1>Cadastro de Vagas</h1>
             <job-form></job-form>
         </div>
-        CONTENT
       </n-layout-content>
     </n-layout>
   </div>
@@ -22,76 +21,16 @@ export default {
     HeaderMenu,
     JobForm
   },
-  data() {
-    return {
-      job: {
-        title: '',
-        level: '',
-        description: ''
-      }
-    };
-  },
-  methods: {
-    submitForm() {
-      console.log('Dados do formulário:', this.job); //add ação de envio do form
-    },
-    cancelForm() {
-      //inserir rota para retornar
-    }
-  }
 };
 </script>
 
 <style scoped>
+h1 {
+  text-align: center;
+}
 .n-layout-content {
   background-color: #efefef ;
-}
-.job-form {
-  margin: 20px;
-}
-.form-group {
-  margin-bottom: 20px;
-  flex: 1;
-}
-.input-group {
-  display: flex;
-  justify-content: space-between;
+  height: 90vh;
 }
 
-label {
-  display: block;
-  font-weight: bold;
-}
-
-input[type="text"],
-select,
-textarea {
-  width: 100%;
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-}
-
-.button-group {
-  display: flex;
-  justify-content: flex-end;
-  align-items: center;
-}
-.cancel-button {
-  background-color: #bdbdbd;
-  color: #000000;
-  border: none;
-  border-radius: 4px;
-  padding: 10px 20px;
-  cursor: pointer;
-  margin-right: 10px;
-}
-.register-button {
-  background-color: #7ef0c0;
-  color: #000000;
-  border: none;
-  border-radius: 4px;
-  padding: 10px 20px;
-  cursor: pointer;
-}
 </style>

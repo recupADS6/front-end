@@ -3,85 +3,89 @@
     ref="formRef"
     :model="model"
     :rules="rules"
-    :show-label=false
+    :show-label="false"
   >
-  <n-grid :span="100" :x-gap="24">
-    <n-form-item-gi :span="12" :label="inputLabel" prop="inputValue">
-      <n-input v-model:value="model.inputValue" placeholder="Título da Vaga" />
-    </n-form-item-gi>
+    <n-grid :span="100" :x-gap="24">
+      <n-form-item-gi :span="12" label="Título da Vaga" prop="jobTitle">
+        <n-input v-model:value="model.jobTitle" placeholder="Título da Vaga" />
+      </n-form-item-gi>
 
-    <n-form-item-gi :span="12" :label="selectLabel" prop="selectValue">
-      <n-select
-        v-model:value="model.selectValue"
-        placeholder="Nível"
-        :options="selectOptions"
-      />
-    </n-form-item-gi>
+      <n-form-item-gi :span="12" label="Nível da Vaga" prop="jobLevel">
+        <n-select
+          v-model:value="model.jobLevel"
+          placeholder="Nível"
+          :options="selectOptions"
+        />
+      </n-form-item-gi>
 
-    <n-form-item-gi :span="24" label="Textarea" path="textareaValue">
-      <n-input
-        v-model:value="model.textareaValue"
-        placeholder="Descrição da Vaga"
-        type="textarea"
-        :autosize="{
-          minRows: 3,
-          maxRows: 5
-        }"
-      />
-    </n-form-item-gi>
+      <n-form-item-gi :span="24" label="Descrição da Vaga" prop="jobDescription">
+        <n-input
+          v-model:value="model.jobDescription"
+          placeholder="Descrição da Vaga"
+          type="textarea"
+          :autosize="{
+            minRows: 3,
+            maxRows: 5
+          }"
+        />
+      </n-form-item-gi>
     </n-grid>
-    <div class="button-group" style="display: flex; justify-content: flex-end">
-      <n-button color ="#bdbdbd" class="cancel-button" @click="cancelForm">Cancelar</n-button>
-      <n-button color="#7ef0c0" class="register-button" type="submit">Cadastrar</n-button>
+    <div class="button-group">
+      <n-button color="#bdbdbd" class="cancel-button" @click="cancelForm">Cancelar</n-button>
+      <n-button color="#7ef0c0" class="register-button" type="submit" @click="submitForm">Cadastrar</n-button>
     </div>
   </n-form>
 </template>
 
 <script>
 import { defineComponent, ref } from 'vue'
-import { FormInst } from 'naive-ui'
 
 export default defineComponent({
-  setup () {
-    const formRef = ref<FormInst | null>(null)
+  setup() {
+    const formRef = ref<null>(null)
     return {
       formRef,
       model: ref({
-        inputValue: null,
-        textareaValue: null,
-        selectValue: null,
+        jobTitle: null,
+        jobDescription: null,
+        jobLevel: null,
       }),
-      inputLabel: 'Input Label',
-      textareaLabel: 'Textarea Label',
-      selectLabel: 'Select Label',
       selectOptions: ['Júnior', 'Pleno', 'Sênior'].map((v) => ({
         label: v,
         value: v
       })),
       rules: {
-        inputValue: {
+        jobTitle: {
           required: true,
           trigger: ['blur', 'input'],
-          message: 'Por favor, insira o título'
+          message: 'Por favor, insira o título da vaga'
         },
-        textareaValue: {
+        jobDescription: {
           required: true,
           trigger: ['blur', 'input'],
-          message: 'Por favor, insira a descrição'
+          message: 'Por favor, insira a descrição da vaga'
         },
-        selectValue: {
+        jobLevel: {
           required: true,
           trigger: ['blur', 'change'],
-          message: 'Por favor, insira o nível'
+          message: 'Por favor, selecione o nível da vaga'
         },
       },
     }
-  }
+  },
+  methods: {
+    submitForm() {
+      console.log('Dados do formulário:', this.model);
+      // ação de envio do formulário aqui
+    },
+    cancelForm() {
+      // rota para retornar
+    },
+  },
 })
 </script>
 
 <style scoped>
-
 .button-group {
   display: flex;
   justify-content: flex-end;
@@ -97,7 +101,6 @@ export default defineComponent({
   cursor: pointer;
   margin-right: 10px;
 }
-
 .register-button {
   background-color: #7ef0c0;
   color: #000000;
