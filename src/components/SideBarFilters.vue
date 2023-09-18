@@ -1,9 +1,15 @@
 <template>
   <div>
-    <h1>side bar filters</h1>
+    <h1>Filtros</h1>
 
     <n-space vertical>
       <n-switch v-model:value="collapsed" />
+
+      <n-space vertical>
+        <n-select v-model:value="value" :options="options" />
+        <n-input v-model:value="value" type="text" placeholder="Basic Input" />
+      </n-space>
+
       <n-layout has-sider>
         <n-layout-sider
           bordered
@@ -42,54 +48,92 @@
 
   const menuOptions = [
     {
-      label: "Hear the Wind Sing",
-      key: "hear-the-wind-sing",
-      href: "https://en.wikipedia.org/wiki/Hear_the_Wind_Sing"
+      label: "Localização",
+      key: "jobLocation",
+      // href: "https://en.wikipedia.org/wiki/Hear_the_Wind_Sing"
     },
     {
-      label: "Dance Dance Dance",
-      key: "Dance Dance Dance",
+      label: "Tipo Vaga de Emprego",
+      key: "Tipo Vaga de Emprego",
       children: [
         {
           type: "group",
-          label: "People",
-          key: "people",
+          key: "jobType",
           children: [
             {
-              label: "Narrator",
+              label: "Jovem Aprendiz",
               key: "narrator"
             },
             {
-              label: "Sheep Man",
-              key: "sheep-man"
-            }
+              label: "Estágio",
+              key: "narrator"
+            },
+            {
+              label: "Período Integral",
+              key: "narrator"
+            },
+            {
+              label: "Contrato",
+              key: "narrator"
+            },
           ]
         },
+      ]
+    },
+    {
+      label: "Categoria",
+      key: "category",
+      children: [
         {
-          label: "Beverage",
-          key: "beverage",
+          type: "group",
+          key: "people",
           children: [
             {
-              label: "Whisky",
-              key: "whisky",
-              href: "https://en.wikipedia.org/wiki/Whisky"
-            }
+              label: "Desenvolvimentp de Software",
+              key: "narrator"
+            },
+            {
+              label: "Ciencias Dados",
+              key: "narrator"
+            },
+            {
+              label: "Educação",
+              key: "narrator"
+            },
+            {
+              label: "Engenharia",
+              key: "narrator"
+            },
           ]
         },
+      ]
+    },
+    {
+      label: "Nível de Escolaridade",
+      key: "scholarShipLevel",
+      children: [
         {
-          label: "Food",
-          key: "food",
+          type: "group",
+          key: "people",
           children: [
             {
-              label: "Sandwich",
-              key: "sandwich"
-            }
+              label: "Graduação",
+              key: "narrator"
+            },
+            {
+              label: "Pós-graduação",
+              key: "narrator"
+            },
+            {
+              label: "Mestrado",
+              key: "narrator"
+            },
+            {
+              label: "Doutorado",
+              key: "narrator"
+            },
           ]
         },
-        {
-          label: "The past increases. The future recedes.",
-          key: "the-past-increases-the-future-recedes"
-        }
       ]
     }
   ];
@@ -127,8 +171,37 @@
         renderMenuLabel,
         renderMenuIcon,
         expandIcon,
+
+        value: ref(null),
+        options: [
+          {
+            label: "Everybody's Got Something to Hide Except Me and My Monkey",
+            value: 'song0',
+            disabled: true
+          },
+          {
+            label: 'Drive My Car',
+            value: 'song1'
+          },
+          {
+            label: 'Norwegian Wood',
+            value: 'song2'
+          },
+          {
+            label: "You Won't See",
+            value: 'song3',
+            disabled: true
+          },
+        ]
       }
     }
   })
 
 </script>
+
+<!-- TODO -->
+<!-- - adicionar os botoes no side bar como no figma -->
+<!-- - terminar de estilizar a seleção de localização e adicionar um botão para salvar a locaçização selecionada na busca -->
+<!-- - adicionar um botão que leva para a pagina de cadastro de vagas da Ju -->
+<!-- - adicionar um olá, Fulano -->
+<!-- - alterar cor do menu no canto superior direito para torna-lo mais visível -->
