@@ -13,6 +13,7 @@
         <n-h2>Localização</n-h2>
         <div class="location-section">
           <n-select class="location-select" v-model:value="value" :options="options" />
+
           <n-button class="search-button" type="search">
             Search
           </n-button>
@@ -32,16 +33,17 @@
           @collapse="collapsed = true"
           @expand="collapsed = false"
         >
-          <n-menu
-            :collapsed="collapsed"
-            :collapsed-width="64"
-            :collapsed-icon-size="22"
-            :options="menuOptions"
-            :render-label="renderMenuLabel"
-            :render-icon="renderMenuIcon"
-            :expand-icon="expandIcon"
-          />
-        </n-layout-sider>
+        <n-menu
+          :collapsed="collapsed"
+          :collapsed-width="64"
+          :collapsed-icon-size="22"
+          :options="menuOptions"
+          :render-label="renderMenuLabel"
+          :render-icon="renderMenuIcon"
+          :expand-icon="expandIcon"
+        />
+      </n-layout-sider>
+
         <n-layout>
           <list-jobs />
         </n-layout>
@@ -59,27 +61,31 @@
   const menuOptions = [
     {
       label: "Tipo Vaga de Emprego",
-      key: "Tipo Vaga de Emprego",
+      key: "jobType",
       children: [
         {
           type: "group",
-          key: "jobType",
+          key: "groupJobType",
           children: [
             {
               label: "Jovem Aprendiz",
-              key: "narrator"
+              key: "jovem-aprendiz",
+              checkbox: true,
             },
             {
               label: "Estágio",
-              key: "narrator"
+              key: "estagio",
+              checkbox: true,
             },
             {
               label: "Período Integral",
-              key: "narrator"
+              key: "periodo-integral",
+              checkbox: true,
             },
             {
               label: "Contrato",
-              key: "narrator"
+              key: "contrato",
+              checkbox: true,
             },
           ]
         },
@@ -91,23 +97,23 @@
       children: [
         {
           type: "group",
-          key: "people",
+          key: "groupCategory",
           children: [
             {
-              label: "Desenvolvimentp de Software",
-              key: "narrator"
+              label: "Desenvolvimento de Software",
+              key: "desenvolvimento-de-software"
             },
             {
               label: "Ciencias Dados",
-              key: "narrator"
+              key: "cientista-de-dados"
             },
             {
               label: "Educação",
-              key: "narrator"
+              key: "educacao"
             },
             {
               label: "Engenharia",
-              key: "narrator"
+              key: "engenharia"
             },
           ]
         },
@@ -119,23 +125,23 @@
       children: [
         {
           type: "group",
-          key: "people",
+          key: "groupScholarShipLevel",
           children: [
             {
               label: "Graduação",
-              key: "narrator"
+              key: "graduacao"
             },
             {
               label: "Pós-graduação",
-              key: "narrator"
+              key: "posGraduacao"
             },
             {
               label: "Mestrado",
-              key: "narrator"
+              key: "mestrado"
             },
             {
               label: "Doutorado",
-              key: "narrator"
+              key: "doutorado"
             },
           ]
         },
