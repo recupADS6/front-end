@@ -1,6 +1,12 @@
 <template>
   <div class="dashboard">
-    <n-h1>Filtros</n-h1>
+    <div class="header-page">
+      <n-h1>Filtros</n-h1>
+
+      <n-button type="primary" class="add-job-button">
+        Adicionar Vaga
+      </n-button>
+    </div>
 
     <n-space vertical>
       <n-space vertical>
@@ -292,5 +298,19 @@
 
   .dashboard {
     margin: 1%
+  }
+
+  .add-job-button {
+    margin-right: 5px;
+    margin-left: 3px;
+    width: 8.5rem;
+    height: 2.5rem;
+    background-color: #62A362;
+  }
+
+  .header-page {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
   }
 </style>
