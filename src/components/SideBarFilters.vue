@@ -13,6 +13,7 @@
         <n-h2>Localização</n-h2>
         <div class="location-section">
           <n-select class="location-select" v-model:value="value" :options="options" />
+
           <n-button class="search-button" type="search">
             Search
           </n-button>
@@ -32,16 +33,17 @@
           @collapse="collapsed = true"
           @expand="collapsed = false"
         >
-          <n-menu
-            :collapsed="collapsed"
-            :collapsed-width="64"
-            :collapsed-icon-size="22"
-            :options="menuOptions"
-            :render-label="renderMenuLabel"
-            :render-icon="renderMenuIcon"
-            :expand-icon="expandIcon"
-          />
-        </n-layout-sider>
+        <n-menu
+          :collapsed="collapsed"
+          :collapsed-width="64"
+          :collapsed-icon-size="22"
+          :options="menuOptions"
+          :render-label="renderMenuLabel"
+          :render-icon="renderMenuIcon"
+          :expand-icon="expandIcon"
+        />
+      </n-layout-sider>
+
         <n-layout>
           <list-jobs />
         </n-layout>
@@ -59,85 +61,74 @@
   const menuOptions = [
     {
       label: "Tipo Vaga de Emprego",
-      key: "Tipo Vaga de Emprego",
-      children: [
+      key: "jobType",
+      children:
+      [
         {
-          type: "group",
-          key: "jobType",
-          children: [
-            {
-              label: "Jovem Aprendiz",
-              key: "narrator"
-            },
-            {
-              label: "Estágio",
-              key: "narrator"
-            },
-            {
-              label: "Período Integral",
-              key: "narrator"
-            },
-            {
-              label: "Contrato",
-              key: "narrator"
-            },
-          ]
+          label: "Jovem Aprendiz",
+          key: "jovem-aprendiz",
+          checkbox: true,
+        },
+        {
+          label: "Estágio",
+          key: "estagio",
+          checkbox: true,
+        },
+        {
+          label: "Período Integral",
+          key: "periodo-integral",
+          checkbox: true,
+        },
+        {
+          label: "Contrato",
+          key: "contrato",
+          checkbox: true,
         },
       ]
     },
     {
-      label: "Categoria",
-      key: "category",
-      children: [
+    label: "Categoria",
+    key: "category",
+    children:
+      [
         {
-          type: "group",
-          key: "people",
-          children: [
-            {
-              label: "Desenvolvimentp de Software",
-              key: "narrator"
-            },
-            {
-              label: "Ciencias Dados",
-              key: "narrator"
-            },
-            {
-              label: "Educação",
-              key: "narrator"
-            },
-            {
-              label: "Engenharia",
-              key: "narrator"
-            },
-          ]
+          label: "Desenvolvimento de Software",
+          key: "desenvolvimento-de-software"
+        },
+        {
+          label: "Ciencias Dados",
+          key: "cientista-de-dados"
+        },
+        {
+          label: "Educação",
+          key: "educacao"
+        },
+        {
+          label: "Engenharia",
+          key: "engenharia"
         },
       ]
     },
     {
       label: "Nível de Escolaridade",
       key: "scholarShipLevel",
-      children: [
+      children:
+      [
         {
-          type: "group",
-          key: "people",
-          children: [
-            {
-              label: "Graduação",
-              key: "narrator"
-            },
-            {
-              label: "Pós-graduação",
-              key: "narrator"
-            },
-            {
-              label: "Mestrado",
-              key: "narrator"
-            },
-            {
-              label: "Doutorado",
-              key: "narrator"
-            },
-          ]
+          label: "Graduação",
+          key: "graduacao"
+        },
+        {
+          label: "Pós-graduação",
+          key: "posGraduacao"
+        },
+        {
+          label: "Mestrado",
+          key: "mestrado"
+        },
+        {
+          label: "Doutorado",
+          key: "doutorado"
         },
       ]
     }
