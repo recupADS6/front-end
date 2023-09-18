@@ -1,34 +1,36 @@
 <template>
-  <h1>side bar filters</h1>
+  <div>
+    <h1>side bar filters</h1>
 
-  <n-space vertical>
-    <n-switch v-model:value="collapsed" />
-    <n-layout has-sider>
-      <n-layout-sider
-        bordered
-        collapse-mode="width"
-        :collapsed-width="64"
-        :width="240"
-        :collapsed="collapsed"
-        show-trigger
-        @collapse="collapsed = true"
-        @expand="collapsed = false"
-      >
-        <n-menu
-          :collapsed="collapsed"
+    <n-space vertical>
+      <n-switch v-model:value="collapsed" />
+      <n-layout has-sider>
+        <n-layout-sider
+          bordered
+          collapse-mode="width"
           :collapsed-width="64"
-          :collapsed-icon-size="22"
-          :options="menuOptions"
-          :render-label="renderMenuLabel"
-          :render-icon="renderMenuIcon"
-          :expand-icon="expandIcon"
-        />
-      </n-layout-sider>
-      <n-layout>
-        <span>Content</span>
+          :width="240"
+          :collapsed="collapsed"
+          show-trigger
+          @collapse="collapsed = true"
+          @expand="collapsed = false"
+        >
+          <n-menu
+            :collapsed="collapsed"
+            :collapsed-width="64"
+            :collapsed-icon-size="22"
+            :options="menuOptions"
+            :render-label="renderMenuLabel"
+            :render-icon="renderMenuIcon"
+            :expand-icon="expandIcon"
+          />
+        </n-layout-sider>
+        <n-layout>
+          <list-jobs />
+        </n-layout>
       </n-layout>
-    </n-layout>
-  </n-space>
+    </n-space>
+  </div>
 </template>
 
 <script>
@@ -36,6 +38,7 @@
   // NSpace, NLayout, NLayoutSider, NMenu, NSwitch
   import { NIcon } from 'naive-ui'
   import { BookmarkOutline, CaretDownOutline } from '@vicons/ionicons5'
+  import ListJobs from './ListJobs.vue'
 
   const menuOptions = [
     {
@@ -113,6 +116,10 @@
   }
 
   export default defineComponent({
+    components: {
+      ListJobs,
+    },
+
     setup(){
       return {
         menuOptions,

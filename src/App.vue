@@ -1,23 +1,17 @@
 <template>
   <div id="app">
-    <!-- <cadastro-vaga></cadastro-vaga> -->
-    <!-- <dash-board></dash-board> -->
-    <side-bar-filters></side-bar-filters>
+    <dashboard-page></dashboard-page>
 
   </div>
 </template>
 
 
 <script>
-// import CadastroVaga from './components/CadastroVaga.vue';
-// import DashBoard from './components/DashBoard.vue';
-import SideBarFilters from './components/SideBarFilters.vue';
+import DashboardPage from './pages/DashboardPage.vue';
 
 export default {
   components: {
-    // CadastroVaga,
-    // DashBoard,
-    SideBarFilters
+    DashboardPage
   }
 };
 </script>
