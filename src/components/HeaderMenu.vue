@@ -67,7 +67,7 @@
 <style scoped>
 .n-layout-header {
   background-color: #000000;
-  color: white;
+  color: #ffffff;
   position: fixed;
   top: 0;
   height: 60px;
