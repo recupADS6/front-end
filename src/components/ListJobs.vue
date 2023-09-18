@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="list-job-content">
     <div>
       <n-h1>Jobs ListJobs</n-h1>
     </div>
@@ -46,5 +46,10 @@
 
   .jobs-card {
     background-color: blueviolet;
+  }
+
+  .list-job-content {
+    margin-left: 25px;
+    margin-right: 5px;
   }
 </style>

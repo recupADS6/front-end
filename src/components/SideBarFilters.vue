@@ -1,13 +1,18 @@
 <template>
-  <div>
-    <h1>Filtros</h1>
+  <div class="dashboard">
+    <n-h1>Filtros</n-h1>
 
     <n-space vertical>
-      <n-switch v-model:value="collapsed" />
-
       <n-space vertical>
-        <n-select v-model:value="value" :options="options" />
-        <n-input v-model:value="value" type="text" placeholder="Basic Input" />
+        <n-h2>Localização</n-h2>
+        <div class="location-section">
+          <n-select class="location-select" v-model:value="value" :options="options" />
+          <n-button class="search-button" type="search">
+            Search
+          </n-button>
+        </div>
+
+        <n-switch class="side-filters-colapse" v-model:value="collapsed" />
       </n-space>
 
       <n-layout has-sider>
@@ -41,17 +46,11 @@
 
 <script>
   import { h, ref, defineComponent } from 'vue'
-  // NSpace, NLayout, NLayoutSider, NMenu, NSwitch
   import { NIcon } from 'naive-ui'
   import { BookmarkOutline, CaretDownOutline } from '@vicons/ionicons5'
   import ListJobs from './ListJobs.vue'
 
   const menuOptions = [
-    {
-      label: "Localização",
-      key: "jobLocation",
-      // href: "https://en.wikipedia.org/wiki/Hear_the_Wind_Sing"
-    },
     {
       label: "Tipo Vaga de Emprego",
       key: "Tipo Vaga de Emprego",
@@ -172,25 +171,86 @@
         renderMenuIcon,
         expandIcon,
 
-        value: ref(null),
+        value: ref("Escolha um estado"),
         options: [
           {
-            label: "Everybody's Got Something to Hide Except Me and My Monkey",
-            value: 'song0',
-            disabled: true
+            label: "Acre - AC"
           },
           {
-            label: 'Drive My Car',
-            value: 'song1'
+            label: "Amapá - AP"
           },
           {
-            label: 'Norwegian Wood',
-            value: 'song2'
+            label: "Amazonas - AM"
           },
           {
-            label: "You Won't See",
-            value: 'song3',
-            disabled: true
+            label: "Bahia - BA"
+          },
+          {
+            label: "Ceará - CE"
+          },
+          {
+            label: "Distrito Federal - DF"
+          },
+          {
+            label: "Espírito Santo - ES"
+          },
+          {
+            label: "Goiás - GO"
+          },
+          {
+            label: "Maranhão - MA"
+          },
+          {
+            label: "Mato Grosso - MT"
+          },
+          {
+            label: "Mato Grosso do Sul - MS"
+          },
+          {
+            label: "Minas Gerais - MG"
+          },
+          {
+            label: "Pará - PA"
+          },
+          {
+            label: "Paraíba - PB"
+          },
+          {
+            label: "Paraná - PR"
+          },
+          {
+            label: "Pernambuco - PE"
+          },
+          {
+            label: "Piauí - PI"
+          },
+          {
+            label: "Rio de Janeiro - RJ"
+          },
+          {
+            label: "Rio Grande do Norte - RN"
+          },
+          {
+            label: "Rio Grande do Sul - RS"
+          },
+          {
+            label: "Rondônia - RO"
+          },
+          {
+            label: "Roraima - RR"
+          },
+          {
+            label: "Santa Catarina - SC"
+          },
+          {
+            label: "São Paulo - SP"
+          },
+          {
+            label: "Sergipe - SE"
+          },
+          {
+            label: "Tocantins - TO"
+
           },
         ]
       }
@@ -205,3 +265,32 @@
 <!-- - adicionar um botão que leva para a pagina de cadastro de vagas da Ju -->
 <!-- - adicionar um olá, Fulano -->
 <!-- - alterar cor do menu no canto superior direito para torna-lo mais visível -->
+
+<style>
+  .location-select {
+    width: 80%;
+    margin-left: 5px;
+  }
+
+  .search-button {
+    margin-right: 5px;
+    margin-left: 3px;
+    width: 20%;
+    background-color: #62A362;
+  }
+
+  .location-section {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+  }
+
+  .side-filters-colapse {
+    margin-top: 10px;
+    margin-left: 5px;
+  }
+
+  .dashboard {
+    margin: 1%
+  }
+</style>
