@@ -39,8 +39,10 @@
 
 <script>
 import { defineComponent, ref } from 'vue'
+
 import axios from 'axios';
 import baseURL from '../main.js';
+
 
 export default defineComponent({
   setup() {
@@ -48,9 +50,9 @@ export default defineComponent({
     return {
       formRef,
       model: ref({
-        jobTitle: null,
-        jobDescription: null,
-        jobLevel: null,
+        jobTitle: '',
+        jobDescription: '',
+        jobLevel: '',
         cha: '',
       }),
       selectOptions: ['Júnior', 'Pleno', 'Sênior'].map((v) => ({
@@ -74,29 +76,29 @@ export default defineComponent({
           message: 'Por favor, selecione o nível da vaga'
         },
       },
-    }
-  },
-  methods: {
-    cancelForm() {
-      // rota para retornar
-    },
-    async submitForm() {
-  try {
-    const response = await axios.post(`${baseURL}/job`, this.model);
-    
-    console.log('Resposta do servidor:', response.data);
 
-    this.model = {
-      jobTitle: null,
-      jobDescription: null,
-      jobLevel: null,
-      cha:"",
-    };
-  } catch (error) {
-    console.error('Erro ao enviar requisição:', error);
   }
-},
   },
+  methods:{
+  async submitForm() {
+      
+      try {
+        const response = await axios.post(`${baseURL}/job/add`, this.model);
+        console.log('Resposta do servidor:', response.data);
+
+        this.model = {
+          jobTitle: null,
+          jobDescription: null,
+          jobLevel: null,
+          cha:"",
+        };
+      } catch {
+        console.log('Erro ao enviar requisição:');
+
+      }
+    },
+    cancelForm() {}
+  }
 })
 </script>
 
@@ -106,7 +108,7 @@ export default defineComponent({
   justify-content: flex-end;
   align-items: center;
 }
-
+ 
 .cancel-button {
   background-color: #bdbdbd;
   color: #000000;
