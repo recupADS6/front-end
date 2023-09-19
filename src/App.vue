@@ -6,7 +6,7 @@
 
 
 <script>
-import CadastroVaga from './components/CadastroVaga.vue';
+import CadastroVaga from './pages/CadastroVaga.vue';
 
 export default {
   components: {

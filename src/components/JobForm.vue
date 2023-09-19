@@ -39,6 +39,8 @@
 
 <script>
 import { defineComponent, ref } from 'vue'
+import axios from 'axios';
+import baseURL from '../main.js';
 
 export default defineComponent({
   setup() {
@@ -49,6 +51,7 @@ export default defineComponent({
         jobTitle: null,
         jobDescription: null,
         jobLevel: null,
+        cha: '',
       }),
       selectOptions: ['Júnior', 'Pleno', 'Sênior'].map((v) => ({
         label: v,
@@ -74,13 +77,25 @@ export default defineComponent({
     }
   },
   methods: {
-    submitForm() {
-      console.log('Dados do formulário:', this.model);
-      // ação de envio do formulário aqui
-    },
     cancelForm() {
       // rota para retornar
     },
+    async submitForm() {
+  try {
+    const response = await axios.post(`${baseURL}/job`, this.model);
+    
+    console.log('Resposta do servidor:', response.data);
+
+    this.model = {
+      jobTitle: null,
+      jobDescription: null,
+      jobLevel: null,
+      cha:"",
+    };
+  } catch (error) {
+    console.error('Erro ao enviar requisição:', error);
+  }
+},
   },
 })
 </script>
