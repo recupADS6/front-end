@@ -13,8 +13,8 @@
 </template>
 
 <script>
-import HeaderMenu from './HeaderMenu.vue';
-import JobForm from './JobForm.vue';
+import HeaderMenu from '../components/HeaderMenu.vue';
+import JobForm from '../components/JobForm.vue';
 
 export default {
   components: {
