@@ -39,7 +39,6 @@
           :collapsed-icon-size="22"
           :options="menuOptions"
           :render-label="renderMenuLabel"
-          :render-icon="renderMenuIcon"
           :expand-icon="expandIcon"
         />
       </n-layout-sider>
@@ -53,9 +52,10 @@
 </template>
 
 <script>
-  import { h, ref, defineComponent } from 'vue'
-  import { NIcon } from 'naive-ui'
-  import { BookmarkOutline, CaretDownOutline } from '@vicons/ionicons5'
+  import { h, ref, defineComponent, watch } from 'vue'
+  import { NIcon, NCheckbox, NMenu, NButton, NSpace, NH2, NSelect, NSwitch, NLayout,
+  NLayoutSider } from 'naive-ui'
+  import { CaretDownOutline } from '@vicons/ionicons5'
   import ListJobs from './ListJobs.vue'
 
   const menuOptions = [
@@ -67,22 +67,26 @@
         {
           label: "Jovem Aprendiz",
           key: "jovem-aprendiz",
-          checkbox: true,
+          value: "jovem-aprendiz",
+          checkbox: ref(false),
         },
         {
           label: "Estágio",
           key: "estagio",
-          checkbox: true,
+          value: "estagio",
+          checkbox: ref(false),
         },
         {
           label: "Período Integral",
           key: "periodo-integral",
-          checkbox: true,
+          value: "periodo-integral",
+          checkbox: ref(false),
         },
         {
           label: "Contrato",
           key: "contrato",
-          checkbox: true,
+          value: "contrato",
+          checkbox: ref(false),
         },
       ]
     },
@@ -93,19 +97,27 @@
       [
         {
           label: "Desenvolvimento de Software",
-          key: "desenvolvimento-de-software"
+          key: "desenvolvimento-de-software",
+          value: "desenvolvimento-de-software",
+          checkbox: ref(false),
         },
         {
           label: "Ciencias Dados",
-          key: "cientista-de-dados"
+          key: "cientista-de-dados",
+          value: "cientista-de-dados",
+          checkbox: ref(false),
         },
         {
           label: "Educação",
-          key: "educacao"
+          key: "educacao",
+          value: "educacao",
+          checkbox: ref(false),
         },
         {
           label: "Engenharia",
-          key: "engenharia"
+          key: "engenharia",
+          value: "engenharia",
+          checkbox: ref(false),
         },
       ]
     },
@@ -116,39 +128,58 @@
       [
         {
           label: "Graduação",
-          key: "graduacao"
+          key: "graduacao",
+          value: "graduacao",
+          checkbox: ref(false),
         },
         {
           label: "Pós-graduação",
-          key: "posGraduacao"
+          key: "posGraduacao",
+          value: "posGraduacao",
+          checkbox: ref(false),
         },
         {
           label: "Mestrado",
-          key: "mestrado"
+          key: "mestrado",
+          value: "mestrado",
+          checkbox: ref(false),
         },
         {
           label: "Doutorado",
-          key: "doutorado"
+          key: "doutorado",
+          value: "doutorado",
+          checkbox: ref(false),
         },
       ]
     }
   ];
 
+  const checkboxValues = ref([]);
+
+  watch(checkboxValues, (newValue) => {
+    console.log('Valores dos checkboxes atualizados:');
+    console.log(newValue);
+  }, { deep: true });
+
+
   function renderMenuLabel(option) {
-    if ("href" in option) {
-      return h("a", { href: option.href, target: "_blank" }, [
-        option.label
-      ]);
+    if ("checkbox" in option) {
+      return h(
+        NCheckbox,
+        {
+          checked: checkboxValues.value[option.key],
+          onChange: (value) => {
+            if (value) {
+              checkboxValues.value.push(option.key);
+            } else {
+              checkboxValues.value.pop(option.key);
+            }
+          },
+        },
+        () => [option.label] // Use uma função de renderização para o slot
+      );
     }
     return option.label;
-  }
-
-  function renderMenuIcon(option) {
-    if (option.key === "sheep-man")
-      return true;
-    if (option.key === "food")
-      return null;
-    return h(NIcon, null, { default: () => h(BookmarkOutline) });
   }
 
   function expandIcon() {
@@ -158,6 +189,14 @@
   export default defineComponent({
     components: {
       ListJobs,
+      NMenu,
+      NButton,
+      NSpace,
+      NH2,
+      NSelect,
+      NSwitch,
+      NLayout,
+      NLayoutSider,
     },
 
     setup(){
@@ -165,9 +204,8 @@
         menuOptions,
         collapsed: ref(false),
         renderMenuLabel,
-        renderMenuIcon,
+        checkboxValues,
         expandIcon,
-
         value: ref("Escolha um estado"),
         options: [
           {
