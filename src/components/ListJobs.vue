@@ -41,7 +41,7 @@
     justify-content: center;
     align-items: center;
     margin-top: 20px;
-    width: 70%;
+    width: 100%;
   }
 
   .jobs-card {
