@@ -35,15 +35,28 @@
       <n-button color="#7ef0c0" class="register-button" type="submit" @click="submitForm">Cadastrar</n-button>
     </div>
   </n-form>
+  <pre>{{ JSON.stringify(model, null, 2) }}
+</pre>
+  <div>
+    <div v-for="(message, index) in chatMessages" :key="index" :class="message.role">
+      {{ message.content }}
+    </div>
+    <div>
+      <input v-model="userMessage" @keyup.enter="sendMessage" placeholder="Digite sua mensagem">
+      <button @click="sendMessage">Enviar</button>
+    </div>
+  </div>
 </template>
 
 <script>
 import { defineComponent, ref   } from 'vue'
+import { useMessage } from 'naive-ui'
 import axios from 'axios';
 import baseURL from '../main.js';
 
 export default defineComponent({
   setup() {
+    window.$message = useMessage()
     const formRef = ref<null>(null)
 
     return {
@@ -85,6 +98,7 @@ export default defineComponent({
       try {
         const response = await axios.post(`${baseURL}/job/add`, this.model);
         console.log('Resposta do servidor:', response.data);
+        window.$message.success('Vaga cadastrada com sucesso!')
 
         this.model = {
           jobTitle: null,
@@ -93,8 +107,9 @@ export default defineComponent({
           cha:"",
           jobStatus: "",
         };
-      } catch {
-        console.log('Erro ao enviar requisição:');
+      } catch (error) {
+        console.error('Erro ao enviar requisição:', error);
+        window.$message.error('Erro ao cadastrar a vaga. Tente novamente.')
 
       }
     },

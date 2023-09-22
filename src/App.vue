@@ -1,7 +1,10 @@
 <template>
+
+  <n-message-provider>
   <div id="app">
     <cadastro-vaga></cadastro-vaga>
   </div>
+  </n-message-provider>
 </template>
 
 
