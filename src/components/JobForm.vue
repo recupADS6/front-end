@@ -38,15 +38,14 @@
 </template>
 
 <script>
-import { defineComponent, ref } from 'vue'
-
+import { defineComponent, ref   } from 'vue'
 import axios from 'axios';
 import baseURL from '../main.js';
-
 
 export default defineComponent({
   setup() {
     const formRef = ref<null>(null)
+
     return {
       formRef,
       model: ref({
@@ -54,6 +53,7 @@ export default defineComponent({
         jobDescription: '',
         jobLevel: '',
         cha: '',
+        jobStatus: 'Aberta',
       }),
       selectOptions: ['Júnior', 'Pleno', 'Sênior'].map((v) => ({
         label: v,
@@ -91,6 +91,7 @@ export default defineComponent({
           jobDescription: null,
           jobLevel: null,
           cha:"",
+          jobStatus: "",
         };
       } catch {
         console.log('Erro ao enviar requisição:');
