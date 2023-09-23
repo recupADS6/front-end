@@ -1,12 +1,23 @@
 <template>
   <div class="dashboard">
-    <div class="header-page">
-      <n-h1>Filtros</n-h1>
-    </div>
-
     <n-space vertical>
       <n-layout has-sider>
-        <n-layout-sider :class="{ 'layout-sider': !collapsed }" bordered collapse-mode="width" :collapsed-width="64" :width="240" :collapsed="collapsed" show-trigger @collapse="collapsed = true" @expand="collapsed = false">
+        <n-layout-sider
+          :class="{ 'layout-sider': !collapsed }"
+          bordered collapse-mode="width"
+          :collapsed-width="64" :width="240"
+          :collapsed="collapsed" show-trigger
+          @collapse="collapsed = true"
+          @expand="collapsed = false"
+        >
+          <div v-if="!collapsed">
+            <div class="header-page">
+              <n-h1>Filtros</n-h1>
+            </div>
+
+            <location-filters/>
+          </div>
+
           <n-menu :collapsed="collapsed" :collapsed-width="64" :collapsed-icon-size="22" :options="menuOptions" :render-label="renderMenuLabel" :expand-icon="expandIcon" />
 
           <n-space justify="space-between" class="button-spaces" v-if="!collapsed">
@@ -25,16 +36,18 @@
 
 <script>
 import { CaretDownOutline } from '@vicons/ionicons5';
-import { NCheckbox, NIcon, NLayout, NLayoutSider, NMenu, NSpace, NButton } from 'naive-ui';
-import ListJobs from './ListJobs.vue';
-import menuOptions from "../utils/menuOptions.js";
+import { NButton, NCheckbox, NIcon, NLayout, NLayoutSider, NMenu, NSpace } from 'naive-ui';
+import { h, onMounted, ref } from 'vue';
+import { filterJobs, toggleCheckbox } from "../helpers/jobFilters.js";
 import { getAllJobs } from '../services/jobsService.js';
-import { onMounted, ref, h } from 'vue';
-import { filterJobs, toggleCheckbox } from "../helpers/jobFilters.js"
+import menuOptions from "../utils/menuOptions.js";
+import ListJobs from './ListJobs.vue';
+import LocationFilters from "./LocationFilters.vue";
 
 export default {
   components: {
     ListJobs,
+    LocationFilters,
     NMenu,
     NSpace,
     NLayout,
