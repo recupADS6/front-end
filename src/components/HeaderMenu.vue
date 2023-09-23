@@ -14,33 +14,52 @@
 </template>
 
 <script>
-  import { defineComponent, ref } from "vue";
+  import { defineComponent, ref, h } from "vue";
+  import { RouterLink } from "vue-router";
 
   const menuOptions = [
     {
-      label: "Home",
+      label: () => h(
+        RouterLink,
+        {
+          to: {
+            name: "dashboard-page",
+          }
+        },
+        { default: () => "Home" }
+      ),
       key: "home",
+      route: "/"
     },
     {
-      label: "Cadastro de Vagas",
+      label: () => h(
+        RouterLink,
+        {
+          to: {
+            name: "cadastrar-vaga",
+          }
+        },
+        { default: () => "Cadastro de Vagas" }
+      ),
       key: "job",
+      route: "/cadastro-de-vaga"
     },
-    {
-      label: "Minha Conta",
-      key: "account",
-    },
-    {
-      label: "Privacidade e Segurança",
-      key: "security",
-    },
-    {
-      label: "Notificações",
-      key: "notification",
-    },
-    {
-      label: "Sair",
-      key: "logout",
-    },
+    // {
+    //   label: "Minha Conta",
+    //   key: "account",
+    // },
+    // {
+    //   label: "Privacidade e Segurança",
+    //   key: "security",
+    // },
+    // {
+    //   label: "Notificações",
+    //   key: "notification",
+    // },
+    // {
+    //   label: "Sair",
+    //   key: "logout",
+    // },
   ];
 
   export default defineComponent({
@@ -62,11 +81,11 @@
     padding: 10px;
   }
 
-  #menu-item .n-menu-item-content-header {
+  #menu-item .n-menu-item-content-header a {
     color: #ffffff !important;
   }
 
-  #menu-item .n-menu-item-content-header:hover {
+  #menu-item .n-menu-item-content-header a:hover {
     color: #62A362 !important;
   }
 

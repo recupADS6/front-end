@@ -1,19 +1,14 @@
 <template>
   <div id="app">
-    <dashboard-page></dashboard-page>
-
+    <router-view/>
   </div>
 </template>
 
 
 <script>
-import DashboardPage from './pages/DashboardPage.vue';
-
 export default {
-  components: {
-    DashboardPage
-  }
-};
+  name: 'App',
+}
 </script>
 
 <style>
