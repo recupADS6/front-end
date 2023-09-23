@@ -41,7 +41,7 @@
       </n-layout-sider>
 
         <n-layout>
-          <list-jobs />
+          <list-jobs :filtered-options="checkboxValues" :jobs="filteredJobs"/>
         </n-layout>
       </n-layout>
     </n-space>
@@ -59,24 +59,27 @@
     NSpace,
     NButton
   } from 'naive-ui';
-  import { defineComponent, h, ref } from 'vue';
+  import { defineComponent, h, ref, onMounted } from 'vue';
   import ListJobs from './ListJobs.vue';
   import menuOptions from "../utils/menuOptions.js"
   import locationOptions from "../utils/locationOptions.js"
+  import { getAllJobs } from '../services/jobsService.js'
 
   const checkboxValues = ref([]);
+  const filteredJobs = ref([]);
+  const allJobs = ref([]);
 
   function renderMenuLabel(option) {
     if ("checkbox" in option) {
       return h(
         NCheckbox,
         {
-          checked: checkboxValues.value[option.key],
+          checked: checkboxValues.value[option.value],
           onChange: (value) => {
             if (value) {
-              checkboxValues.value.push(option.key);
+              checkboxValues.value.push(option.value);
             } else {
-              checkboxValues.value.pop(option.key);
+              checkboxValues.value.pop(option.value);
             }
           },
         },
@@ -90,13 +93,30 @@
     return h(NIcon, null, { default: () => h(CaretDownOutline) });
   }
 
+
+  function filterJobs() {
+    if (checkboxValues.value.length === 0) {
+      filteredJobs.value = allJobs.value;
+    } else {
+      console.log("checkboxValues", checkboxValues.value);
+      console.log("allJobs", allJobs.value);
+      filteredJobs.value = allJobs.value.filter(job =>
+        checkboxValues.value.includes(job.type) ||
+        checkboxValues.value.includes(job.category) ||
+        checkboxValues.value.includes(job.scholarLevel)
+      );
+    }
+  }
+
   function filterOptions() {
-    console.log(checkboxValues.value);
+    filterJobs();
+    console.log("filteredJObs", filteredJobs.value);
   }
 
   function clearFilterOptions() {
     checkboxValues.value = [];
-    console.log(checkboxValues.value);
+    filterJobs();
+    console.log("filteredJObs clear", filteredJobs.value);
   }
 
   export default defineComponent({
@@ -110,6 +130,11 @@
     },
 
     setup(){
+      onMounted(async () => {
+        allJobs.value = await getAllJobs();
+        filterJobs();
+      });
+
       return {
         menuOptions,
         collapsed: ref(false),
@@ -120,6 +145,7 @@
         locationOptions,
         filterOptions,
         clearFilterOptions,
+        filteredJobs
       }
     }
   })

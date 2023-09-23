@@ -43,7 +43,7 @@
 
 <script>
   import { NH1, NCard, NText } from 'naive-ui'
-  import { onMounted, ref } from 'vue'
+  import { onMounted, ref, watch } from 'vue'
   import { getAllJobs } from '../services/jobsService.js'
 
   export default {
@@ -53,26 +53,56 @@
       NH1,
       NText
     },
+    props: {
+      filteredOptions: {
+        type: Array,
+        required: true
+      },
+      jobs: {
+        type: Array,
+        required: true
+      }
+    },
 
-    setup () {
+    setup (props) {
       const jobsList = ref([]);
       const jobsOpen = ref([]);
       const jobsFilled = ref([]);
 
-      onMounted(async () => {
-        jobsList.value = await getAllJobs()
-        console.log(jobsList.value.data)
+      console.log("props", props);
 
-        jobsList.value.data.map (job => {
+      onMounted(async () => {
+        jobsList.value = await getAllJobs();
+
+        jobsList.value.map (job => {
           if (job.status === 'open') {
             jobsOpen.value.push(job)
           } else {
             jobsFilled.value.push(job)
           }
         })
-        console.log(jobsOpen.value)
-        console.log(jobsFilled.value)
       });
+
+      function updateLists(jobs) {
+        jobsOpen.value = [];
+        jobsFilled.value = [];
+
+        jobs.forEach(job => {
+          if (job.status === 'open') {
+            jobsOpen.value.push(job);
+          } else {
+            jobsFilled.value.push(job);
+          }
+        });
+      }
+
+    watch(
+      () => props.jobs,
+      (newJobs) => {
+        updateLists(newJobs);
+      },
+      { immediate: true }
+    );
 
       return {
         jobsList,

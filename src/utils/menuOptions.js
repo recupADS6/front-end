@@ -9,25 +9,25 @@ export default [
       {
         label: "Jovem Aprendiz",
         key: "jovem-aprendiz",
-        value: "jovem-aprendiz",
+        value: "Jovem Aprendiz",
         checkbox: ref(false),
       },
       {
         label: "Estágio",
         key: "estagio",
-        value: "estagio",
+        value: "Estágio",
         checkbox: ref(false),
       },
       {
         label: "Período Integral",
         key: "periodo-integral",
-        value: "periodo-integral",
+        value: "Período Integral",
         checkbox: ref(false),
       },
       {
         label: "Contrato",
         key: "contrato",
-        value: "contrato",
+        value: "Contrato",
         checkbox: ref(false),
       },
     ]
@@ -40,25 +40,25 @@ export default [
       {
         label: "Desenvolvimento de Software",
         key: "desenvolvimento-de-software",
-        value: "desenvolvimento-de-software",
+        value: "Desenvolvimento de Software",
         checkbox: ref(false),
       },
       {
         label: "Ciencias Dados",
         key: "cientista-de-dados",
-        value: "cientista-de-dados",
+        value: "Ciencias Dados",
         checkbox: ref(false),
       },
       {
         label: "Educação",
         key: "educacao",
-        value: "educacao",
+        value: "Educação",
         checkbox: ref(false),
       },
       {
         label: "Engenharia",
         key: "engenharia",
-        value: "engenharia",
+        value: "Engenharia",
         checkbox: ref(false),
       },
     ]
@@ -71,25 +71,25 @@ export default [
       {
         label: "Graduação",
         key: "graduacao",
-        value: "graduacao",
+        value: "Graduação",
         checkbox: ref(false),
       },
       {
         label: "Pós-graduação",
         key: "posGraduacao",
-        value: "posGraduacao",
+        value: "Pós-graduação",
         checkbox: ref(false),
       },
       {
         label: "Mestrado",
         key: "mestrado",
-        value: "mestrado",
+        value: "Mestrado",
         checkbox: ref(false),
       },
       {
         label: "Doutorado",
         key: "doutorado",
-        value: "doutorado",
+        value: "Doutorado",
         checkbox: ref(false),
       },
     ]
