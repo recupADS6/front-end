@@ -6,39 +6,14 @@
 
     <n-space vertical>
       <n-layout has-sider>
-        <n-layout-sider
-          :class="{ 'layout-sider': !collapsed }"
-          bordered
-          collapse-mode="width"
-          :collapsed-width="64"
-          :width="240"
-          :collapsed="collapsed"
-          show-trigger
-          @collapse="collapsed = true"
-          @expand="collapsed = false"
-        >
-        <n-menu
-          :collapsed="collapsed"
-          :collapsed-width="64"
-          :collapsed-icon-size="22"
-          :options="menuOptions"
-          :render-label="renderMenuLabel"
-          :expand-icon="expandIcon"
-        />
+        <n-layout-sider :class="{ 'layout-sider': !collapsed }" bordered collapse-mode="width" :collapsed-width="64" :width="240" :collapsed="collapsed" show-trigger @collapse="collapsed = true" @expand="collapsed = false">
+          <n-menu :collapsed="collapsed" :collapsed-width="64" :collapsed-icon-size="22" :options="menuOptions" :render-label="renderMenuLabel" :expand-icon="expandIcon" />
 
-        <n-space
-          justify="space-between"
-          class="button-spaces"
-          v-if="!collapsed"
-        >
-          <n-button tertiary @click="clearFilterOptions">
-            Limpar filtros
-          </n-button>
-          <n-button type="primary" style="width: 108px" @click="filterOptions">
-            Filtrar
-          </n-button>
-        </n-space>
-      </n-layout-sider>
+          <n-space justify="space-between" class="button-spaces" v-if="!collapsed">
+            <n-button tertiary @click="clearFilterOptions">Limpar filtros</n-button>
+            <n-button type="primary" style="width: 108px" @click="filterOptions">Filtrar</n-button>
+          </n-space>
+        </n-layout-sider>
 
         <n-layout>
           <list-jobs :filtered-options="checkboxValues" :jobs="filteredJobs"/>
@@ -49,138 +24,108 @@
 </template>
 
 <script>
-  import { CaretDownOutline } from '@vicons/ionicons5';
-  import {
-    NCheckbox,
-    NIcon,
-    NLayout,
-    NLayoutSider,
+import { CaretDownOutline } from '@vicons/ionicons5';
+import { NCheckbox, NIcon, NLayout, NLayoutSider, NMenu, NSpace, NButton } from 'naive-ui';
+import ListJobs from './ListJobs.vue';
+import menuOptions from "../utils/menuOptions.js";
+import { getAllJobs } from '../services/jobsService.js';
+import { onMounted, ref, h } from 'vue';
+import { filterJobs, toggleCheckbox } from "../helpers/jobFilters.js"
+
+export default {
+  components: {
+    ListJobs,
     NMenu,
     NSpace,
+    NLayout,
+    NLayoutSider,
     NButton
-  } from 'naive-ui';
-  import { defineComponent, h, ref, onMounted } from 'vue';
-  import ListJobs from './ListJobs.vue';
-  import menuOptions from "../utils/menuOptions.js"
-  import locationOptions from "../utils/locationOptions.js"
-  import { getAllJobs } from '../services/jobsService.js'
+  },
 
-  const checkboxValues = ref([]);
-  const filteredJobs = ref([]);
-  const allJobs = ref([]);
+  setup() {
+    const checkboxValues = ref([]);
+    const filteredJobs = ref([]);
+    const allJobs = ref([]);
+    const collapsed = ref(false);
 
-  function renderMenuLabel(option) {
-    if ("checkbox" in option) {
-      return h(
-        NCheckbox,
-        {
-          checked: checkboxValues.value[option.value],
-          onChange: (value) => {
-            if (value) {
-              checkboxValues.value.push(option.value);
-            } else {
-              checkboxValues.value.pop(option.value);
-            }
+    const isCheckboxChecked = option => checkboxValues.value.includes(option.value);
+
+    function renderMenuLabel(option) {
+      if ("checkbox" in option) {
+        return h(
+          NCheckbox,
+          {
+            checked: isCheckboxChecked(option),
+            onChange: () => toggleCheckbox(checkboxValues.value, option)
           },
-        },
-        () => [option.label]
-      );
-    }
-    return option.label;
-  }
-
-  function expandIcon() {
-    return h(NIcon, null, { default: () => h(CaretDownOutline) });
-  }
-
-
-  function filterJobs() {
-    if (checkboxValues.value.length === 0) {
-      filteredJobs.value = allJobs.value;
-    } else {
-      console.log("checkboxValues", checkboxValues.value);
-      console.log("allJobs", allJobs.value);
-      filteredJobs.value = allJobs.value.filter(job =>
-        checkboxValues.value.includes(job.type) ||
-        checkboxValues.value.includes(job.category) ||
-        checkboxValues.value.includes(job.scholarLevel)
-      );
-    }
-  }
-
-  function filterOptions() {
-    filterJobs();
-    console.log("filteredJObs", filteredJobs.value);
-  }
-
-  function clearFilterOptions() {
-    checkboxValues.value = [];
-    filterJobs();
-    console.log("filteredJObs clear", filteredJobs.value);
-  }
-
-  export default defineComponent({
-    components: {
-      ListJobs,
-      NMenu,
-      NSpace,
-      NLayout,
-      NLayoutSider,
-      NButton
-    },
-
-    setup(){
-      onMounted(async () => {
-        allJobs.value = await getAllJobs();
-        filterJobs();
-      });
-
-      return {
-        menuOptions,
-        collapsed: ref(false),
-        renderMenuLabel,
-        checkboxValues,
-        expandIcon,
-        value: ref("Escolha um estado"),
-        locationOptions,
-        filterOptions,
-        clearFilterOptions,
-        filteredJobs
+          () => [option.label]
+        );
       }
+      return option.label;
     }
-  })
+
+    function expandIcon() {
+      return h(NIcon, null, { default: () => h(CaretDownOutline) });
+    }
+
+    function applyFilters() {
+      filteredJobs.value = filterJobs(allJobs.value, checkboxValues.value);
+    }
+
+    function clearFilterOptions() {
+      checkboxValues.value = [];
+      applyFilters();
+    }
+
+    onMounted(async () => {
+      allJobs.value = await getAllJobs();
+      applyFilters();
+    });
+
+    return {
+      menuOptions,
+      collapsed,
+      renderMenuLabel,
+      checkboxValues,
+      expandIcon,
+      filterOptions: applyFilters,
+      clearFilterOptions,
+      filteredJobs
+    };
+  }
+}
 </script>
 
 <style>
-  .side-filters-colapse {
-    margin-top: 10px;
-    margin-left: 5px;
-  }
+.side-filters-colapse {
+  margin-top: 10px;
+  margin-left: 5px;
+}
 
-  .dashboard {
-    margin: 1%
-  }
+.dashboard {
+  margin: 1%
+}
 
-  .add-job-button {
-    margin-right: 5px;
-    margin-left: 3px;
-    width: 8.5rem;
-    height: 2.5rem;
-    background-color: #62A362;
-  }
+.add-job-button {
+  margin-right: 5px;
+  margin-left: 3px;
+  width: 8.5rem;
+  height: 2.5rem;
+  background-color: #62A362;
+}
 
-  .header-page {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-  }
+.header-page {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
 
-  .layout-sider {
-    max-width: 300px !important;
-    width: 300px !important;
-  }
+.layout-sider {
+  max-width: 300px !important;
+  width: 300px !important;
+}
 
-  .button-spaces {
-    padding: 1rem;
-  }
+.button-spaces {
+  padding: 1rem;
+}
 </style>
