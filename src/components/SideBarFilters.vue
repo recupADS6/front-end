@@ -7,6 +7,7 @@
     <n-space vertical>
       <n-layout has-sider>
         <n-layout-sider
+          :class="{ 'layout-sider': !collapsed }"
           bordered
           collapse-mode="width"
           :collapsed-width="64"
@@ -24,6 +25,19 @@
           :render-label="renderMenuLabel"
           :expand-icon="expandIcon"
         />
+
+        <n-space
+          justify="space-between"
+          class="button-spaces"
+          v-if="!collapsed"
+        >
+          <n-button tertiary @click="clearFilterOptions">
+            Limpar filtros
+          </n-button>
+          <n-button type="primary" style="width: 108px" @click="filterOptions">
+            Filtrar
+          </n-button>
+        </n-space>
       </n-layout-sider>
 
         <n-layout>
@@ -43,6 +57,7 @@
     NLayoutSider,
     NMenu,
     NSpace,
+    NButton
   } from 'naive-ui';
   import { defineComponent, h, ref } from 'vue';
   import ListJobs from './ListJobs.vue';
@@ -75,6 +90,15 @@
     return h(NIcon, null, { default: () => h(CaretDownOutline) });
   }
 
+  function filterOptions() {
+    console.log(checkboxValues.value);
+  }
+
+  function clearFilterOptions() {
+    checkboxValues.value = [];
+    console.log(checkboxValues.value);
+  }
+
   export default defineComponent({
     components: {
       ListJobs,
@@ -82,6 +106,7 @@
       NSpace,
       NLayout,
       NLayoutSider,
+      NButton
     },
 
     setup(){
@@ -93,6 +118,8 @@
         expandIcon,
         value: ref("Escolha um estado"),
         locationOptions,
+        filterOptions,
+        clearFilterOptions,
       }
     }
   })
@@ -120,5 +147,14 @@
     display: flex;
     flex-direction: row;
     justify-content: space-between;
+  }
+
+  .layout-sider {
+    max-width: 300px !important;
+    width: 300px !important;
+  }
+
+  .button-spaces {
+    padding: 1rem;
   }
 </style>
