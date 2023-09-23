@@ -25,6 +25,8 @@
 
 <script>
   import { NH1, NCard } from 'naive-ui'
+  import { onMounted, ref } from 'vue'
+  import { getAllJobs } from '../services/jobsService.js'
 
   export default {
     name: "ListJobs",
@@ -32,7 +34,20 @@
       NCard,
       NH1
     },
-  }
+
+    setup () {
+      const jobsList = ref([]);
+
+      onMounted(async () => {
+        jobsList.value = await getAllJobs()
+        console.log(jobsList.value.data)
+      });
+
+      return {
+        jobsList,
+      }
+    }
+  };
 </script>
 
 <style>
