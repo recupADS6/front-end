@@ -2,7 +2,8 @@
 <n-loading-bar-provider>
   <n-message-provider>
   <div id="app">
-    <cadastro-vaga></cadastro-vaga>
+    <dashboard-page></dashboard-page>
+
   </div>
   </n-message-provider>
   </n-loading-bar-provider>
@@ -11,10 +12,11 @@
 
 <script>
 import CadastroVaga from './pages/CadastroVaga.vue';
+import DashboardPage from './pages/DashboardPage.vue';
 
 export default {
   components: {
-    CadastroVaga
+    DashboardPage
   }
 };
 </script>
