@@ -10,49 +10,67 @@
     </template>
   
 <script>
-  import { defineComponent, h, ref } from "vue";
-  import { NIcon } from "naive-ui";
-  import {
-    LogOutOutline as LogoutIcon,
-    NotificationsOutline as NotificationIcon,
-    Menu as MenuIcon} from "@vicons/ionicons5";
-  import {UserRegular as UserIcon} from "@vicons/fa";
-  import {SecurityFilled as SecurityIcon} from "@vicons/material";
-  
-  function renderIcon(icon) {
-    return () => h(NIcon, null, { default: () => h(icon) });
-  }
-  
+  import { defineComponent, ref, h } from "vue";
+  import { RouterLink } from "vue-router";
+
   const menuOptions = [
     {
-      label: "Menu",
-      key: "menu",
-      icon: renderIcon(MenuIcon),
-      children: [
-            {
-              label: "Minha Conta",
-              key: "account",
-              icon: renderIcon(UserIcon)
-            },
-            {
-              label: "Privacidade e Segurança",
-              key: "security",
-              icon: renderIcon(SecurityIcon)
-            },
-            {
-              label: "Notificações",
-              key: "notification",
-              icon: renderIcon(NotificationIcon),
-            },
-            {
-              label: "Sair",
-              key: "logout",
-              icon: renderIcon(LogoutIcon),
-            },
-        ]
-    }
+      label: () => h(
+        RouterLink,
+        {
+          to: {
+            name: "dashboard-page",
+          }
+        },
+        { default: () => "Home" }
+      ),
+      key: "home",
+      route: "/"
+    },
+    {
+      label: () => h(
+        RouterLink,
+        {
+          to: {
+            name: "cadastrar-vaga",
+          }
+        },
+        { default: () => "Cadastro de Vagas" }
+      ),
+      key: "job",
+      route: "/cadastro-de-vaga"
+    },
+    {
+      label: () => h(
+        RouterLink,
+        {
+          to: {
+            name: "vaga-chatgpt",
+          }
+        },
+        { default: () => "Gerar CHA" }
+      ),
+      key: "cha",
+      route: "/vaga-chatgpt"
+    },
+    // {
+    //   label: "Minha Conta",
+    //   key: "account",
+    // },
+    // {
+    //   label: "Privacidade e Segurança",
+    //   key: "security",
+    // },
+    // {
+    //   label: "Notificações",
+    //   key: "notification",
+    // },
+    // {
+    //   label: "Sair",
+    //   key: "logout",
+    // },
   ];
-  
+
   export default defineComponent({
     setup() {
       return {

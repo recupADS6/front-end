@@ -1,24 +1,14 @@
 <template>
-<n-loading-bar-provider>
-  <n-message-provider>
   <div id="app">
-    <dashboard-page></dashboard-page>
-
+    <router-view/>
   </div>
-  </n-message-provider>
-  </n-loading-bar-provider>
 </template>
 
 
 <script>
-import CadastroVaga from './pages/CadastroVaga.vue';
-import DashboardPage from './pages/DashboardPage.vue';
-
 export default {
-  components: {
-    DashboardPage
-  }
-};
+  name: 'App',
+}
 </script>
 
 <style>

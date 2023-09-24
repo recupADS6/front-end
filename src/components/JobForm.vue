@@ -51,7 +51,7 @@
 import { defineComponent, ref   } from 'vue'
 import { useMessage, useLoadingBar } from 'naive-ui'
 import axios from 'axios';
-import baseURL from '../main.js';
+import baseURL from '../services/chatService.js';
 
 export default defineComponent({
   setup() {
