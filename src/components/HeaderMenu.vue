@@ -52,7 +52,7 @@
             name: "vaga-chatgpt",
           }
         },
-        { default: () => "Gerar CHA" }
+        { default: () => "Integração CHA" }
       ),
       key: "cha",
       route: "/vaga-chatgpt"
