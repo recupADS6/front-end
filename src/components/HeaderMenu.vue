@@ -1,5 +1,5 @@
 <template>
-  
+
     <n-layout >
         <n-layout-header>
           <n-space justify="end">
@@ -7,7 +7,6 @@
           </n-space>
         </n-layout-header>
     </n-layout>
-
     </template>
   
 <script>

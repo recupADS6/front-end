@@ -1,10 +1,11 @@
 <template>
-
+<n-loading-bar-provider>
   <n-message-provider>
   <div id="app">
     <cadastro-vaga></cadastro-vaga>
   </div>
   </n-message-provider>
+  </n-loading-bar-provider>
 </template>
 
 
