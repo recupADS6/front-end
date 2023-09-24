@@ -1,14 +1,18 @@
 <template>
-    <n-layout >
-        <n-layout-header class="nav-bar">
-          <p class="welcome">Olá, Fulano</p>
-          <n-space justify="end">
-            <n-menu class="nav-menu" v-model:value="activeKey" mode="horizontal" :options="menuOptions" />
-          </n-space>
-        </n-layout-header>
-    </n-layout>
-    </template>
-  
+  <n-layout >
+      <n-layout-header class="nav-bar">
+        <p class="welcome">Olá, Fulano</p>
+        <n-menu
+          id="menu-item"
+          v-model:value="activeKey"
+          mode="horizontal"
+          :options="menuOptions"
+        />
+      </n-layout-header>
+  </n-layout>
+
+</template>
+
 <script>
   import { defineComponent, ref, h } from "vue";
   import { RouterLink } from "vue-router";
@@ -81,31 +85,35 @@
   });
 </script>
 
-<style scoped>
-.n-layout-header {
-  background-color: #000000;
-  position: fixed;
-  top: 0;
-  height: 70px;
-  padding: 10px;
-}
-.nav-menu {
-  background-color: #ffffff78;
-  color: #ffffff;
-}
+<style>
+  .n-layout-header {
+    background-color: #000000;
+    position: fixed;
+    top: 0;
+    height: 70px;
+    padding: 10px;
+  }
 
-.welcome {
-  color: #ffffff;
-  font-size: 20px;
-  padding: 10px;
-}
+  #menu-item .n-menu-item-content-header a {
+    color: #ffffff !important;
+  }
 
-.nav-bar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  width: 100%;
-  height: 70px;
-  padding: 0 20px;
-}
+  #menu-item .n-menu-item-content-header a:hover {
+    color: #62A362 !important;
+  }
+
+  .welcome {
+    color: #ffffff;
+    font-size: 20px;
+    padding: 10px;
+  }
+
+  .nav-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    height: 70px;
+    padding: 0 20px;
+  }
 </style>

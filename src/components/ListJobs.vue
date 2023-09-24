@@ -6,33 +6,113 @@
 
     <n-tabs type="line" animated>
       <n-tab-pane name="jobs-open" tab="Abertas">
-        <div class="jobs-section">
-        <n-card class="jobs-card" title="Card" size="large">
-          Card Content
-        </n-card>
-      </div>
+        <n-space vertical>
+          <div v-for="job in jobsFilled" :key="job.id">
+            <n-card class="jobs-card" :title="job.title" size="large">
+              <n-space vertical>
+                <n-text><strong>Nível:</strong> {{ job.level }}</n-text>
+                <n-text><strong>Tipo:</strong> {{ job.type }}</n-text>
+                <n-text><strong>Categoria:</strong> {{ job.category }}</n-text>
+                <n-text><strong>Nível de Formação</strong> {{ job.scholarLevel }}</n-text>
+                <n-text><strong>CHA:</strong> {{ job.cha }}</n-text>
+                <n-text><strong>Local</strong> {{ job.location }}</n-text>
+                <n-text><strong>Descrição</strong> {{ job.description }}</n-text>
+              </n-space>
+            </n-card>
+          </div>
+        </n-space>
       </n-tab-pane>
-      <n-tab-pane name="complted-jobs" tab="Concluidas">
-        <div class="jobs-section">
-        <n-card class="jobs-card" title="Card" size="large">
-          Card Content
-        </n-card>
-      </div>
+      <n-tab-pane name="completed-jobs" tab="Concluídas">
+        <n-space vertical>
+          <div v-for="job in jobsOpen" :key="job.id">
+            <n-card class="jobs-card" :title="job.title" size="large">
+              <n-space vertical>
+                <n-text><strong>Nível:</strong> {{ job.level }}</n-text>
+                <n-text><strong>Tipo:</strong> {{ job.type }}</n-text>
+                <n-text><strong>Categoria:</strong> {{ job.category }}</n-text>
+                <n-text><strong>Nível de Formação</strong> {{ job.scholarLevel }}</n-text>
+                <n-text><strong>CHA:</strong> {{ job.cha }}</n-text>
+                <n-text><strong>Local</strong> {{ job.location }}</n-text>
+                <n-text><strong>Descrição</strong> {{ job.description }}</n-text>
+              </n-space>
+            </n-card>
+          </div>
+        </n-space>
       </n-tab-pane>
     </n-tabs>
   </div>
 </template>
 
 <script>
-  import { NH1, NCard } from 'naive-ui'
+  import { NH1, NCard, NText } from 'naive-ui'
+  import { onMounted, ref, watch } from 'vue'
+  import { getAllJobs } from '../services/jobsService.js'
 
   export default {
     name: "ListJobs",
     components: {
       NCard,
-      NH1
+      NH1,
+      NText
     },
-  }
+    props: {
+      filteredOptions: {
+        type: Array,
+        required: true
+      },
+      jobs: {
+        type: Array,
+        required: true
+      }
+    },
+
+    setup (props) {
+      const jobsList = ref([]);
+      const jobsOpen = ref([]);
+      const jobsFilled = ref([]);
+
+      console.log("props", props);
+
+      onMounted(async () => {
+        jobsList.value = await getAllJobs();
+
+        jobsList.value.map (job => {
+          if (job.status === 'open') {
+            jobsOpen.value.push(job)
+          } else {
+            jobsFilled.value.push(job)
+          }
+        })
+      });
+
+      function updateLists(jobs) {
+        jobsOpen.value = [];
+        jobsFilled.value = [];
+
+        jobs.forEach(job => {
+          if (job.status === 'open') {
+            jobsOpen.value.push(job);
+          } else {
+            jobsFilled.value.push(job);
+          }
+        });
+      }
+
+    watch(
+      () => props.jobs,
+      (newJobs) => {
+        updateLists(newJobs);
+      },
+      { immediate: true }
+    );
+
+      return {
+        jobsList,
+        jobsOpen,
+        jobsFilled,
+      }
+    }
+  };
 </script>
 
 <style>
@@ -41,11 +121,7 @@
     justify-content: center;
     align-items: center;
     margin-top: 20px;
-    width: 70%;
-  }
-
-  .jobs-card {
-    background-color: blueviolet;
+    width: 100%;
   }
 
   .list-job-content {

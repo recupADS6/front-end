@@ -1,51 +1,33 @@
 <template>
   <div class="dashboard">
-    <div class="header-page">
-      <n-h1>Filtros</n-h1>
-
-      <n-button type="primary" class="add-job-button">
-        Adicionar Vaga
-      </n-button>
-    </div>
-
     <n-space vertical>
-      <n-space vertical>
-        <n-h2>Localização</n-h2>
-        <div class="location-section">
-          <n-select class="location-select" v-model:value="value" :options="options" />
-
-          <n-button class="search-button" type="search">
-            Search
-          </n-button>
-        </div>
-
-        <n-switch class="side-filters-colapse" v-model:value="collapsed" />
-      </n-space>
-
       <n-layout has-sider>
         <n-layout-sider
-          bordered
-          collapse-mode="width"
-          :collapsed-width="64"
-          :width="240"
-          :collapsed="collapsed"
-          show-trigger
+          :class="{ 'layout-sider': !collapsed }"
+          bordered collapse-mode="width"
+          :collapsed-width="64" :width="240"
+          :collapsed="collapsed" show-trigger
           @collapse="collapsed = true"
           @expand="collapsed = false"
         >
-        <n-menu
-          :collapsed="collapsed"
-          :collapsed-width="64"
-          :collapsed-icon-size="22"
-          :options="menuOptions"
-          :render-label="renderMenuLabel"
-          :render-icon="renderMenuIcon"
-          :expand-icon="expandIcon"
-        />
-      </n-layout-sider>
+          <div v-if="!collapsed">
+            <div class="header-page">
+              <n-h2>Filtros</n-h2>
+            </div>
+
+            <location-filters @location-selected="handleLocationSelection"/>
+          </div>
+
+          <n-menu :collapsed="collapsed" :collapsed-width="64" :collapsed-icon-size="22" :options="menuOptions" :render-label="renderMenuLabel" :expand-icon="expandIcon" />
+
+          <n-space justify="space-between" class="button-spaces" v-if="!collapsed">
+            <n-button tertiary @click="clearFilterOptions">Limpar filtros</n-button>
+            <n-button type="primary" style="width: 108px" @click="filterOptions">Filtrar</n-button>
+          </n-space>
+        </n-layout-sider>
 
         <n-layout>
-          <list-jobs />
+          <list-jobs :filtered-options="checkboxValues" :jobs="filteredJobs"/>
         </n-layout>
       </n-layout>
     </n-space>
@@ -53,270 +35,116 @@
 </template>
 
 <script>
-  import { h, ref, defineComponent } from 'vue'
-  import { NIcon } from 'naive-ui'
-  import { BookmarkOutline, CaretDownOutline } from '@vicons/ionicons5'
-  import ListJobs from './ListJobs.vue'
+import { CaretDownOutline } from '@vicons/ionicons5';
+import { NButton, NCheckbox, NIcon, NLayout, NLayoutSider, NMenu, NSpace } from 'naive-ui';
+import { h, onMounted, ref } from 'vue';
+import { filterJobs, toggleCheckbox } from "../helpers/jobFilters.js";
+import { getAllJobs } from '../services/jobsService.js';
+import menuOptions from "../utils/menuOptions.js";
+import ListJobs from './ListJobs.vue';
+import LocationFilters from "./LocationFilters.vue";
 
-  const menuOptions = [
-    {
-      label: "Tipo Vaga de Emprego",
-      key: "jobType",
-      children: [
-        {
-          type: "group",
-          key: "groupJobType",
-          children: [
-            {
-              label: "Jovem Aprendiz",
-              key: "jovem-aprendiz",
-              checkbox: true,
-            },
-            {
-              label: "Estágio",
-              key: "estagio",
-              checkbox: true,
-            },
-            {
-              label: "Período Integral",
-              key: "periodo-integral",
-              checkbox: true,
-            },
-            {
-              label: "Contrato",
-              key: "contrato",
-              checkbox: true,
-            },
-          ]
-        },
-      ]
-    },
-    {
-      label: "Categoria",
-      key: "category",
-      children: [
-        {
-          type: "group",
-          key: "groupCategory",
-          children: [
-            {
-              label: "Desenvolvimento de Software",
-              key: "desenvolvimento-de-software"
-            },
-            {
-              label: "Ciencias Dados",
-              key: "cientista-de-dados"
-            },
-            {
-              label: "Educação",
-              key: "educacao"
-            },
-            {
-              label: "Engenharia",
-              key: "engenharia"
-            },
-          ]
-        },
-      ]
-    },
-    {
-      label: "Nível de Escolaridade",
-      key: "scholarShipLevel",
-      children: [
-        {
-          type: "group",
-          key: "groupScholarShipLevel",
-          children: [
-            {
-              label: "Graduação",
-              key: "graduacao"
-            },
-            {
-              label: "Pós-graduação",
-              key: "posGraduacao"
-            },
-            {
-              label: "Mestrado",
-              key: "mestrado"
-            },
-            {
-              label: "Doutorado",
-              key: "doutorado"
-            },
-          ]
-        },
-      ]
-    }
-  ];
+export default {
+  components: {
+    ListJobs,
+    LocationFilters,
+    NMenu,
+    NSpace,
+    NLayout,
+    NLayoutSider,
+    NButton
+  },
 
-  function renderMenuLabel(option) {
-    if ("href" in option) {
-      return h("a", { href: option.href, target: "_blank" }, [
-        option.label
-      ]);
-    }
-    return option.label;
-  }
+  setup() {
+    const checkboxValues = ref([]);
+    const filteredJobs = ref([]);
+    const allJobs = ref([]);
+    const selectedLocation = ref(null);
+    const collapsed = ref(false);
 
-  function renderMenuIcon(option) {
-    if (option.key === "sheep-man")
-      return true;
-    if (option.key === "food")
-      return null;
-    return h(NIcon, null, { default: () => h(BookmarkOutline) });
-  }
+    const isCheckboxChecked = option => checkboxValues.value.includes(option.value);
 
-  function expandIcon() {
-    return h(NIcon, null, { default: () => h(CaretDownOutline) });
-  }
-
-  export default defineComponent({
-    components: {
-      ListJobs,
-    },
-
-    setup(){
-      return {
-        menuOptions,
-        collapsed: ref(false),
-        renderMenuLabel,
-        renderMenuIcon,
-        expandIcon,
-
-        value: ref("Escolha um estado"),
-        options: [
+    function renderMenuLabel(option) {
+      if ("checkbox" in option) {
+        return h(
+          NCheckbox,
           {
-            label: "Acre - AC"
+            checked: isCheckboxChecked(option),
+            onChange: () => toggleCheckbox(checkboxValues.value, option)
           },
-          {
-            label: "Amapá - AP"
-          },
-          {
-            label: "Amazonas - AM"
-          },
-          {
-            label: "Bahia - BA"
-          },
-          {
-            label: "Ceará - CE"
-          },
-          {
-            label: "Distrito Federal - DF"
-          },
-          {
-            label: "Espírito Santo - ES"
-          },
-          {
-            label: "Goiás - GO"
-          },
-          {
-            label: "Maranhão - MA"
-          },
-          {
-            label: "Mato Grosso - MT"
-          },
-          {
-            label: "Mato Grosso do Sul - MS"
-          },
-          {
-            label: "Minas Gerais - MG"
-          },
-          {
-            label: "Pará - PA"
-          },
-          {
-            label: "Paraíba - PB"
-          },
-          {
-            label: "Paraná - PR"
-          },
-          {
-            label: "Pernambuco - PE"
-          },
-          {
-            label: "Piauí - PI"
-          },
-          {
-            label: "Rio de Janeiro - RJ"
-          },
-          {
-            label: "Rio Grande do Norte - RN"
-          },
-          {
-            label: "Rio Grande do Sul - RS"
-          },
-          {
-            label: "Rondônia - RO"
-          },
-          {
-            label: "Roraima - RR"
-          },
-          {
-            label: "Santa Catarina - SC"
-          },
-          {
-            label: "São Paulo - SP"
-          },
-          {
-            label: "Sergipe - SE"
-          },
-          {
-            label: "Tocantins - TO"
-
-          },
-        ]
+          () => [option.label]
+        );
       }
+      return option.label;
     }
-  })
 
+    function handleLocationSelection(location) {
+      selectedLocation.value = location;
+    }
+
+    function expandIcon() {
+      return h(NIcon, null, { default: () => h(CaretDownOutline) });
+    }
+
+    function applyFilters() {
+      filteredJobs.value = filterJobs(allJobs.value, checkboxValues.value, selectedLocation.value);
+    }
+
+    function clearFilterOptions() {
+      checkboxValues.value = [];
+      applyFilters();
+    }
+
+    onMounted(async () => {
+      allJobs.value = await getAllJobs();
+      applyFilters();
+    });
+
+    return {
+      menuOptions,
+      collapsed,
+      renderMenuLabel,
+      checkboxValues,
+      expandIcon,
+      filterOptions: applyFilters,
+      clearFilterOptions,
+      filteredJobs,
+      handleLocationSelection
+    };
+  }
+}
 </script>
 
-<!-- TODO -->
-<!-- - adicionar os botoes no side bar como no figma -->
-<!-- - terminar de estilizar a seleção de localização e adicionar um botão para salvar a locaçização selecionada na busca -->
-<!-- - adicionar um botão que leva para a pagina de cadastro de vagas da Ju -->
-<!-- - adicionar um olá, Fulano -->
-<!-- - alterar cor do menu no canto superior direito para torna-lo mais visível -->
-
 <style>
-  .location-select {
-    width: 80%;
-    margin-left: 5px;
-  }
+.side-filters-colapse {
+  margin-top: 10px;
+  margin-left: 5px;
+}
 
-  .search-button {
-    margin-right: 5px;
-    margin-left: 3px;
-    width: 20%;
-    background-color: #62A362;
-  }
+.dashboard {
+  margin: 1%
+}
 
-  .location-section {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-  }
+.add-job-button {
+  margin-right: 5px;
+  margin-left: 3px;
+  width: 8.5rem;
+  height: 2.5rem;
+  background-color: #62A362;
+}
 
-  .side-filters-colapse {
-    margin-top: 10px;
-    margin-left: 5px;
-  }
+.header-page {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
 
-  .dashboard {
-    margin: 1%
-  }
+.layout-sider {
+  max-width: 300px !important;
+  width: 300px !important;
+}
 
-  .add-job-button {
-    margin-right: 5px;
-    margin-left: 3px;
-    width: 8.5rem;
-    height: 2.5rem;
-    background-color: #62A362;
-  }
-
-  .header-page {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-  }
+.button-spaces {
+  padding: 1rem;
+}
 </style>
