@@ -3,7 +3,7 @@
     <n-space vertical>
     <n-h2>Localização</n-h2>
     <div>
-      <n-select class="location-select" v-model:value="value" :options="locationOptions" />
+      <n-select class="location-select" v-model:value="locationItem" :options="locationOptions" />
     </div>
   </n-space>
   </div>
@@ -14,8 +14,8 @@ import {
   NH2,
   NSelect,
 } from 'naive-ui';
-import { defineComponent, ref } from 'vue';
-  import locationOptions from "../utils/locationOptions.js"
+import { defineComponent, ref, watch } from 'vue';
+import locationOptions from "../utils/locationOptions.js"
 
 export default defineComponent({
   components: {
@@ -23,10 +23,18 @@ export default defineComponent({
     NSelect,
   },
 
-  setup(){
+  emits: ['location-selected'],
+
+  setup(_, { emit }){
+    const locationItem = ref("Selecione uma localização");
+
+    watch(locationItem, (newValue) => {
+      emit('location-selected', newValue);
+    });
+
     return {
-      value: ref("Escolha um estado"),
       locationOptions,
+      locationItem
     }
   }
 })

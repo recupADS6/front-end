@@ -15,6 +15,7 @@
                 <n-text><strong>Categoria:</strong> {{ job.category }}</n-text>
                 <n-text><strong>Nível de Formação</strong> {{ job.scholarLevel }}</n-text>
                 <n-text><strong>CHA:</strong> {{ job.cha }}</n-text>
+                <n-text><strong>Local</strong> {{ job.location }}</n-text>
                 <n-text><strong>Descrição</strong> {{ job.description }}</n-text>
               </n-space>
             </n-card>
@@ -31,6 +32,7 @@
                 <n-text><strong>Categoria:</strong> {{ job.category }}</n-text>
                 <n-text><strong>Nível de Formação</strong> {{ job.scholarLevel }}</n-text>
                 <n-text><strong>CHA:</strong> {{ job.cha }}</n-text>
+                <n-text><strong>Local</strong> {{ job.location }}</n-text>
                 <n-text><strong>Descrição</strong> {{ job.description }}</n-text>
               </n-space>
             </n-card>

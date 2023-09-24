@@ -1,14 +1,15 @@
 import { normalizeString } from './stringHelpers';
 
-export function filterJobs(allJobs, checkboxValues) {
-  if (!checkboxValues.length) return allJobs;
+export function filterJobs(allJobs, checkboxValues, locationValue) {
+  if (!checkboxValues.length && locationValue === null) return allJobs;
 
   const normalizedCheckboxValues = checkboxValues.map(normalizeString);
 
   return allJobs.filter(job =>
     normalizedCheckboxValues.includes(normalizeString(job.type)) ||
     normalizedCheckboxValues.includes(normalizeString(job.category)) ||
-    normalizedCheckboxValues.includes(normalizeString(job.scholarLevel))
+    normalizedCheckboxValues.includes(normalizeString(job.scholarLevel)) ||
+    locationValue === job.location
   );
 }
 

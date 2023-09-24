@@ -12,10 +12,10 @@
         >
           <div v-if="!collapsed">
             <div class="header-page">
-              <n-h1>Filtros</n-h1>
+              <n-h2>Filtros</n-h2>
             </div>
 
-            <location-filters/>
+            <location-filters @location-selected="handleLocationSelection"/>
           </div>
 
           <n-menu :collapsed="collapsed" :collapsed-width="64" :collapsed-icon-size="22" :options="menuOptions" :render-label="renderMenuLabel" :expand-icon="expandIcon" />
@@ -59,6 +59,7 @@ export default {
     const checkboxValues = ref([]);
     const filteredJobs = ref([]);
     const allJobs = ref([]);
+    const selectedLocation = ref(null);
     const collapsed = ref(false);
 
     const isCheckboxChecked = option => checkboxValues.value.includes(option.value);
@@ -77,12 +78,16 @@ export default {
       return option.label;
     }
 
+    function handleLocationSelection(location) {
+      selectedLocation.value = location;
+    }
+
     function expandIcon() {
       return h(NIcon, null, { default: () => h(CaretDownOutline) });
     }
 
     function applyFilters() {
-      filteredJobs.value = filterJobs(allJobs.value, checkboxValues.value);
+      filteredJobs.value = filterJobs(allJobs.value, checkboxValues.value, selectedLocation.value);
     }
 
     function clearFilterOptions() {
@@ -103,7 +108,8 @@ export default {
       expandIcon,
       filterOptions: applyFilters,
       clearFilterOptions,
-      filteredJobs
+      filteredJobs,
+      handleLocationSelection
     };
   }
 }
