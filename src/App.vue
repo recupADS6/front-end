@@ -1,7 +1,11 @@
 <template>
-  <div id="app">
-    <router-view/>
-  </div>
+  <n-loading-bar-provider>
+    <n-message-provider>
+      <div id="app">
+        <router-view/>
+      </div>
+    </n-message-provider>
+  </n-loading-bar-provider>
 </template>
 
 
