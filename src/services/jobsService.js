@@ -8,3 +8,12 @@ export async function getAllJobs() {
     console.error(error);
   }
 }
+
+export async function create(model) {
+  try {
+    const response = await axios.post(`http://localhost:3000/jobsList`, model);
+    return response.data;
+  } catch {
+    console.log('Erro ao enviar requisição:');
+  }
+}
