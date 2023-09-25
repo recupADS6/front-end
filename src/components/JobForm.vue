@@ -99,7 +99,7 @@ export default defineComponent({
     }
 
     async function cancelForm() {
-      this.$router.push({ name: 'dashboard-page' });
+      router.push({ name: 'dashboard-page' });
     }
 
     return {
