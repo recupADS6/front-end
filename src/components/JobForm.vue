@@ -98,8 +98,8 @@ export default defineComponent({
       }
     }
 
-    function cancelForm() {
-      // Função para cancelar, se necessário
+    async function cancelForm() {
+      this.$router.push({ name: 'dashboard-page' });
     }
 
     return {
