@@ -5,7 +5,7 @@
       <n-layout-content content-style="padding: 24px;">
         <div class="cadastro-vaga">
           <h1>Cadastro de Vagas</h1>
-            <job-form></job-form>
+            <chat-form></chat-form>
         </div>
       </n-layout-content>
     </n-layout>
@@ -14,12 +14,12 @@
 
 <script>
 import HeaderMenu from '../components/HeaderMenu.vue';
-import JobForm from '../components/JobForm.vue';
+import ChatForm from '../components/ChatForm.vue';
 
 export default {
   components: {
     HeaderMenu,
-    JobForm
+    ChatForm
   },
 };
 </script>

@@ -49,7 +49,7 @@
         RouterLink,
         {
           to: {
-            name: "vaga-chatgpt",
+            name: "chatgpt",
           }
         },
         { default: () => "Integração CHA" }
