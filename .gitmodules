@@ -1,0 +1,3 @@
+[submodule "chat-gpt"]
+	path = chat-gpt
+	url = https://github.com/Digital-Wave-6-API/chat-gpt.git
