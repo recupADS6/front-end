@@ -146,12 +146,11 @@ export default defineComponent({
       model: ref({
         jobTitle: '',
         jobDescription: '',
-        text: '',  // armazenar o texto do usuário/texto aprimorado
         cha:{
           conhecimento:"",
           habilidade:"",
           atitude:""
-        },  //  armazenar o CHA gerado
+        },
         jobLevel: '',
         jobStatus: 'Aberta',
       }),
@@ -339,7 +338,6 @@ export default defineComponent({
   console.log('Habilidades:', habilidade);
   console.log('Atitudes:', atitude);
 
-  // Assign the extracted CHA to the model
   this.model.cha = {
     conhecimento: conhecimento.join('\n'),
     habilidade: habilidade.join('\n'),
@@ -358,29 +356,54 @@ export default defineComponent({
     },
 
     async sendServerResponseToBackend() {
-      const requestBody = {
-        content:  `${this.model.jobDescription}`
+      const requestBodyC = {
+        content:  `${this.model.cha.conhecimento}`
+      };
+      const requestBodyH = {
+        content:  `${this.model.cha.habilidade}`
+      };
+      const requestBodyA = {
+        content:  `${this.model.cha.atitude}`
       };
       try{
-        const resposta = await axios.post(`${baseURL}/cha/add`, requestBody)
-        const conhecimentoId = resposta.data.id
+        const respostaC = await axios.post(`${baseURL}/con/add`, requestBodyC)
+        const respostaH = await axios.post(`${baseURL}/hab/add`, requestBodyH)
+        const respostaA = await axios.post(`${baseURL}/ati/add`, requestBodyA)
 
-        this.sendJobToBackend(conhecimentoId);
+        const conhecimentoId = respostaC.data.id
+        const habilidadeId = respostaH.data.id
+        const atitudeId = respostaA.data.id
+
+        console.log(`conhecimento ${conhecimentoId}, habilidade ${habilidadeId} e atitude ${atitudeId}`)
+
+        const requestBodyCHA = {
+          conhecimento: { id: conhecimentoId },
+          habilidade: { id: habilidadeId },
+          atitude: { id: atitudeId }
+        };
+        console.log('REQUEST BODY CHA', requestBodyCHA)
+
+        const respostaCha = await axios.post(`${baseURL}/cha/add`, requestBodyCHA)
+
+        const chaId = respostaCha.data.id;
+        console.log("cha id", chaId)
+
+        this.sendJobToBackend(chaId);
 
       }catch(error ) {
           console.error('Erro ao enviar resposta do servidor para o backend:', error);
         }
     },
 
-    async sendJobToBackend(conhecimentoId){
+    async sendJobToBackend(chaId){
       try {
         const jobData = {
               jobTitle: this.model.jobTitle,
               jobDescription: this.model.jobDescription,
               jobLevel: this.model.jobLevel,
               jobStatus: this.model.jobStatus,
-              conhecimento:{
-                id: conhecimentoId,
+              cha:{
+                id: chaId,
               }
             };
         const responseJob = await axios.post(`${baseURL}/job/add`, jobData);
@@ -391,9 +414,11 @@ export default defineComponent({
           jobTitle: null,
           jobDescription: null,
           jobLevel: null,
-          conhecimento: "",
-          text:"",
-          cha:"",
+          cha: {
+            conhecimento: "",
+            habilidade:"",
+            atitude:"",
+          },
           jobStatus: "",
         };
       } catch (error) {
@@ -420,9 +445,11 @@ export default defineComponent({
           jobTitle: null,
           jobDescription: null,
           jobLevel: null,
-          conhecimento: "",
-          text: "",
-          cha:"",
+          cha: {
+            conhecimento: "",
+            habilidade:"",
+            atitude:"",
+          },
           jobStatus: "",
         };
       this.$router.push({ name: 'dashboard-page' });
@@ -438,8 +465,11 @@ export default defineComponent({
           jobDescription: null,
           jobLevel: null,
           conhecimento: "",
-          text: "",
-          cha:"",
+          cha: {
+            conhecimento: "",
+            habilidade:"",
+            atitude:"",
+          },
           jobStatus: "",
         };
       this.$router.push({ name: 'dashboard-page' });
