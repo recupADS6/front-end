@@ -10,7 +10,6 @@
       <n-form-item-gi :span="12" label="Título da Vaga" prop="jobTitle">
         <n-input v-model:value="model.jobTitle" placeholder="" />
       </n-form-item-gi>
-
       <n-form-item-gi :span="12" label="Nível da Vaga" prop="jobLevel">
         <n-select
           v-model:value="model.jobLevel"
@@ -18,7 +17,6 @@
           :options="selectOptions"
         />
       </n-form-item-gi>
-
       <n-form-item-gi :span="24" label="Descrição da Vaga" prop="jobDescription">
         <n-input
           v-model:value="model.jobDescription"
@@ -30,35 +28,30 @@
           }"
         />
       </n-form-item-gi>
-
       <n-form-item-gi :span="24" label="Conhecimentos" prop="conhecimento">
-  <n-input
-    v-model:value="model.cha.conhecimento"
-    placeholder=""
-    type="textarea"
-    :autosize="{ minRows: 3, maxRows: 5 }"
-  />
-</n-form-item-gi>
-
-<n-form-item-gi :span="24" label="Habilidades" prop="habilidades">
-  <n-input
-    v-model:value="model.cha.habilidade"
-    placeholder=""
-    type="textarea"
-    :autosize="{ minRows: 3, maxRows: 5 }"
-  />
-</n-form-item-gi>
-
-<n-form-item-gi :span="24" label="Atitudes" prop="atitudes">
-  <n-input
-    v-model:value="model.cha.atitude"
-    placeholder=""
-    type="textarea"
-    :autosize="{ minRows: 3, maxRows: 5 }"
-  />
-</n-form-item-gi>
-
-
+        <n-input
+          v-model:value="model.cha.conhecimento"
+          placeholder=""
+          type="textarea"
+          :autosize="{ minRows: 3, maxRows: 5 }"
+        />
+      </n-form-item-gi>
+      <n-form-item-gi :span="24" label="Habilidades" prop="habilidades">
+        <n-input
+          v-model:value="model.cha.habilidade"
+          placeholder=""
+          type="textarea"
+          :autosize="{ minRows: 3, maxRows: 5 }"
+        />
+      </n-form-item-gi>
+      <n-form-item-gi :span="24" label="Atitudes" prop="atitudes">
+        <n-input
+          v-model:value="model.cha.atitude"
+          placeholder=""
+          type="textarea"
+          :autosize="{ minRows: 3, maxRows: 5 }"
+        />
+      </n-form-item-gi>
     </n-grid>
     <div class="button-group">
       <n-modal
@@ -73,19 +66,38 @@
         @negative-click="onNegativeClick"
       />
       <n-button color="#B04141"  @click="showModalCancel = true">Cancelar</n-button>
-      <n-button  color="#F2C94C"  text-color="#607004" :loading="loadingUpgrade" @click="sendDescription" icon-placement="left" >
+      <n-button  color="#F2C94C"  text-color="#607004" :loading="loadingUpgrade" @click="sendDescription" icon-placement="left">
         <template #icon>
           <n-icon>
             <sparkles-icon />
           </n-icon>
-        </template>Aprimorar Descrição</n-button>
+        </template>
+        Aprimorar Descrição
+      </n-button>
       <n-button color="#73A79A"  @click="sendMessage" :loading="loadingGenerate" icon-placement="left">
         <template #icon>
           <n-icon>
             <wand-icon />
           </n-icon>
-        </template>Gerar CHA</n-button>
-          <n-modal
+        </template>
+        Gerar CHA
+      </n-button>
+      <n-button
+      color="#F2C94C"
+      text-color="#607004"
+      :loading="loadingUpgradeCha"
+      @click="sendCha"
+      :disabled="!isChaComplete"
+      icon-placement="left"
+    >
+      <template #icon>
+        <n-icon>
+          <sparkles-icon />
+        </n-icon>
+      </template>
+      Aprimorar CHA
+     </n-button>
+      <n-modal
           v-model:show="showModalSubmit"
           :mask-closable="false"
           preset="dialog"
@@ -95,8 +107,8 @@
           negative-text="Cancelar"
           @positive-click="submitForm"
           @negative-click="cancelForm"
-        />
-      <n-button  color="#27AE60"   class="register-button"  type="submit" @click="showModalSubmit = true" :disabled="enviadoOuAprimorado">Cadastrar</n-button>
+      />
+      <n-button  color="#27AE60" type="submit" @click="showModalSubmit =true" :disabled="enviadoOuAprimorado">Cadastrar</n-button>
     </div>
   </n-form>
 </template>
@@ -114,29 +126,24 @@ export default defineComponent({
     WandIcon
   },
   setup() {
-    const messageHistory = ref(''); // Variável para armazenar o histórico das mensagens    
+    const messageHistory = ref('');   
     window.$message = useMessage()
     const formRef = ref<null>(null)
     const chatMessages = ref([]);
     const userMessage = ref('');
     const loadingBar = useLoadingBar();
     const loadingUpgrade = ref(false)
+    const loadingUpgradeCha = ref(false)
     const loadingGenerate = ref(false)
-    const loadingRef = ref(false);
     const enviadoOuAprimorado = ref(true);
     const showModalSubmit = ref(false)
     const showModalCancel = ref(false);
     return {
       messageHistory,
-      handleClick() {
-        loadingRef.value = true;
-        setTimeout(() => {
-          loadingRef.value = false;
-        }, 2e3);
-      },
       showModalCancel,
       showModalSubmit,
       loadingUpgrade,
+      loadingUpgradeCha,
       loadingGenerate,
       loadingBar,
       chatMessages,
@@ -175,32 +182,31 @@ export default defineComponent({
           message: 'Por favor, selecione o nível da vaga'
         },
       },
-
-  }
+    }
   },
   methods:{
 
+    isChaComplete() {
+      if (this.model.cha.conhecimento && this.model.cha.habilidade && this.model.cha.atitude === "") {
+        return false;
+      }
+      return true;
+    },
+
    async sendDescription  () {
-    this.loadingB = true; 
+    this.loadingUpgrade = true; 
       try {
-        
         const userMessage = `Aprimore a descrição da seguinte vaga ,como um descrição comum de sites de emprego: 
           ${this.model.jobTitle}, 
           ${this.model.jobLevel}, 
           ${this.model.jobDescription}`;
 
-    this.userMessage = '';
+         this.userMessage = '';
 
-    this.askUpgradeToChat(userMessage);
-           // Simule um envio bem-sucedido
-           setTimeout(() => {
-          this.enviadoOuAprimorado = false;
-          this.loadingUpgrade = false;
-        }, 2000);
+        this.askUpgradeToChat(userMessage);
 
       } catch (error) {
         console.error('Erro ao enviar descrição:', error);
-        this.loadingUpgrade.value = false;
       }
     },
 
@@ -214,8 +220,6 @@ export default defineComponent({
           body: JSON.stringify({ user_message: message }),
         });
 
-        console.log("APRIMORAR - PERGUNTA:" , message)
-
         if (response) {
           const data = await response.json();
           const responseMessageDescription = data.response;
@@ -223,21 +227,27 @@ export default defineComponent({
           
         this.messageHistory += `\n${responseMessageDescription}\n`;
         this.upgradeDescription(this.messageHistory);
-
-        // Atualizar "text" com o texto do chat
-        this.model.text = responseMessageDescription;
-
-
-          console.log("APRIMORAR - RESPOSTA CHAT GPT:" , responseMessageDescription)
         } else {
-          console.error('Erro ao enviar mensagem para o backend:', response.statusText);
+          console.error('Erro ao enviar mensagem:', response.statusText);
         }
       } catch (error) {
-        console.error('Erro ao enviar mensagem para o backend:', error);
+        console.error('Erro ao enviar mensagem:', error);
+      }  finally {
+        this.loadingUpgrade = false; 
+        this.enviadoOuAprimorado = false;
       }
     },
 
-    sendMessage() {
+    async upgradeDescription (messageHistory) {
+      this.model.jobDescription = messageHistory;
+
+      const requestBody = {
+        content: this.model.jobDescription
+      };
+      console.log("NEW DESCRIPTION ", requestBody);
+    },
+
+    async sendMessage () {
       this.loadingGenerate = true;
       const userMessage = 
       `Seguindo a estrutura: 
@@ -267,12 +277,51 @@ export default defineComponent({
       this.userMessage = '';
 
       this.askChaToChat(message);
-             // Simule um envio bem-sucedido
-             setTimeout(() => {
-          this.enviadoOuAprimorado = false;
-          this.loadingGenerate = false;
-        }, 2000);
 
+    },
+
+    async sendCha () {
+            if (!this.isChaComplete) {
+        window.$message.error('Preencha todos os campos de CHA antes de aprimorar.');
+        return;
+      }
+    this.loadingUpgradeCha = true; 
+      try {
+        const userMessage = 
+        `Seguindo a estrutura: 
+
+        Conhecimentos:
+        - item 1;
+        - Item2.
+        etc.
+
+        Habilidades:
+        - item 1;
+        - Item2.
+        etc.
+
+        Atitudes:
+        - item 1;
+        - Item2.
+        etc. 
+
+        Aprimore os Conhecimentos, Habilidades e Atitudes:
+        ${this.model.cha.conhecimento},
+        ${this.model.cha.habilidade},
+        ${this.model.cha.atitude},
+        
+        Da seguinte vaga: 
+          ${this.model.jobTitle}, 
+          ${this.model.jobLevel}, 
+          ${this.model.jobDescription}`;
+
+         this.userMessage = '';
+
+        this.askChaToChat(userMessage);
+
+      } catch (error) {
+        console.error('Erro ao enviar descrição:', error);
+      }
     },
 
     async askChaToChat(message) {
@@ -303,56 +352,49 @@ export default defineComponent({
         }
       } catch (error) {
         console.error('Erro ao enviar mensagem para o backend:', error);
+      } finally {
+        this.loadingGenerate = false; 
+        this.enviadoOuAprimorado = false;
+        this.loadingUpgradeCha=false;
       }
     },
 
-  async extractCHA(responseMessageCha) {
-  const sections = responseMessageCha.split('\n');
+    async extractCHA(responseMessageCha) {
+    const sections = responseMessageCha.split('\n');
 
-  const conhecimento = [];
-  const habilidade = [];
-  const atitude = [];
+    const conhecimento = [];
+    const habilidade = [];
+    const atitude = [];
 
-  let currentCategory = '';
+    let currentCategory = '';
 
-  for (const section of sections) {
-    if (section.startsWith('Conhecimentos:')) {
-      currentCategory = 'conhecimento';
-    } else if (section.startsWith('Habilidades:')) {
-      currentCategory = 'habilidade';
-    } else if (section.startsWith('Atitudes:')) {
-      currentCategory = 'atitude';
-    } else {
-      if (currentCategory === 'conhecimento') {
-        conhecimento.push(section.trim());
-      } else if (currentCategory === 'habilidade') {
-        habilidade.push(section.trim());
-      } else if (currentCategory === 'atitude') {
-        atitude.push(section.trim());
+    for (const section of sections) {
+      if (section.startsWith('Conhecimentos:')) {
+        currentCategory = 'conhecimento';
+      } else if (section.startsWith('Habilidades:')) {
+        currentCategory = 'habilidade';
+      } else if (section.startsWith('Atitudes:')) {
+        currentCategory = 'atitude';
+      } else {
+        if (currentCategory === 'conhecimento') {
+          conhecimento.push(section.trim());
+        } else if (currentCategory === 'habilidade') {
+          habilidade.push(section.trim());
+        } else if (currentCategory === 'atitude') {
+          atitude.push(section.trim());
+        }
       }
     }
-  }
 
-    
-  console.log('Conhecimentos:', conhecimento);
-  console.log('Habilidades:', habilidade);
-  console.log('Atitudes:', atitude);
+    console.log('Conhecimentos:', conhecimento);
+    console.log('Habilidades:', habilidade);
+    console.log('Atitudes:', atitude);
 
-  this.model.cha = {
-    conhecimento: conhecimento.join('\n'),
-    habilidade: habilidade.join('\n'),
-    atitude: atitude.join('\n')
-  };
-  },
-
-    async upgradeDescription (messageHistory) {
-      this.model.jobDescription = messageHistory;
-
-    const requestBody = {
-      content: this.model.jobDescription
+    this.model.cha = {
+      conhecimento: conhecimento.join('\n'),
+      habilidade: habilidade.join('\n'),
+      atitude: atitude.join('\n')
     };
-    console.log("new UPGRADE DESCRIPTION ", requestBody);
-
     },
 
     async sendServerResponseToBackend() {
@@ -374,21 +416,15 @@ export default defineComponent({
         const habilidadeId = respostaH.data.id
         const atitudeId = respostaA.data.id
 
-        console.log(`conhecimento ${conhecimentoId}, habilidade ${habilidadeId} e atitude ${atitudeId}`)
-
         const requestBodyCHA = {
-          conhecimento: { id: conhecimentoId },
-          habilidade: { id: habilidadeId },
-          atitude: { id: atitudeId }
+          conhecimento: { id: `${conhecimentoId}` },
+          habilidade: { id: `${habilidadeId}` },
+          atitude: { id: `${atitudeId}` }
         };
-        console.log('REQUEST BODY CHA', requestBodyCHA)
 
         const respostaCha = await axios.post(`${baseURL}/cha/add`, requestBodyCHA)
 
-        const chaId = respostaCha.data.id;
-        console.log("cha id", chaId)
-
-        this.sendJobToBackend(chaId);
+        return respostaCha.data.id;
 
       }catch(error ) {
           console.error('Erro ao enviar resposta do servidor para o backend:', error);
@@ -410,72 +446,57 @@ export default defineComponent({
         console.log('Resposta do servidor:', responseJob.data);
         window.$message.success('Vaga cadastrada com sucesso!');
 
-        this.model = {
-          jobTitle: null,
-          jobDescription: null,
-          jobLevel: null,
-          cha: {
-            conhecimento: "",
-            habilidade:"",
-            atitude:"",
-          },
-          jobStatus: "",
-        };
+        this.clearModel();
+
       } catch (error) {
         console.error('Erro ao enviar requisição:', error);
         window.$message.error('Erro ao cadastrar a vaga. Tente novamente.');
       }
     },
 
+    async clearModel (){
+      this.model = {
+              jobTitle: null,
+              jobDescription: null,
+              jobLevel: null,
+              jobStatus: "",
+              cha: {
+                conhecimento: "",
+                habilidade:"",
+                atitude:"",
+              },
+            };
+    },
+
     async submitForm(){
       try {
-      await this.sendServerResponseToBackend();
+      const chaId = await this.sendServerResponseToBackend();
+      await this.sendJobToBackend(chaId);
       this.showModalSubmit = false
       } catch (error) {
         console.error('Erro', error);
       }
     },
 
-      cancelSubmit () {
-        this.showModalSubmit = false
-      },
+    cancelSubmit () {
+      this.showModalSubmit = false
+    },
 
     onPositiveClick () {
-        this.model = {
-          jobTitle: null,
-          jobDescription: null,
-          jobLevel: null,
-          cha: {
-            conhecimento: "",
-            habilidade:"",
-            atitude:"",
-          },
-          jobStatus: "",
-        };
+      this.clearModel();
       this.$router.push({ name: 'dashboard-page' });
         this.showModalCancel = false
       },
-      onNegativeClick () {
-        this.showModalCancel = false
-      },
+    onNegativeClick () {
+      this.showModalCancel = false
+    },
 
     cancelForm() {
-      this.model = {
-          jobTitle: null,
-          jobDescription: null,
-          jobLevel: null,
-          conhecimento: "",
-          cha: {
-            conhecimento: "",
-            habilidade:"",
-            atitude:"",
-          },
-          jobStatus: "",
-        };
+      this.clearModel();
       this.$router.push({ name: 'dashboard-page' });
     }
-      }
-    });
+  }
+});
 </script>
 
 <style scoped>
