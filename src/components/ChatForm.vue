@@ -381,7 +381,6 @@ export default defineComponent({
       }
     },
 
-
     async extractCHA(responseMessageCha) {
     const sections = responseMessageCha.split('\n');
 
@@ -508,7 +507,7 @@ export default defineComponent({
     onPositiveClick () {
       this.clearModel();
       this.$router.push({ name: 'dashboard-page' });
-        this.showModalCancel = false
+      this.showModalCancel = false
       },
     onNegativeClick () {
       this.showModalCancel = false

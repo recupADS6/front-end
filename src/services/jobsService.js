@@ -28,10 +28,10 @@ export async function create(model) {
   }
 }
 
-export async function editJob(model) {
+export async function editJob(id,model) {
   try {
-    const response = await axios.update(`http://localhost:8090/job/`, model);
-    return response.data;
+    const response = await axios.update(`http://localhost:8090/${id}`, model);
+    return response;
   } catch {
     console.log('Erro ao enviar requisição:');
   }
@@ -40,7 +40,8 @@ export async function editJob(model) {
 export async function deleteJob(id) {
   try {
     const response = await axios.delete(`http://localhost:8090/job/${id}`);
-    return response.data;
+    console.log("JOB DELETE", response.data)
+    return response;
   } catch {
     console.log('Erro ao enviar requisição:');
   }
