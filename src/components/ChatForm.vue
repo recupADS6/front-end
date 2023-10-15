@@ -159,7 +159,7 @@ export default defineComponent({
           atitude:""
         },
         jobLevel: '',
-        jobStatus: 'Aberta',
+        jobStatus: 'open',
       }),
       selectOptions: ['Júnior', 'Pleno', 'Sênior'].map((v) => ({
         label: v,
@@ -343,9 +343,7 @@ export default defineComponent({
 
           console.log("GERAR CHA - RESPOSTA CHAT GPT:" , responseMessageCha)
 
-          // Extrair as informações de conhecimento, habilidade e atitude
           this.extractCHA(responseMessageCha);
-
 
         } else {
           console.error('Erro ao enviar mensagem para o backend:', response.statusText);
@@ -399,13 +397,13 @@ export default defineComponent({
 
     async sendServerResponseToBackend() {
       const requestBodyC = {
-        content:  `${this.model.cha.conhecimento}`
+        content:  this.model.cha.conhecimento
       };
       const requestBodyH = {
-        content:  `${this.model.cha.habilidade}`
+        content:  this.model.cha.habilidade
       };
       const requestBodyA = {
-        content:  `${this.model.cha.atitude}`
+        content:  this.model.cha.atitude
       };
       try{
         const respostaC = await axios.post(`${baseURL}/con/add`, requestBodyC)

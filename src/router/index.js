@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 import DashboardPage from '../pages/DashboardPage.vue'
 import CadastroVaga from '../pages/CadastroVaga.vue'
 import VagaChatgpt from '../pages/VagaChatgpt.vue'
+import JobDetails from '../pages/JobDetails.vue'
 
 const routes = [
   {
@@ -18,7 +19,12 @@ const routes = [
     path: '/vaga-chatgpt',
     name: 'chatgpt',
     component: VagaChatgpt
-  }
+  },
+  {
+    path: '/:id',
+    name: 'JobDetails',
+    component: JobDetails,
+  },
 ]
 
 const router = createRouter({
