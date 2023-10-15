@@ -108,6 +108,7 @@
           @positive-click="submitForm"
           @negative-click="cancelForm"
       />
+      <n-button  color="#5380b8" :loading="loadingUpgrade" @click="getScraping">Scraping</n-button>
       <n-button  color="#27AE60" type="submit" @click="showModalSubmit =true" :disabled="enviadoOuAprimorado">Cadastrar</n-button>
     </div>
   </n-form>
@@ -358,6 +359,30 @@ export default defineComponent({
         this.loadingUpgradeCha=false;
       }
     },
+
+    async getScraping() {
+      try {
+        const response = await fetch('http://localhost:7000/scraping', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'text/plain',
+          },
+          body: this.model.jobTitle
+        });
+        if (response) {
+          console.log(response)                    
+        } else {
+          console.error('Erro ao enviar mensagem para o backend:', response.statusText);
+        }
+      } catch (error) {
+        console.error('Erro ao enviar mensagem para o backend:', error);
+      } finally {
+        this.loadingGenerate = false; 
+        this.enviadoOuAprimorado = false;
+        this.loadingUpgradeCha=false;
+      }
+    },
+
 
     async extractCHA(responseMessageCha) {
     const sections = responseMessageCha.split('\n');
