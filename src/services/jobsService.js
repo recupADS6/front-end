@@ -28,9 +28,9 @@ export async function create(model) {
   }
 }
 
-export async function editJob(id,model) {
+export async function jobUpdate(id,model) {
   try {
-    const response = await axios.update(`http://localhost:8090/${id}`, model);
+    const response = await axios.put(`http://localhost:8090/${id}`, model);
     return response;
   } catch {
     console.log('Erro ao enviar requisição:');

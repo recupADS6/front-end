@@ -28,7 +28,7 @@
       />
       <n-space>
         <n-button color="#B04141"  @click="backHome">Voltar</n-button>
-        <n-button type="warning"  @click="editJob" icon-placement="left">
+        <n-button type="warning"  @click="redirectToEditJob" icon-placement="left">
         <template #icon>
           <n-icon>
             <pen-icon />
@@ -100,10 +100,6 @@
 
     onMounted(fetchJobDetails);
 
-    const editJob = async () => {
-      
-    };
-
     const onPositiveClick = async () =>{
       try {
       const jobId = route.params.id; // Get the job ID from route params
@@ -115,15 +111,18 @@
     } catch (error) {
       console.error('Erro ao excluir a vaga:', error);
     } 
-  }
+  };
 
-
-    
+  const redirectToEditJob = (id) => {
+    router.push({ name: 'job-edit', params: { id: id } });
+    console.log("TESTE ID", id)
+  };
+ 
     return {
       job,
-      editJob,
       showModalDelete,
-      onPositiveClick
+      onPositiveClick,
+      redirectToEditJob
     };
   },
     methods:{
@@ -162,8 +161,7 @@
     },
     backHome() {
       this.$router.push({ name: 'dashboard-page' });
-    }
-    
+    },    
   },
 };
 </script>

@@ -36,23 +36,10 @@
         RouterLink,
         {
           to: {
-            name: "cadastrar-vaga",
-          }
-        },
-        { default: () => "Cadastro de Vagas" }
-      ),
-      key: "job",
-      route: "/cadastro-de-vaga"
-    },
-    {
-      label: () => h(
-        RouterLink,
-        {
-          to: {
             name: "chatgpt",
           }
         },
-        { default: () => "Integração CHA" }
+        { default: () => "Cadastro de Vagas" }
       ),
       key: "cha",
       route: "/vaga-chatgpt"

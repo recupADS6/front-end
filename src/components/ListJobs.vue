@@ -80,7 +80,7 @@
     setup (props) {
       const router = useRouter(); 
       const redirectToJobDetailsPage = (id) => {
-    router.push({ name: 'JobDetails', params: { id: id } });
+    router.push({ name: 'job-details', params: { id: id } });
     console.log("TESTE ID", id)
   };
 

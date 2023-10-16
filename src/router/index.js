@@ -3,6 +3,7 @@ import DashboardPage from '../pages/DashboardPage.vue'
 import CadastroVaga from '../pages/CadastroVaga.vue'
 import VagaChatgpt from '../pages/VagaChatgpt.vue'
 import JobDetails from '../pages/JobDetails.vue'
+import JobEdit from '../pages/JobEdit.vue'
 
 const routes = [
   {
@@ -22,9 +23,14 @@ const routes = [
   },
   {
     path: '/:id',
-    name: 'JobDetails',
+    name: 'job-details',
     component: JobDetails,
   },
+  {
+    path: '/:id',
+    name: 'job-edit',
+    component: JobEdit,
+  }
 ]
 
 const router = createRouter({
