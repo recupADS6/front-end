@@ -59,7 +59,7 @@
       </n-form>
       <div class="button-group">
         <n-button color="#B04141"  @click="backHome">Voltar</n-button>
-        <n-button color="#5380b8" @click="editJob">Editar</n-button>
+        <n-button color="#5380b8" @click="saveChanges">Editar</n-button>
       </div>
     </div>
   </template>
@@ -68,7 +68,9 @@
   import { NButton, NForm, NFormItemGi, NInput, NSelect, useMessage } from 'naive-ui';
   import { ref, onMounted } from 'vue';
   import { useRoute, useRouter } from 'vue-router';
-  import { getJobById, updateJob } from '../services/jobsService';
+  import { getJobById } from '../services/jobsService';
+  import axios from 'axios';
+import baseURL from '../services/chatService.js';
   
   export default {
     components: {
@@ -80,6 +82,7 @@
     },
   
     setup() {
+      const job = ref(null);
       const formRef = ref(null);
       const model = ref({
         jobTitle: '',
@@ -97,31 +100,63 @@
       const message = useMessage();
   
 
-  
-      const fetchJobDetails = async (jobId) => {
-        try {
-          const jobDetails = await getJobById(jobId);
-          if (jobDetails) {
-            model.value = jobDetails; // Preenche os campos com os detalhes da vaga
-          } else {
-            message.error('Erro ao obter os detalhes da vaga.');
-          }
-        } catch (error) {
-          console.error('Erro ao obter os detalhes da vaga:', error);
-        }
-      };
-  
-      onMounted(() => {
+      const fetchJobDetails = async () => {
+      try {
+        console.log("Tentando obter o trabalho com o ID:", route.params.id);
+
         const jobId = route.params.id;
-        if (jobId) {
-          fetchJobDetails(jobId);
-        }
-      });
+
+        console.log("Fetching job details for ID:", jobId);
+
+        job.value = await getJobById(jobId);
+        const titulo = job.value.jobTitle;
+
+        model.value = job.value;
+
+        model.value.jobTitle = job.value.jobTitle;
+        model.value.jobDescription = job.value.jobDescription;
+        model.value.jobLevel = job.value.jobLevel;
+        model.value.cha.conhecimento = job.value.cha.conhecimento.content;
+        model.value.cha.habilidade = job.value.cha.habilidade.content;
+        model.value.cha.atitude = job.value.cha.atitude.content;
+        model.value.jobStatus = job.value.jobStatus;
+
+            console.log('Conhecimentos:',  job.value.cha.conhecimento);
+    console.log('Habilidades:',  job.value.cha.habilidade);
+    console.log('Atitudes:',  job.value.cha.atitude);
+
+
+        console.log("titulo", titulo)
+        console.log("Job details obtained:", job.value);
+      } catch (error) {
+        console.error('Erro ao obter os detalhes do trabalho:', error);
+      }
+    };
+
+    onMounted(fetchJobDetails);
+
   
       const saveChanges = async () => {
         try {
-          const jobId = route.params.id;
-          await updateJob(jobId, model.value);
+          const jobId = route.params.id; // Assuming this gets the correct job ID
+          const updatedModel = { 
+            id: jobId, // Make sure to include the job ID in the model
+      jobTitle: model.value.jobTitle,
+      jobLevel: model.value.jobLevel,
+      jobDescription: model.value.jobDescription,
+      cha: {
+        conhecimento: model.value.cha.conhecimento.content,
+        habilidade: model.value.cha.habilidade.content,
+        atitude: model.value.cha.atitude.content
+      },
+      jobStatus: model.value.jobStatus
+    };
+    
+console.log("SAVE CHANGES", updatedModel)
+
+const responseJob = await axios.put(`${baseURL}/job/${jobId}`, updatedModel);
+console.log('Resposta do servidor:', responseJob.data);
+    //await jobUpdate(jobId, updatedModel);
           message.success('Alterações salvas com sucesso!');
           router.push({ name: 'dashboard-page' });
         } catch (error) {

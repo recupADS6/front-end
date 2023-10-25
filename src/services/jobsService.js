@@ -28,14 +28,17 @@ export async function create(model) {
   }
 }
 
-export async function jobUpdate(id,model) {
+export async function jobUpdate(id, model) {
   try {
-    const response = await axios.put(`http://localhost:8090/${id}`, model);
-    return response;
-  } catch {
-    console.log('Erro ao enviar requisição:');
+    const response = await axios.put(`http://localhost:8090/job/${id}`, model);
+    return response.data;
+  } catch (error) {
+    console.error('Erro ao enviar requisição:', error);
+    throw error;  // Re-throw the error to handle it further if needed
   }
 }
+
+
 
 export async function deleteJob(id) {
   try {

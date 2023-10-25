@@ -13,6 +13,14 @@
         <n-text><strong>Descrição</strong> {{ job.jobDescription }}</n-text>
       </n-space>
     </n-card>
+
+    <div v-if="candidatoInfo">
+  <n-card>
+    <n-space vertical>
+      <n-text><strong>Candidato:</strong> {{ candidatoInfo }}</n-text>
+    </n-space>
+  </n-card>
+</div>
     
     <div class="button-group">
       <n-modal
@@ -44,7 +52,7 @@
         </template>
         Excluir
       </n-button>
-      <n-button  color="#5380b8"  @click="getScraping">
+      <n-button  :loading="loadingScraping" color="#5380b8"  @click="getScraping(job.jobTitle)">
         <template #icon>
           <n-icon>
             <search-icon />
@@ -55,7 +63,7 @@
       </n-space>
       </div>
    </div>
-  </n-layout-content>
+    </n-layout-content>
   </n-layout>
 </template>
 
@@ -83,8 +91,47 @@
     const job = ref(null);
     const route = useRoute()
     const showModalDelete = ref(false);
+    const loadingScraping = ref(false)
     window.$message = useMessage()
-        const router = useRouter();
+    const router = useRouter();
+    const candidatoInfo = ref(null);
+    
+
+
+    const getScraping = async (titulo) => {
+  try {
+    const response = await fetch('http://localhost:7000/scraping', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'text/plain',
+      },
+      body: titulo,
+    });
+
+      
+      const data = await response.json();
+    loadingScraping.value = true; 
+      handleScrapingResponse(data);
+
+  } catch (error) {
+    console.error('Erro ao enviar a requisição para o backend:', error);
+  }
+};
+
+const handleScrapingResponse = (data) => {
+  if (data && data.sobre_profissao && data.sobre_profissao.length > 1) {
+    candidatoInfo.value = data.sobre_profissao[1]; 
+    console.log("Informações do candidato", candidatoInfo.value);
+    loadingScraping.value = false;
+  } else {
+    console.error('Dados do candidato não encontrados.');
+  }
+};
+
+
+
+
+
 
     const fetchJobDetails = async () => {
       try {
@@ -92,6 +139,8 @@
         const jobId = route.params.id;
         console.log("Fetching job details for ID:", jobId);
         job.value = await getJobById(jobId);
+        const titulo = job.value.jobTitle;
+        console.log("titulo", titulo)
         console.log("Job details obtained:", job.value);
       } catch (error) {
         console.error('Erro ao obter os detalhes do trabalho:', error);
@@ -113,19 +162,22 @@
     } 
   };
 
-  const redirectToEditJob = (id) => {
-    router.push({ name: 'job-edit', params: { id: id } });
-    console.log("TESTE ID", id)
+  const redirectToEditJob = (jobId) => {
+    router.push({ name: 'job-edit'});
+    console.log("TESTE ID", jobId)
   };
  
     return {
       job,
       showModalDelete,
+      loadingScraping,
       onPositiveClick,
-      redirectToEditJob
+      redirectToEditJob,
+      getScraping,
     };
   },
     methods:{
+      /*
       async getScraping() {
       try {
         const response = await fetch('http://localhost:7000/scraping', {
@@ -133,7 +185,7 @@
           headers: {
             'Content-Type': 'text/plain',
           },
-          body: this.model.jobTitle
+          body: this.job.jobTitle
         });
         if (response) {
           console.log(response)                    
@@ -144,7 +196,7 @@
         console.error('Erro ao enviar mensagem para o backend:', error);
     }
     },
-
+*/
     async deleteJ (jobId) {
       try {
         await deleteJob(jobId);

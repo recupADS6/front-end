@@ -87,7 +87,6 @@
       text-color="white"
       :loading="loadingUpgradeCha"
       @click="sendCha"
-      :disabled="!isChaComplete"
       icon-placement="left"
     >
       <template #icon>
@@ -281,10 +280,6 @@ export default defineComponent({
     },
 
     async sendCha () {
-            if (!this.isChaComplete) {
-        window.$message.error('Preencha todos os campos de CHA antes de aprimorar.');
-        return;
-      }
     this.loadingUpgradeCha = true; 
       try {
         const userMessage = 
@@ -305,7 +300,7 @@ export default defineComponent({
         - Item2.
         etc. 
 
-        Aprimore os Conhecimentos, Habilidades e Atitudes:
+        Aprimore os Conhecimentos, Habilidades e Atitudes com palavras completamente diferentes:
         ${this.model.cha.conhecimento},
         ${this.model.cha.habilidade},
         ${this.model.cha.atitude},
@@ -358,14 +353,16 @@ export default defineComponent({
     },
 
     async extractCHA(responseMessageCha) {
+      const conhecimentos = [""];
+    const habilidades = [""];
+    const atitudes = [""];
     const sections = responseMessageCha.split('\n');
 
-    const conhecimento = [];
-    const habilidade = [];
-    const atitude = [];
+
 
     let currentCategory = '';
 
+    try{
     for (const section of sections) {
       if (section.startsWith('Conhecimentos:')) {
         currentCategory = 'conhecimento';
@@ -375,25 +372,31 @@ export default defineComponent({
         currentCategory = 'atitude';
       } else {
         if (currentCategory === 'conhecimento') {
-          conhecimento.push(section.trim());
+          conhecimentos.push(section.trim());
         } else if (currentCategory === 'habilidade') {
-          habilidade.push(section.trim());
+          habilidades.push(section.trim());
         } else if (currentCategory === 'atitude') {
-          atitude.push(section.trim());
+          atitudes.push(section.trim());
         }
       }
     }
 
-    console.log('Conhecimentos:', conhecimento);
-    console.log('Habilidades:', habilidade);
-    console.log('Atitudes:', atitude);
+    console.log('Conhecimentos:', conhecimentos);
+    console.log('Habilidades:', habilidades);
+    console.log('Atitudes:', atitudes);
 
     this.model.cha = {
-      conhecimento: conhecimento.join('\n'),
-      habilidade: habilidade.join('\n'),
-      atitude: atitude.join('\n')
+      conhecimento: conhecimentos.join('\n'),
+      habilidade: habilidades.join('\n'),
+      atitude: atitudes.join('\n')
     };
-    },
+
+    console.log("NOVO cha", this.model.cha)
+
+  } catch {
+    console.log("ERRO")
+  }
+},
 
     async sendServerResponseToBackend() {
       const requestBodyC = {

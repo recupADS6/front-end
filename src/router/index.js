@@ -27,7 +27,7 @@ const routes = [
     component: JobDetails,
   },
   {
-    path: '/:id',
+    path: '/editar/:id',
     name: 'job-edit',
     component: JobEdit,
   }
