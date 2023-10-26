@@ -36,6 +36,24 @@
           :autosize="{ minRows: 3, maxRows: 5 }"
         />
       </n-form-item-gi>
+      <n-form-item-gi>
+          <n-button
+          class="upgrade-button"
+          color="#5380b8"
+          text-color="white"
+          :loading="loadingUpgradeCha"
+          @click="sendCha"
+          icon-placement="left"
+          >
+          <template #icon>
+            <n-icon>
+              <sparkles-icon />
+            </n-icon>
+          </template>
+          Aprimorar Conhecimentos
+          </n-button>
+      </n-form-item-gi>
+      
       <n-form-item-gi :span="24" label="Habilidades" prop="habilidades">
         <n-input
           v-model:value="model.cha.habilidade"
@@ -44,13 +62,62 @@
           :autosize="{ minRows: 3, maxRows: 5 }"
         />
       </n-form-item-gi>
+      <n-form-item-gi>
+        <n-button
+        class="upgrade-button"
+        color="#5380b8"
+        text-color="white"
+        :loading="loadingUpgradeCha"
+        @click="sendCha"
+        icon-placement="left"
+        >
+        <template #icon>
+          <n-icon>
+            <sparkles-icon />
+          </n-icon>
+        </template>
+        Aprimorar Habilidades
+        </n-button>
+      </n-form-item-gi>
+
       <n-form-item-gi :span="24" label="Atitudes" prop="atitudes">
+      <n-tooltip trigger="hover">
+      <template #trigger>
+      <n-button circle="true" >
+        <template #icon>
+        <n-icon>
+          <info-icon />
+        </n-icon>
+      </template>
+      </n-button>
+      </template>
+      <div class="large-text">
+        Atitudes requeridas para a vagas. Clique em gerar para o ChatGPT gerar atitudes. Clique em aprimorar para melhorar.
+      </div>
+      </n-tooltip>
         <n-input
           v-model:value="model.cha.atitude"
           placeholder=""
           type="textarea"
           :autosize="{ minRows: 3, maxRows: 5 }"
         />
+      </n-form-item-gi>
+      <n-form-item-gi>
+        <n-button
+        class="upgrade-button"
+        color="#5380b8"
+        text-color="white"
+        :loading="loadingUpgradeCha"
+        @click="sendCha"
+        icon-placement="left"
+        >
+        <template #icon>
+          <n-icon>
+            <sparkles-icon />
+          </n-icon>
+        </template>
+        Aprimorar Atitudes
+        </n-button>
       </n-form-item-gi>
     </n-grid>
     <div class="button-group">
@@ -65,7 +132,14 @@
         @positive-click="onPositiveClick"
         @negative-click="onNegativeClick"
       />
-      <n-button color="#B04141"  @click="showModalCancel = true">Cancelar</n-button>
+      <n-button color="#B04141"  @click="showModalCancel = true" icon-placement="left">
+        <template #icon>
+          <n-icon>
+            <close-icon />
+          </n-icon>
+        </template>
+        Cancelar
+      </n-button>
       <n-button  color="#F2C94C"  text-color="#607004" :loading="loadingUpgrade" @click="sendDescription" icon-placement="left">
         <template #icon>
           <n-icon>
@@ -107,7 +181,14 @@
           @positive-click="submitForm"
           @negative-click="cancelForm"
       />
-      <n-button  color="#27AE60" type="submit" @click="showModalSubmit =true" :disabled="enviadoOuAprimorado">Cadastrar</n-button>
+      <n-button  color="#27AE60" type="submit" @click="showModalSubmit =true" :disabled="enviadoOuAprimorado" icon-placement="left">
+        <template #icon>
+          <n-icon>
+            <check-icon />
+          </n-icon>
+        </template>
+        Cadastrar
+      </n-button>
     </div>
   </n-form>
 </template>
@@ -117,12 +198,19 @@ import { defineComponent, ref} from 'vue'
 import { useMessage, useLoadingBar } from 'naive-ui'
 import axios from 'axios';
 import baseURL from '../services/chatService.js';
-import { SparklesSharp as SparklesIcon, ColorWand as WandIcon } from "@vicons/ionicons5";
+import { SparklesSharp as SparklesIcon, 
+  ColorWand as WandIcon, 
+  Close as CloseIcon,
+  Checkmark as CheckIcon,
+  Information as InfoIcon } from "@vicons/ionicons5";
 
 export default defineComponent({
   components: {
     SparklesIcon,
-    WandIcon
+    WandIcon,
+    CloseIcon,
+    CheckIcon,
+    InfoIcon
   },
   setup() {
     const messageHistory = ref('');   
@@ -512,5 +600,10 @@ button{
   padding: 10px 20px;
   cursor: pointer;
   margin-right: 10px;
+}
+.upgrade-button {
+  display: flex-end;
+  justify-content: flex-end;
+  align-items: center;
 }
 </style>
