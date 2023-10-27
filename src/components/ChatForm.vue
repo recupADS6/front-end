@@ -41,8 +41,8 @@
           class="upgrade-button"
           color="#5380b8"
           text-color="white"
-          :loading="loadingUpgradeCha"
-          @click="sendCha"
+          :loading="loadingUpgradeConhecimento"
+          @click="sendConhecimento"
           icon-placement="left"
           >
           <template #icon>
@@ -67,8 +67,8 @@
         class="upgrade-button"
         color="#5380b8"
         text-color="white"
-        :loading="loadingUpgradeCha"
-        @click="sendCha"
+        :loading="loadingUpgradeHabilidade"
+        @click="sendhabilidade"
         icon-placement="left"
         >
         <template #icon>
@@ -107,8 +107,8 @@
         class="upgrade-button"
         color="#5380b8"
         text-color="white"
-        :loading="loadingUpgradeCha"
-        @click="sendCha"
+        :loading="loadingUpgradeAtitude"
+        @click="sendAtitude"
         icon-placement="left"
         >
         <template #icon>
@@ -172,6 +172,7 @@
      </n-button>
       <n-modal
           v-model:show="showModalSubmit"
+          attr-type="submit"
           :mask-closable="false"
           preset="dialog"
           title="Confirmar Cadastro"
@@ -219,18 +220,44 @@ export default defineComponent({
     const chatMessages = ref([]);
     const userMessage = ref('');
     const loadingBar = useLoadingBar();
-    const loadingUpgrade = ref(false)
-    const loadingUpgradeCha = ref(false)
-    const loadingGenerate = ref(false)
+    const loadingUpgrade = ref(false);
+    const loadingUpgradeCha = ref(false);
+    const loadingUpgradeConhecimento = ref(false)
+    const loadingUpgradeHabilidade = ref(false)
+    const loadingUpgradeAtitude = ref(false)
+    const loadingGenerate = ref(false);
     const enviadoOuAprimorado = ref(true);
     const showModalSubmit = ref(false)
     const showModalCancel = ref(false);
+
+    const rules = {
+        jobTitle:[ {
+          required: true,
+          trigger: ['blur', 'input'],
+          message: 'Por favor, insira o título da vaga'
+        }],
+        jobDescription: {
+          required: true,
+          trigger: ['blur', 'input'],
+          message: 'Por favor, insira a descrição da vaga'
+        },
+        jobLevel: {
+          required: true,
+          trigger: ['blur', 'change'],
+          message: 'Por favor, selecione o nível da vaga'
+        },
+      };
+
     return {
+      rules,
       messageHistory,
       showModalCancel,
       showModalSubmit,
       loadingUpgrade,
       loadingUpgradeCha,
+      loadingUpgradeConhecimento,
+      loadingUpgradeHabilidade,
+      loadingUpgradeAtitude,
       loadingGenerate,
       loadingBar,
       chatMessages,
@@ -252,33 +279,9 @@ export default defineComponent({
         label: v,
         value: v
       })),
-      rules: {
-        jobTitle: {
-          required: true,
-          trigger: ['blur', 'input'],
-          message: 'Por favor, insira o título da vaga'
-        },
-        jobDescription: {
-          required: true,
-          trigger: ['blur', 'input'],
-          message: 'Por favor, insira a descrição da vaga'
-        },
-        jobLevel: {
-          required: true,
-          trigger: ['blur', 'change'],
-          message: 'Por favor, selecione o nível da vaga'
-        },
-      },
     }
   },
   methods:{
-
-    isChaComplete() {
-      if (this.model.cha.conhecimento && this.model.cha.habilidade && this.model.cha.atitude === "") {
-        return false;
-      }
-      return true;
-    },
 
    async sendDescription  () {
     this.loadingUpgrade = true; 
@@ -407,6 +410,165 @@ export default defineComponent({
       }
     },
 
+    async sendConhecimento () {
+      this.loadingGenerate = true;
+      const userMessage = 
+      `Seguindo a estrutura: 
+
+      Conhecimentos:
+      - item 1;
+      - Item2.
+      etc.
+      
+    Escreva Conhecimentos da seguinte vaga: 
+        ${this.model.jobTitle}, 
+        ${this.model.jobLevel}, 
+        ${this.model.jobDescription}`;
+
+      const message = userMessage;
+      this.chatMessages.push({ role: 'user', content: message });
+      this.userMessage = '';
+
+      this.askChaToChat(message);
+
+    },
+
+    async upgradeConhecimento () {
+    this.loadingUpgradeConhecimento = true; 
+      try {
+        const userMessage = 
+        `Seguindo a estrutura: 
+
+        Conhecimentos:
+        - item 1;
+        - Item2.
+        etc.
+ 
+        Aprimore os Conhecimentos com palavras completamente diferentes:
+        ${this.model.cha.conhecimento},
+        
+        Da seguinte vaga: 
+          ${this.model.jobTitle}, 
+          ${this.model.jobLevel}, 
+          ${this.model.jobDescription}`;
+
+         this.userMessage = '';
+
+        this.askChaToChat(userMessage);
+
+      } catch (error) {
+        console.error('Erro ao enviar descrição:', error);
+      }
+    },
+
+    async sendHabilidade () {
+      this.loadingGenerate = true;
+      const userMessage = 
+      `Seguindo a estrutura: 
+
+      Habilidades:
+      - item 1;
+      - Item2.
+      etc.
+
+    Escreva Habilidades da seguinte vaga: 
+        ${this.model.jobTitle}, 
+        ${this.model.jobLevel}, 
+        ${this.model.jobDescription}`;
+
+      const message = userMessage;
+      this.chatMessages.push({ role: 'user', content: message });
+      this.userMessage = '';
+
+      await this.askChaToChat(message);
+
+
+    },
+
+    async upgradeHabilidade() {
+    this.loadingUpgradeHabilidade = true; 
+      try {
+        const userMessage = 
+        `Seguindo a estrutura: 
+
+        Habilidades:
+        - item 1;
+        - Item2.
+        etc.
+
+        Aprimore as Habilidades com palavras completamente diferentes:
+        ${this.model.cha.habilidade},
+        
+        Da seguinte vaga: 
+          ${this.model.jobTitle}, 
+          ${this.model.jobLevel}, 
+          ${this.model.jobDescription}`;
+
+         this.userMessage = '';
+
+        this.askChaToChat(userMessage);
+
+      } catch (error) {
+        console.error('Erro ao enviar descrição:', error);
+      }
+    },
+
+    async sendAtitude () {
+    this.loadingUpgradeAtitude = true; 
+      try {
+        const userMessage = 
+        `Seguindo a estrutura: 
+
+        Atitudes:
+        - item 1;
+        - Item2.
+        etc. 
+
+        Aprimore as Atitudes com palavras completamente diferentes:
+        ${this.model.cha.atitude},
+        
+        Da seguinte vaga: 
+          ${this.model.jobTitle}, 
+          ${this.model.jobLevel}, 
+          ${this.model.jobDescription}`;
+
+         this.userMessage = '';
+
+        this.askChaToChat(userMessage);
+
+      } catch (error) {
+        console.error('Erro ao enviar descrição:', error);
+      }
+    },
+
+    async upgradeAtitude () {
+    this.loadingUpgradeAtitude = true; 
+      try {
+        const userMessage = 
+        `Seguindo a estrutura: 
+
+        Atitudes:
+        - item 1;
+        - Item2.
+        etc. 
+
+        Aprimore as Atitudes com palavras completamente diferentes:
+        ${this.model.cha.atitude},
+        
+        Da seguinte vaga: 
+          ${this.model.jobTitle}, 
+          ${this.model.jobLevel}, 
+          ${this.model.jobDescription}`;
+
+         this.userMessage = '';
+
+        this.askChaToChat(userMessage);
+
+      } catch (error) {
+        console.error('Erro ao enviar:', error);
+      }
+    },
+
     async askChaToChat(message) {
       try {
         const response = await fetch('http://localhost:5000/ask', {
@@ -417,14 +579,12 @@ export default defineComponent({
           body: JSON.stringify({ user_message: message }),
         });
 
-        console.log("GERAR CHA - PERGUNTA:" , message)
-
         if (response) {
           const data = await response.json();
           const responseMessageCha = data.response;
           this.chatMessages.push({ role: 'AI', content: responseMessageCha });
 
-          console.log("GERAR CHA - RESPOSTA CHAT GPT:" , responseMessageCha)
+          console.log("RESPOSTA CHAT GPT:" , responseMessageCha)
 
           this.extractCHA(responseMessageCha);
 
@@ -437,11 +597,14 @@ export default defineComponent({
         this.loadingGenerate = false; 
         this.enviadoOuAprimorado = false;
         this.loadingUpgradeCha=false;
+        this.loadingUpgradeConhecimento=false;
+        this.loadingUpgradeHabilidade=false;
+        this.loadingUpgradeAtitude=false;
       }
     },
 
     async extractCHA(responseMessageCha) {
-      const conhecimentos = [""];
+    const conhecimentos = [""];
     const habilidades = [""];
     const atitudes = [""];
     const sections = responseMessageCha.split('\n');
@@ -602,7 +765,7 @@ button{
   margin-right: 10px;
 }
 .upgrade-button {
-  display: flex-end;
+  display: flex;
   justify-content: flex-end;
   align-items: center;
 }
