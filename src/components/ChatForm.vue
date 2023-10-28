@@ -6,7 +6,7 @@
     :show-label="true"
     :show-placeholder="false"
   >
-    <n-grid :span="100" :x-gap="24">
+    <n-grid :span="100" :x-gap="12">
       <n-form-item-gi :span="12" label="Título da Vaga" prop="jobTitle">
         <n-input v-model:value="model.jobTitle" placeholder="" />
       </n-form-item-gi>
@@ -22,13 +22,26 @@
           v-model:value="model.jobDescription"
           placeholder=""
           type="textarea"
-          :autosize="{
-            minRows: 3,
-            maxRows: 20
-          }"
+          :autosize="{ minRows: 3, maxRows: 20}"
         />
       </n-form-item-gi>
-      <n-form-item-gi :span="24" label="Conhecimentos" prop="conhecimento">
+
+      <n-form-item-gi class="label" :span="24">
+      <div>
+      Conhecimentos
+      <n-tooltip trigger="hover">
+      <template #trigger>
+        <n-icon size="16" color="#52A352">
+          <info-icon />
+        </n-icon>
+      </template>
+      <div class="large-text">
+        Clique em "Gerar Conhecimentos" para que o ChatGPT gere conhecimentos para a vaga. Clique em aprimorar para melhorar.
+      </div>
+      </n-tooltip>
+      </div>
+      </n-form-item-gi>
+      <n-form-item-gi :span="24">
         <n-input
           v-model:value="model.cha.conhecimento"
           placeholder=""
@@ -36,25 +49,56 @@
           :autosize="{ minRows: 3, maxRows: 5 }"
         />
       </n-form-item-gi>
+
       <n-form-item-gi>
-          <n-button
-          class="upgrade-button"
-          color="#5380b8"
-          text-color="white"
-          :loading="loadingUpgradeConhecimento"
-          @click="sendConhecimento"
-          icon-placement="left"
-          >
-          <template #icon>
-            <n-icon>
-              <sparkles-icon />
-            </n-icon>
-          </template>
-          Aprimorar Conhecimentos
-          </n-button>
+        <n-button-group class="buttons">
+        <n-button 
+        class="upgrade-button"
+        color="#73A79A"  
+        @click="sendConhecimento" 
+        :loading="loadingGenerateConhecimento" 
+        icon-placement="left">
+        <template #icon>
+          <n-icon>
+            <wand-icon />
+          </n-icon>
+        </template>
+        Gerar Conhecimentos
+      </n-button>
+      <n-button
+        class="upgrade-button"
+        color="#5380b8"
+        text-color="white"
+        :loading="loadingUpgradeConhecimento"
+        @click="sendUpgradeConhecimento"
+        icon-placement="left"
+        >
+        <template #icon>
+          <n-icon>
+            <sparkles-icon />
+          </n-icon>
+        </template>
+        Aprimorar Conhecimentos
+        </n-button>
+        </n-button-group>
       </n-form-item-gi>
-      
-      <n-form-item-gi :span="24" label="Habilidades" prop="habilidades">
+
+      <n-form-item-gi class="label" :span="24">
+      <div>
+      Habilidades
+      <n-tooltip trigger="hover">
+      <template #trigger>
+        <n-icon size="16" color="#52A352">
+          <info-icon />
+        </n-icon>
+      </template>
+      <div class="large-text">
+        Clique em "Gerar Habilidades" para que o ChatGPT gere habilidades para a vaga. Clique em aprimorar para melhorar.
+      </div>
+      </n-tooltip>
+      </div>
+      </n-form-item-gi>
+      <n-form-item-gi :span="24">
         <n-input
           v-model:value="model.cha.habilidade"
           placeholder=""
@@ -63,12 +107,26 @@
         />
       </n-form-item-gi>
       <n-form-item-gi>
-        <n-button
+        <n-button-group>
+        <n-button 
+        class="upgrade-button"
+        color="#73A79A"  
+        @click="sendHabilidade" 
+        :loading="loadingGenerateHabilidade" 
+        icon-placement="left">
+        <template #icon>
+          <n-icon>
+            <wand-icon />
+          </n-icon>
+        </template>
+        Gerar Habilidades
+      </n-button>
+      <n-button
         class="upgrade-button"
         color="#5380b8"
         text-color="white"
         :loading="loadingUpgradeHabilidade"
-        @click="sendhabilidade"
+        @click="sendUpgradeHabilidade"
         icon-placement="left"
         >
         <template #icon>
@@ -78,23 +136,27 @@
         </template>
         Aprimorar Habilidades
         </n-button>
+        </n-button-group>
       </n-form-item-gi>
 
-      <n-form-item-gi :span="24" label="Atitudes" prop="atitudes">
+
+      <n-form-item-gi class="label" :span="24">
+      <div>
+      Atitudes
       <n-tooltip trigger="hover">
       <template #trigger>
-      <n-button circle="true" >
-        <template #icon>
-        <n-icon>
+        <n-icon size="16" color="#52A352">
           <info-icon />
         </n-icon>
       </template>
-      </n-button>
-      </template>
       <div class="large-text">
-        Atitudes requeridas para a vagas. Clique em gerar para o ChatGPT gerar atitudes. Clique em aprimorar para melhorar.
+      Clique em "Gerar Atitudes" para que o ChatGPT gere atitudes para a vaga. Clique em aprimorar para melhorar.
       </div>
       </n-tooltip>
+      </div>
+      </n-form-item-gi>
+
+      <n-form-item-gi :span="24">
         <n-input
           v-model:value="model.cha.atitude"
           placeholder=""
@@ -102,13 +164,29 @@
           :autosize="{ minRows: 3, maxRows: 5 }"
         />
       </n-form-item-gi>
-      <n-form-item-gi>
-        <n-button
+
+
+    <n-form-item-gi>
+      <n-button-group>
+        <n-button 
+        class="upgrade-button"
+        color="#73A79A"  
+        @click="sendAtitude" 
+        :loading="loadingGenerateAtitude" 
+        icon-placement="left">
+        <template #icon>
+          <n-icon>
+            <wand-icon />
+          </n-icon>
+        </template>
+        Gerar Atitudes
+      </n-button>
+      <n-button
         class="upgrade-button"
         color="#5380b8"
         text-color="white"
         :loading="loadingUpgradeAtitude"
-        @click="sendAtitude"
+        @click="sendUpgradeAtitude"
         icon-placement="left"
         >
         <template #icon>
@@ -118,6 +196,7 @@
         </template>
         Aprimorar Atitudes
         </n-button>
+        </n-button-group>
       </n-form-item-gi>
     </n-grid>
     <div class="button-group">
@@ -203,7 +282,7 @@ import { SparklesSharp as SparklesIcon,
   ColorWand as WandIcon, 
   Close as CloseIcon,
   Checkmark as CheckIcon,
-  Information as InfoIcon } from "@vicons/ionicons5";
+  InformationCircleSharp as InfoIcon } from "@vicons/ionicons5";
 
 export default defineComponent({
   components: {
@@ -221,7 +300,9 @@ export default defineComponent({
     const userMessage = ref('');
     const loadingBar = useLoadingBar();
     const loadingUpgrade = ref(false);
-    const loadingUpgradeCha = ref(false);
+    const loadingGenerateConhecimento = ref(false);
+    const loadingGenerateHabilidade = ref(false);
+    const loadingGenerateAtitude = ref(false);
     const loadingUpgradeConhecimento = ref(false)
     const loadingUpgradeHabilidade = ref(false)
     const loadingUpgradeAtitude = ref(false)
@@ -254,7 +335,9 @@ export default defineComponent({
       showModalCancel,
       showModalSubmit,
       loadingUpgrade,
-      loadingUpgradeCha,
+      loadingGenerateConhecimento,
+      loadingGenerateHabilidade,
+      loadingGenerateAtitude,
       loadingUpgradeConhecimento,
       loadingUpgradeHabilidade,
       loadingUpgradeAtitude,
@@ -286,7 +369,7 @@ export default defineComponent({
    async sendDescription  () {
     this.loadingUpgrade = true; 
       try {
-        const userMessage = `Aprimore a descrição da seguinte vaga ,como um descrição comum de sites de emprego: 
+        const userMessage = `Aprimore a descrição da seguinte vaga, como um descrição comum de sites de emprego: 
           ${this.model.jobTitle}, 
           ${this.model.jobLevel}, 
           ${this.model.jobDescription}`;
@@ -409,28 +492,29 @@ export default defineComponent({
         console.error('Erro ao enviar descrição:', error);
       }
     },
+// ========================================================CONHECIMENTO=============================================
+async sendConhecimento () {
+    this.loadingGenerateConhecimento = true; 
+      try {
+        const userMessage = 
+        `Seguindo a estrutura: 
 
-    async sendConhecimento () {
-      this.loadingGenerate = true;
-      const userMessage = 
-      `Seguindo a estrutura: 
+        - item 1;
+        - Item2.
+        etc. 
 
-      Conhecimentos:
-      - item 1;
-      - Item2.
-      etc.
-      
-    Escreva Conhecimentos da seguinte vaga: 
-        ${this.model.jobTitle}, 
-        ${this.model.jobLevel}, 
-        ${this.model.jobDescription}`;
+       Gere os Conhecimento da seguinte vaga: 
+          ${this.model.jobTitle}, 
+          ${this.model.jobLevel}, 
+          ${this.model.jobDescription}`;
 
-      const message = userMessage;
-      this.chatMessages.push({ role: 'user', content: message });
-      this.userMessage = '';
+         this.userMessage = '';
 
-      this.askChaToChat(message);
+        await this.askConhecimentoToChat(userMessage);
 
+      } catch (error) {
+        console.error('Erro ao enviar descrição:', error);
+      }
     },
 
     async upgradeConhecimento () {
@@ -439,13 +523,12 @@ export default defineComponent({
         const userMessage = 
         `Seguindo a estrutura: 
 
-        Conhecimentos:
         - item 1;
         - Item2.
-        etc.
- 
-        Aprimore os Conhecimentos com palavras completamente diferentes:
-        ${this.model.cha.conhecimento},
+        etc. 
+
+        Aprimore os Conhecimento com palavras completamente diferentes:
+        ${this.model.cha.conhecimentoonhecimento},
         
         Da seguinte vaga: 
           ${this.model.jobTitle}, 
@@ -454,47 +537,98 @@ export default defineComponent({
 
          this.userMessage = '';
 
-        this.askChaToChat(userMessage);
+         await this.askConhecimentoToChat(userMessage);
+
+      } catch (error) {
+        console.error('Erro ao enviar:', error);
+      }
+    },
+
+    async askConhecimentoToChat(message) {
+      try {
+        const response = await fetch('http://localhost:5000/ask', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ user_message: message }),
+        });
+
+        if (response) {
+          const data = await response.json();
+          const responseMessageConhecimento = data.response;
+          this.chatMessages.push({ role: 'AI', content: responseMessageConhecimento });
+
+          this.getConhecimento(responseMessageConhecimento);
+
+        } else {
+          console.error('Erro ao enviar mensagem para o backend:', response.statusText);
+        }
+      } catch (error) {
+        console.error('Erro ao enviar mensagem para o backend:', error);
+      } finally {
+        this.loadingGenerateConhecimento=false;
+        this.loadingUpgradeConhecimento=false;
+      }
+    },
+
+    async getConhecimento (responseMessageConhecimento){
+      const conhecimentos = [""];
+      const sections = responseMessageConhecimento.split('\n');
+
+      try{
+        for (const section of sections) {
+          conhecimentos.push(section.trim());
+        }
+
+      console.log('Conhecimentos:', conhecimentos);
+
+      this.model.cha = {
+        conhecimento: conhecimentos.join('\n')
+      };
+
+    console.log("NOVO CONHECIMENTO ", this.model.cha.conhecimento)
+
+      }  catch {
+    console.log("ERRO")
+      }
+    },
+// ========================================================CONHECIMENTO=============================================
+
+// ========================================================HABILIDADE=============================================
+    async sendHabilidade () {
+    this.loadingGenerateHabilidade = true; 
+      try {
+        const userMessage = 
+        `Seguindo a estrutura: 
+
+        - item 1;
+        - Item2.
+        etc. 
+
+       Gere as Habilidades da seguinte vaga: 
+          ${this.model.jobTitle}, 
+          ${this.model.jobLevel}, 
+          ${this.model.jobDescription}`;
+
+         this.userMessage = '';
+
+        await this.askHabilidadeToChat(userMessage);
 
       } catch (error) {
         console.error('Erro ao enviar descrição:', error);
       }
     },
 
-    async sendHabilidade () {
-      this.loadingGenerate = true;
-      const userMessage = 
-      `Seguindo a estrutura: 
-
-      Habilidades:
-      - item 1;
-      - Item2.
-      etc.
-
-    Escreva Habilidades da seguinte vaga: 
-        ${this.model.jobTitle}, 
-        ${this.model.jobLevel}, 
-        ${this.model.jobDescription}`;
-
-      const message = userMessage;
-      this.chatMessages.push({ role: 'user', content: message });
-      this.userMessage = '';
-
-      await this.askChaToChat(message);
-
-
-    },
-
-    async upgradeHabilidade() {
+    async upgradeHabilidade () {
     this.loadingUpgradeHabilidade = true; 
       try {
         const userMessage = 
         `Seguindo a estrutura: 
 
-        Habilidades:
         - item 1;
         - Item2.
-        etc.
+        etc. 
 
         Aprimore as Habilidades com palavras completamente diferentes:
         ${this.model.cha.habilidade},
@@ -506,35 +640,83 @@ export default defineComponent({
 
          this.userMessage = '';
 
-        this.askChaToChat(userMessage);
+         await this.askHabilidadeToChat(userMessage);
 
       } catch (error) {
-        console.error('Erro ao enviar descrição:', error);
+        console.error('Erro ao enviar:', error);
       }
     },
 
+    async askHabilidadeToChat(message) {
+      try {
+        const response = await fetch('http://localhost:5000/ask', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ user_message: message }),
+        });
+
+        if (response) {
+          const data = await response.json();
+          const responseMessageHabilidade = data.response;
+          this.chatMessages.push({ role: 'AI', content: responseMessageHabilidade });
+
+          this.getHabilidade(responseMessageHabilidade);
+
+        } else {
+          console.error('Erro ao enviar mensagem para o backend:', response.statusText);
+        }
+      } catch (error) {
+        console.error('Erro ao enviar mensagem para o backend:', error);
+      } finally {
+        this.loadingGenerateHabilidade=false;
+        this.loadingUpgradeHabilidade=false;
+      }
+    },
+
+    async getHabilidade (responseMessageHabilidade){
+      const habilidades = [""];
+      const sections = responseMessageHabilidade.split('\n');
+
+      try{
+        for (const section of sections) {
+          habilidades.push(section.trim());
+        }
+
+      console.log('Habilidades:', habilidades);
+
+      this.model.cha = {
+        atitude: habilidades.join('\n')
+      };
+
+    console.log("NOVA HABILIDADE", this.model.cha.habilidade)
+
+      }  catch {
+    console.log("ERRO")
+      }
+    },
+// ========================================================HABILIDADE=============================================
+
+// ========================================================ATITUDE=============================================
     async sendAtitude () {
-    this.loadingUpgradeAtitude = true; 
+    this.loadingGenerateAtitude = true; 
       try {
         const userMessage = 
         `Seguindo a estrutura: 
 
-        Atitudes:
         - item 1;
         - Item2.
         etc. 
 
-        Aprimore as Atitudes com palavras completamente diferentes:
-        ${this.model.cha.atitude},
-        
-        Da seguinte vaga: 
+       Gere as Atitudes da seguinte vaga: 
           ${this.model.jobTitle}, 
           ${this.model.jobLevel}, 
           ${this.model.jobDescription}`;
 
          this.userMessage = '';
 
-        this.askChaToChat(userMessage);
+        await this.askAtitudeToChat(userMessage);
 
       } catch (error) {
         console.error('Erro ao enviar descrição:', error);
@@ -547,7 +729,6 @@ export default defineComponent({
         const userMessage = 
         `Seguindo a estrutura: 
 
-        Atitudes:
         - item 1;
         - Item2.
         etc. 
@@ -562,13 +743,64 @@ export default defineComponent({
 
          this.userMessage = '';
 
-        this.askChaToChat(userMessage);
+         await this.askAtitudeToChat(userMessage);
 
       } catch (error) {
         console.error('Erro ao enviar:', error);
       }
     },
 
+    async askAtitudeToChat(message) {
+      try {
+        const response = await fetch('http://localhost:5000/ask', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ user_message: message }),
+        });
+
+        if (response) {
+          const data = await response.json();
+          const responseMessageAtitude = data.response;
+          this.chatMessages.push({ role: 'AI', content: responseMessageAtitude });
+
+          this.getAtitude(responseMessageAtitude);
+
+        } else {
+          console.error('Erro ao enviar mensagem para o backend:', response.statusText);
+        }
+      } catch (error) {
+        console.error('Erro ao enviar mensagem para o backend:', error);
+      } finally {
+        this.loadingGenerateAtitude=false;
+        this.loadingUpgradeAtitude=false;
+      }
+    },
+
+    async getAtitude (responseMessageAtitude){
+      const atitudes = [""];
+      const sections = responseMessageAtitude.split('\n');
+
+      try{
+        for (const section of sections) {
+          atitudes.push(section.trim());
+        }
+
+      console.log('Atitudes:', atitudes);
+
+      this.model.cha = {
+        atitude: atitudes.join('\n')
+      };
+
+    console.log("NOVA ATITUDE", this.model.cha.atitude)
+
+      }  catch {
+    console.log("ERRO")
+      }
+    },
+// ========================================================ATITUDE=============================================
+   
     async askChaToChat(message) {
       try {
         const response = await fetch('http://localhost:5000/ask', {
@@ -584,9 +816,7 @@ export default defineComponent({
           const responseMessageCha = data.response;
           this.chatMessages.push({ role: 'AI', content: responseMessageCha });
 
-          console.log("RESPOSTA CHAT GPT:" , responseMessageCha)
-
-          this.extractCHA(responseMessageCha);
+        
 
         } else {
           console.error('Erro ao enviar mensagem para o backend:', response.statusText);
@@ -647,8 +877,8 @@ export default defineComponent({
   } catch {
     console.log("ERRO")
   }
-},
-
+    },
+// cadastra o cha(um de cada vez) > cadastra os ids na tabela cha > obtem chaId 
     async sendServerResponseToBackend() {
       const requestBodyC = {
         content:  this.model.cha.conhecimento
@@ -682,7 +912,7 @@ export default defineComponent({
           console.error('Erro ao enviar resposta do servidor para o backend:', error);
         }
     },
-
+// enviar vaga backend 
     async sendJobToBackend(chaId){
       try {
         const jobData = {
@@ -705,7 +935,7 @@ export default defineComponent({
         window.$message.error('Erro ao cadastrar a vaga. Tente novamente.');
       }
     },
-
+// limpar model
     async clearModel (){
       this.model = {
               jobTitle: null,
@@ -719,7 +949,7 @@ export default defineComponent({
               },
             };
     },
-
+// chama o cadastro do cha > manda o chaId para cadastrar a vaga
     async submitForm(){
       try {
       const chaId = await this.sendServerResponseToBackend();
@@ -752,6 +982,7 @@ export default defineComponent({
 </script>
 
 <style scoped>
+
 .button-group {
   display: flex;
   justify-content: flex-end;
@@ -765,6 +996,7 @@ button{
   margin-right: 10px;
 }
 .upgrade-button {
+  margin-top: -40px;
   display: flex;
   justify-content: flex-end;
   align-items: center;
