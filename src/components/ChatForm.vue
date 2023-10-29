@@ -7,17 +7,17 @@
     :show-placeholder="false"
   >
     <n-grid :span="100" :x-gap="12">
-      <n-form-item-gi :span="12" label="Título da Vaga" prop="jobTitle">
+      <n-form-item-gi :span="12" label="Título da Vaga" prop="jobTitle" path="jobTitle">
         <n-input v-model:value="model.jobTitle" placeholder="" />
       </n-form-item-gi>
-      <n-form-item-gi :span="12" label="Nível da Vaga" prop="jobLevel">
+      <n-form-item-gi :span="12" label="Nível da Vaga" prop="jobLevel" path="jobLevel">
         <n-select
           v-model:value="model.jobLevel"
           placeholder=""
           :options="selectOptions"
         />
       </n-form-item-gi>
-      <n-form-item-gi :span="24" label="Descrição da Vaga" prop="jobDescription">
+      <n-form-item-gi :span="24" label="Descrição da Vaga" prop="jobDescription" path="jobDescription">
         <n-input
           v-model:value="model.jobDescription"
           placeholder=""
@@ -25,7 +25,6 @@
           :autosize="{ minRows: 3, maxRows: 20}"
         />
       </n-form-item-gi>
-
       <n-form-item-gi class="label" :span="24">
       <div>
       Conhecimentos
@@ -41,7 +40,7 @@
       </n-tooltip>
       </div>
       </n-form-item-gi>
-      <n-form-item-gi :span="24">
+      <n-form-item-gi :span="24" path="cha.conhecimento">
         <n-input
           v-model:value="model.cha.conhecimento"
           placeholder=""
@@ -49,7 +48,6 @@
           :autosize="{ minRows: 3, maxRows: 5 }"
         />
       </n-form-item-gi>
-
       <n-form-item-gi>
         <n-button-group class="buttons">
         <n-button 
@@ -82,7 +80,6 @@
         </n-button>
         </n-button-group>
       </n-form-item-gi>
-
       <n-form-item-gi class="label" :span="24">
       <div>
       Habilidades
@@ -98,7 +95,7 @@
       </n-tooltip>
       </div>
       </n-form-item-gi>
-      <n-form-item-gi :span="24">
+      <n-form-item-gi :span="24" path="cha.habilidade">
         <n-input
           v-model:value="model.cha.habilidade"
           placeholder=""
@@ -156,7 +153,7 @@
       </div>
       </n-form-item-gi>
 
-      <n-form-item-gi :span="24">
+      <n-form-item-gi :span="24" path="cha.atitude">
         <n-input
           v-model:value="model.cha.atitude"
           placeholder=""
@@ -164,8 +161,6 @@
           :autosize="{ minRows: 3, maxRows: 5 }"
         />
       </n-form-item-gi>
-
-
     <n-form-item-gi>
       <n-button-group>
         <n-button 
@@ -261,7 +256,7 @@
           @positive-click="submitForm"
           @negative-click="cancelForm"
       />
-      <n-button  color="#27AE60" type="submit" @click="showModalSubmit =true" :disabled="enviadoOuAprimorado" icon-placement="left">
+      <n-button  color="#27AE60" type="submit" @click="handleValidateClick" icon-placement="left">
         <template #icon>
           <n-icon>
             <check-icon />
@@ -295,7 +290,8 @@ export default defineComponent({
   setup() {
     const messageHistory = ref('');   
     window.$message = useMessage()
-    const formRef = ref<null>(null)
+    const message = useMessage();
+    const formRef = ref(null);
     const chatMessages = ref([]);
     const userMessage = ref('');
     const loadingBar = useLoadingBar();
@@ -307,30 +303,10 @@ export default defineComponent({
     const loadingUpgradeHabilidade = ref(false)
     const loadingUpgradeAtitude = ref(false)
     const loadingGenerate = ref(false);
-    const enviadoOuAprimorado = ref(true);
     const showModalSubmit = ref(false)
     const showModalCancel = ref(false);
 
-    const rules = {
-        jobTitle:[ {
-          required: true,
-          trigger: ['blur', 'input'],
-          message: 'Por favor, insira o título da vaga'
-        }],
-        jobDescription: {
-          required: true,
-          trigger: ['blur', 'input'],
-          message: 'Por favor, insira a descrição da vaga'
-        },
-        jobLevel: {
-          required: true,
-          trigger: ['blur', 'change'],
-          message: 'Por favor, selecione o nível da vaga'
-        },
-      };
-
     return {
-      rules,
       messageHistory,
       showModalCancel,
       showModalSubmit,
@@ -346,23 +322,47 @@ export default defineComponent({
       chatMessages,
       userMessage,
       formRef,
-      enviadoOuAprimorado,
       model: ref({
-        jobTitle: '',
-        jobDescription: '',
+        jobTitle: null,
+        jobDescription: null,
         cha:{
-          conhecimento:"",
-          habilidade:"",
-          atitude:""
+          conhecimento:null,
+          habilidade:null,
+          atitude:null
         },
-        jobLevel: '',
-        jobStatus: 'open',
+        jobLevel: null,
+        jobStatus: null,
       }),
       selectOptions: ['Júnior', 'Pleno', 'Sênior'].map((v) => ({
         label: v,
         value: v
       })),
-    }
+      rules: {
+        jobTitle: [
+          { required: true, trigger: 'blur', message: 'Por favor, insira o título da vaga', warningOnly: true, }
+        ],
+        jobLevel: [
+          { required: true, trigger: 'change', message: 'Por favor, selecione o nível da vaga', warningOnly: true, }
+        ],
+        jobDescription: [
+          { required: true, trigger: 'blur', message: 'Por favor, insira a descrição da vaga' , warningOnly: true,}
+        ]
+      },
+      async handleValidateClick(e) {
+            e.preventDefault();
+            formRef.value?.validate((errors) => {
+          if (!errors) {
+            console.log("validado")
+            showModalSubmit.value = true;
+          } else {
+            console.log(errors);
+            message.error("Preencha os campos indicados!");
+          }
+        }).catch((error) => {
+          console.error('Erro na validação:', error);
+        });
+      },  
+    };
   },
   methods:{
 
@@ -407,7 +407,6 @@ export default defineComponent({
         console.error('Erro ao enviar mensagem:', error);
       }  finally {
         this.loadingUpgrade = false; 
-        this.enviadoOuAprimorado = false;
       }
     },
 
@@ -493,17 +492,19 @@ export default defineComponent({
       }
     },
 // ========================================================CONHECIMENTO=============================================
-async sendConhecimento () {
+    async sendConhecimento () {
     this.loadingGenerateConhecimento = true; 
       try {
         const userMessage = 
-        `Seguindo a estrutura: 
+        `CHA é o acrônimo de conhecimento, habilidade e atitude, as três dimensões da definição de competência para um determinado cargo ou função.
+        
+        Seguindo a estrutura: 
 
         - item 1;
         - Item2.
         etc. 
 
-       Gere os Conhecimento da seguinte vaga: 
+       gere os Conhecimentos da seguinte vaga: 
           ${this.model.jobTitle}, 
           ${this.model.jobLevel}, 
           ${this.model.jobDescription}`;
@@ -521,14 +522,15 @@ async sendConhecimento () {
     this.loadingUpgradeConhecimento = true; 
       try {
         const userMessage = 
-        `Seguindo a estrutura: 
+        `CHA é o acrônimo de conhecimento, habilidade e atitude, as três dimensões da definição de competência para um determinado cargo ou função.
+        Seguindo a estrutura: 
 
         - item 1;
         - Item2.
         etc. 
 
-        Aprimore os Conhecimento com palavras completamente diferentes:
-        ${this.model.cha.conhecimentoonhecimento},
+        aprimore os Conhecimentos com palavras completamente diferentes:
+        ${this.model.cha.conhecimento},
         
         Da seguinte vaga: 
           ${this.model.jobTitle}, 
@@ -600,13 +602,14 @@ async sendConhecimento () {
     this.loadingGenerateHabilidade = true; 
       try {
         const userMessage = 
-        `Seguindo a estrutura: 
+        `CHA é o acrônimo de conhecimento, habilidade e atitude, as três dimensões da definição de competência para um determinado cargo ou função
+        Seguindo a estrutura: 
 
         - item 1;
         - Item2.
         etc. 
 
-       Gere as Habilidades da seguinte vaga: 
+       gere as Habilidades da seguinte vaga: 
           ${this.model.jobTitle}, 
           ${this.model.jobLevel}, 
           ${this.model.jobDescription}`;
@@ -624,13 +627,14 @@ async sendConhecimento () {
     this.loadingUpgradeHabilidade = true; 
       try {
         const userMessage = 
-        `Seguindo a estrutura: 
+        `CHA é o acrônimo de conhecimento, habilidade e atitude, as três dimensões da definição de competência para um determinado cargo ou função.
+        Seguindo a estrutura: 
 
         - item 1;
         - Item2.
         etc. 
 
-        Aprimore as Habilidades com palavras completamente diferentes:
+        aprimore as Habilidades com palavras completamente diferentes:
         ${this.model.cha.habilidade},
         
         Da seguinte vaga: 
@@ -703,13 +707,14 @@ async sendConhecimento () {
     this.loadingGenerateAtitude = true; 
       try {
         const userMessage = 
-        `Seguindo a estrutura: 
+        `CHA é o acrônimo de conhecimento, habilidade e atitude, as três dimensões da definição de competência para um determinado cargo ou função.
+        Seguindo a estrutura: 
 
         - item 1;
         - Item2.
         etc. 
 
-       Gere as Atitudes da seguinte vaga: 
+       gere as Atitudes da seguinte vaga: 
           ${this.model.jobTitle}, 
           ${this.model.jobLevel}, 
           ${this.model.jobDescription}`;
@@ -727,13 +732,15 @@ async sendConhecimento () {
     this.loadingUpgradeAtitude = true; 
       try {
         const userMessage = 
-        `Seguindo a estrutura: 
+        `
+        CHA é o acrônimo de conhecimento, habilidade e atitude, as três dimensões da definição de competência para um determinado cargo ou função.
+        Seguindo a estrutura: 
 
         - item 1;
         - Item2.
         etc. 
 
-        Aprimore as Atitudes com palavras completamente diferentes:
+        aprimore as Atitudes com palavras completamente diferentes:
         ${this.model.cha.atitude},
         
         Da seguinte vaga: 
@@ -800,7 +807,6 @@ async sendConhecimento () {
       }
     },
 // ========================================================ATITUDE=============================================
-   
     async askChaToChat(message) {
       try {
         const response = await fetch('http://localhost:5000/ask', {
@@ -816,8 +822,6 @@ async sendConhecimento () {
           const responseMessageCha = data.response;
           this.chatMessages.push({ role: 'AI', content: responseMessageCha });
 
-        
-
         } else {
           console.error('Erro ao enviar mensagem para o backend:', response.statusText);
         }
@@ -825,7 +829,6 @@ async sendConhecimento () {
         console.error('Erro ao enviar mensagem para o backend:', error);
       } finally {
         this.loadingGenerate = false; 
-        this.enviadoOuAprimorado = false;
         this.loadingUpgradeCha=false;
         this.loadingUpgradeConhecimento=false;
         this.loadingUpgradeHabilidade=false;
@@ -951,7 +954,7 @@ async sendConhecimento () {
     },
 // chama o cadastro do cha > manda o chaId para cadastrar a vaga
     async submitForm(){
-      try {
+      try {  
       const chaId = await this.sendServerResponseToBackend();
       await this.sendJobToBackend(chaId);
       this.showModalSubmit = false
@@ -976,8 +979,8 @@ async sendConhecimento () {
     cancelForm() {
       this.clearModel();
       this.$router.push({ name: 'dashboard-page' });
-    }
-  }
+    },
+  },
 });
 </script>
 
