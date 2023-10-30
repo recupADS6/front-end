@@ -17,13 +17,23 @@
           :options="selectOptions"
         />
       </n-form-item-gi>
-      <n-form-item-gi :span="24" label="Descrição da Vaga" prop="jobDescription" path="jobDescription">
+      <n-form-item-gi class="text" :span="24" label="Descrição da Vaga" prop="jobDescription" path="jobDescription">
         <n-input
           v-model:value="model.jobDescription"
           placeholder=""
           type="textarea"
           :autosize="{ minRows: 3, maxRows: 20}"
         />
+      </n-form-item-gi>
+      <n-form-item-gi>
+        <n-button class="upgrade-button" color="#F2C94C"  text-color="#607004" :loading="loadingUpgrade" @click="sendDescription" icon-placement="left">
+        <template #icon>
+          <n-icon>
+            <sparkles-icon />
+          </n-icon>
+        </template>
+        Aprimorar Descrição
+      </n-button>
       </n-form-item-gi>
       <n-form-item-gi class="label" :span="24">
       <div>
@@ -214,36 +224,7 @@
         </template>
         Cancelar
       </n-button>
-      <n-button  color="#F2C94C"  text-color="#607004" :loading="loadingUpgrade" @click="sendDescription" icon-placement="left">
-        <template #icon>
-          <n-icon>
-            <sparkles-icon />
-          </n-icon>
-        </template>
-        Aprimorar Descrição
-      </n-button>
-      <n-button color="#73A79A"  @click="sendMessage" :loading="loadingGenerate" icon-placement="left">
-        <template #icon>
-          <n-icon>
-            <wand-icon />
-          </n-icon>
-        </template>
-        Gerar CHA
-      </n-button>
-      <n-button
-      color="#5380b8"
-      text-color="white"
-      :loading="loadingUpgradeCha"
-      @click="sendCha"
-      icon-placement="left"
-    >
-      <template #icon>
-        <n-icon>
-          <sparkles-icon />
-        </n-icon>
-      </template>
-      Aprimorar CHA
-     </n-button>
+
       <n-modal
           v-model:show="showModalSubmit"
           attr-type="submit"
@@ -289,6 +270,9 @@ export default defineComponent({
   },
   setup() {
     const messageHistory = ref('');   
+    const conhecimentoHistory = ref([]);
+    const habilidadeHistory = ref([]);
+    const atitudeHistory = ref([]);
     window.$message = useMessage()
     const message = useMessage();
     const formRef = ref(null);
@@ -307,6 +291,9 @@ export default defineComponent({
     const showModalCancel = ref(false);
 
     return {
+      conhecimentoHistory,
+      habilidadeHistory,
+      atitudeHistory,
       messageHistory,
       showModalCancel,
       showModalSubmit,
@@ -518,7 +505,55 @@ export default defineComponent({
       }
     },
 
-    async upgradeConhecimento () {
+    async askConhecimentoToChat(message) {
+      try {
+        const response = await fetch('http://localhost:5000/ask', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ user_message: message }),
+        });
+
+        if (response) {
+          const data = await response.json();
+          const responseMessageConhecimento = data.response;
+          this.chatMessages.push({ role: 'AI', content: responseMessageConhecimento });
+
+          this.generateConhecimento(responseMessageConhecimento);
+
+        } else {
+          console.error('Erro ao enviar mensagem para o backend:', response.statusText);
+        }
+      } catch (error) {
+        console.error('Erro ao enviar mensagem para o backend:', error);
+      } finally {
+        this.loadingGenerateConhecimento=false;
+      }
+    },
+
+    async generateConhecimento (responseMessageConhecimento){
+      const conhecimentos = [""];
+      const sections = responseMessageConhecimento.split('\n');
+
+      try{
+        for (const section of sections) {
+          conhecimentos.push(section.trim());
+        }
+
+      this.model.cha = {
+        conhecimento: conhecimentos.join('\n')
+      };
+
+      console.log('Conhecimentos:', conhecimentos);
+      }  catch {
+        console.log("ERRO")
+      }
+    },
+
+    //UPGRADE
+
+    async sendUpgradeConhecimento () {
     this.loadingUpgradeConhecimento = true; 
       try {
         const userMessage = 
@@ -538,15 +573,16 @@ export default defineComponent({
           ${this.model.jobDescription}`;
 
          this.userMessage = '';
+         
 
-         await this.askConhecimentoToChat(userMessage);
+         await this.askUpgradeConhecimentoToChat(userMessage);
 
       } catch (error) {
         console.error('Erro ao enviar:', error);
       }
     },
 
-    async askConhecimentoToChat(message) {
+    async askUpgradeConhecimentoToChat(message) {
       try {
         const response = await fetch('http://localhost:5000/ask', {
           method: 'POST',
@@ -560,40 +596,26 @@ export default defineComponent({
           const data = await response.json();
           const responseMessageConhecimento = data.response;
           this.chatMessages.push({ role: 'AI', content: responseMessageConhecimento });
+          
+        this.conhecimentoHistory += `\n LOG:${responseMessageConhecimento}\n`;
 
-          this.getConhecimento(responseMessageConhecimento);
+        console.log(`HISTÓRICO CONHECIMENTO: ${this.conhecimentoHistory}`);
+        this.getUpgradeConhecimento(responseMessageConhecimento);
 
         } else {
-          console.error('Erro ao enviar mensagem para o backend:', response.statusText);
+          console.error('Erro ao enviar mensagem:', response.statusText);
         }
       } catch (error) {
-        console.error('Erro ao enviar mensagem para o backend:', error);
-      } finally {
-        this.loadingGenerateConhecimento=false;
+        console.error('Erro ao enviar mensagem:', error);
+      }  finally {
         this.loadingUpgradeConhecimento=false;
       }
     },
 
-    async getConhecimento (responseMessageConhecimento){
-      const conhecimentos = [""];
-      const sections = responseMessageConhecimento.split('\n');
+    async getUpgradeConhecimento (responseMessageConhecimento) {
+      this.model.cha.conhecimento = responseMessageConhecimento;
 
-      try{
-        for (const section of sections) {
-          conhecimentos.push(section.trim());
-        }
-
-      console.log('Conhecimentos:', conhecimentos);
-
-      this.model.cha = {
-        conhecimento: conhecimentos.join('\n')
-      };
-
-    console.log("NOVO CONHECIMENTO ", this.model.cha.conhecimento)
-
-      }  catch {
-    console.log("ERRO")
-      }
+      console.log("NEW CONHECIMENTO ", responseMessageConhecimento);
     },
 // ========================================================CONHECIMENTO=============================================
 
@@ -623,7 +645,7 @@ export default defineComponent({
       }
     },
 
-    async upgradeHabilidade () {
+    async sendUpgradeHabilidade () {
     this.loadingUpgradeHabilidade = true; 
       try {
         const userMessage = 
@@ -691,7 +713,7 @@ export default defineComponent({
       console.log('Habilidades:', habilidades);
 
       this.model.cha = {
-        atitude: habilidades.join('\n')
+        habilidade: habilidades.join('\n')
       };
 
     console.log("NOVA HABILIDADE", this.model.cha.habilidade)
@@ -728,7 +750,7 @@ export default defineComponent({
       }
     },
 
-    async upgradeAtitude () {
+    async sendUpgradeAtitude () {
     this.loadingUpgradeAtitude = true; 
       try {
         const userMessage = 
@@ -985,7 +1007,6 @@ export default defineComponent({
 </script>
 
 <style scoped>
-
 .button-group {
   display: flex;
   justify-content: flex-end;
@@ -999,9 +1020,14 @@ button{
   margin-right: 10px;
 }
 .upgrade-button {
-  margin-top: -40px;
+  margin-top: -50px;
   display: flex;
   justify-content: flex-end;
   align-items: center;
+}
+
+.label {
+  margin-bottom: -40px; /* Reduza a margem inferior entre os elementos do formulário */
+  margin-top: -40px;
 }
 </style>
