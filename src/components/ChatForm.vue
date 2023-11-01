@@ -546,8 +546,9 @@ export default defineComponent({
       };
 
       console.log('Conhecimentos:', conhecimentos);
-      }  catch {
-        console.log("ERRO")
+
+      }  catch(error) {
+        console.log("Erro ao gerar Conhecimentos", error)
       }
     },
 
@@ -645,6 +646,57 @@ export default defineComponent({
       }
     },
 
+    async askHabilidadeToChat(message) {
+      try {
+        const response = await fetch('http://localhost:5000/ask', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ user_message: message }),
+        });
+
+        if (response) {
+          const data = await response.json();
+          const responseMessageHabilidade = data.response;
+          this.chatMessages.push({ role: 'AI', content: responseMessageHabilidade });
+
+          this.generateHabilidade(responseMessageHabilidade);
+
+        } else {
+          console.error('Erro ao enviar mensagem para o backend:', response.statusText);
+        }
+      } catch (error) {
+        console.error('Erro ao enviar mensagem para o backend:', error);
+      } finally {
+        this.loadingGenerateHabilidade=false;
+      }
+    },
+
+    async generateHabilidade (responseMessageHabilidade){
+      const habilidades = [""];
+      const sections = responseMessageHabilidade.split('\n');
+
+      try{
+        for (const section of sections) {
+          habilidades.push(section.trim());
+        }
+
+      console.log('Habilidades:', habilidades);
+
+      this.model.cha = {
+        habilidade: habilidades.join('\n')
+      };
+
+      console.log("Habilidades", habilidades)
+
+      }  catch(error) {
+        console.log("Erro ao gerar Habilidades", error)
+      }
+    },
+
+    //UPGRADE
+
     async sendUpgradeHabilidade () {
     this.loadingUpgradeHabilidade = true; 
       try {
@@ -666,14 +718,14 @@ export default defineComponent({
 
          this.userMessage = '';
 
-         await this.askHabilidadeToChat(userMessage);
+         await this.askUpgradeHabilidadeToChat(userMessage);
 
       } catch (error) {
         console.error('Erro ao enviar:', error);
       }
     },
 
-    async askHabilidadeToChat(message) {
+    async askUpgradeHabilidadeToChat(message) {
       try {
         const response = await fetch('http://localhost:5000/ask', {
           method: 'POST',
@@ -687,40 +739,26 @@ export default defineComponent({
           const data = await response.json();
           const responseMessageHabilidade = data.response;
           this.chatMessages.push({ role: 'AI', content: responseMessageHabilidade });
+          
+        this.habilidadeHistory += `\n LOG:${responseMessageHabilidade}\n`;
 
-          this.getHabilidade(responseMessageHabilidade);
+        console.log(`HISTÓRICO HABILIDADE: ${this.habilidadeHistory}`);
+        this.getUpgradeHabilidade(responseMessageHabilidade);
 
         } else {
-          console.error('Erro ao enviar mensagem para o backend:', response.statusText);
+          console.error('Erro ao enviar mensagem:', response.statusText);
         }
       } catch (error) {
-        console.error('Erro ao enviar mensagem para o backend:', error);
-      } finally {
-        this.loadingGenerateHabilidade=false;
+        console.error('Erro ao enviar mensagem:', error);
+      }  finally {
         this.loadingUpgradeHabilidade=false;
       }
     },
 
-    async getHabilidade (responseMessageHabilidade){
-      const habilidades = [""];
-      const sections = responseMessageHabilidade.split('\n');
+    async getUpgradeHabilidade (responseMessageHabilidade){
+      this.model.cha.habilidade = responseMessageHabilidade;
 
-      try{
-        for (const section of sections) {
-          habilidades.push(section.trim());
-        }
-
-      console.log('Habilidades:', habilidades);
-
-      this.model.cha = {
-        habilidade: habilidades.join('\n')
-      };
-
-    console.log("NOVA HABILIDADE", this.model.cha.habilidade)
-
-      }  catch {
-    console.log("ERRO")
-      }
+      console.log("NEW HABILIDADE ", responseMessageHabilidade);
     },
 // ========================================================HABILIDADE=============================================
 
@@ -750,6 +788,57 @@ export default defineComponent({
       }
     },
 
+    async askAtitudeToChat(message) {
+      try {
+        const response = await fetch('http://localhost:5000/ask', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ user_message: message }),
+        });
+
+        if (response) {
+          const data = await response.json();
+          const responseMessageAtitude = data.response;
+          this.chatMessages.push({ role: 'AI', content: responseMessageAtitude });
+
+          this.generateAtitude(responseMessageAtitude);
+
+        } else {
+          console.error('Erro ao enviar mensagem para o backend:', response.statusText);
+        }
+      } catch (error) {
+        console.error('Erro ao enviar mensagem para o backend:', error);
+      } finally {
+        this.loadingGenerateAtitude=false;
+      }
+    },
+
+    async generateAtitude (responseMessageAtitude){
+      const atitudes = [""];
+      const sections = responseMessageAtitude.split('\n');
+
+      try{
+        for (const section of sections) {
+          atitudes.push(section.trim());
+        }
+
+      console.log('Atitudes:', atitudes);
+
+      this.model.cha = {
+        atitude: atitudes.join('\n')
+      };
+
+    console.log("atitudes", atitudes)
+
+      }  catch {
+    console.log("ERRO")
+      }
+    },
+
+        //UPGRADE
+    
     async sendUpgradeAtitude () {
     this.loadingUpgradeAtitude = true; 
       try {
@@ -772,14 +861,14 @@ export default defineComponent({
 
          this.userMessage = '';
 
-         await this.askAtitudeToChat(userMessage);
+         await this.askUpgradeAtitudeToChat(userMessage);
 
       } catch (error) {
         console.error('Erro ao enviar:', error);
       }
     },
 
-    async askAtitudeToChat(message) {
+    async askUpgradeAtitudeToChat(message) {
       try {
         const response = await fetch('http://localhost:5000/ask', {
           method: 'POST',
@@ -793,40 +882,26 @@ export default defineComponent({
           const data = await response.json();
           const responseMessageAtitude = data.response;
           this.chatMessages.push({ role: 'AI', content: responseMessageAtitude });
+          
+        this.atitudeHistory += `\n LOG:${responseMessageAtitude}\n`;
 
-          this.getAtitude(responseMessageAtitude);
+        console.log(`HISTÓRICO ATITUDE: ${this.atitudeHistory}`);
+        this.getUpgradeAtitude(responseMessageAtitude);
 
         } else {
-          console.error('Erro ao enviar mensagem para o backend:', response.statusText);
+          console.error('Erro ao enviar mensagem:', response.statusText);
         }
       } catch (error) {
-        console.error('Erro ao enviar mensagem para o backend:', error);
-      } finally {
-        this.loadingGenerateAtitude=false;
+        console.error('Erro ao enviar mensagem:', error);
+      }  finally {
         this.loadingUpgradeAtitude=false;
       }
     },
 
-    async getAtitude (responseMessageAtitude){
-      const atitudes = [""];
-      const sections = responseMessageAtitude.split('\n');
+    async getUpgradeAtitude (responseMessageAtitude){
+      this.model.cha.atitude = responseMessageAtitude;
 
-      try{
-        for (const section of sections) {
-          atitudes.push(section.trim());
-        }
-
-      console.log('Atitudes:', atitudes);
-
-      this.model.cha = {
-        atitude: atitudes.join('\n')
-      };
-
-    console.log("NOVA ATITUDE", this.model.cha.atitude)
-
-      }  catch {
-    console.log("ERRO")
-      }
+      console.log("NEW ATITUDE ", responseMessageAtitude);
     },
 // ========================================================ATITUDE=============================================
     async askChaToChat(message) {
