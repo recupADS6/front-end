@@ -14,14 +14,6 @@
       </n-space>
     </n-card>
 
-    <div v-if="candidatoInfo">
-  <n-card>
-    <n-space vertical>
-      <n-text><strong>Candidato:</strong> {{ candidatoInfo }}</n-text>
-    </n-space>
-  </n-card>
-</div>
-    
     <div class="button-group">
       <n-modal
         v-model:show="showModalDelete"
@@ -52,7 +44,7 @@
         </template>
         Excluir
       </n-button>
-      <n-button  :loading="loadingScraping" color="#5380b8"  @click="getScraping(job.jobTitle)">
+      <n-button  :loading="loadingScraping" color="#5380b8"  @click="sendMessage">
         <template #icon>
           <n-icon>
             <search-icon />
@@ -61,7 +53,22 @@
         Scraping
       </n-button>
       </n-space>
-      </div>
+    </div>
+
+    <div v-if="candidatoInfo.length > 0">
+      <n-h1>Candidatos:</n-h1>
+        <n-card>
+            <n-card v-for="(codigo, index) in candidatoInfo" :key="index">
+              <n-space class="candidate-container"  horizontal>
+              <div class="circle">
+              {{ index + 1 }}
+              </div>
+                <n-text><strong>{{ `Candidato ${index+1} - Código: ` }}</strong> {{ codigo }}</n-text>
+              </n-space>
+            </n-card>
+        </n-card>
+    </div>
+
    </div>
     </n-layout-content>
   </n-layout>
@@ -85,7 +92,7 @@
       NH1,
       TrashIcon,
       PenIcon,
-      SearchIcon
+      SearchIcon,
     },
     setup() {
     const job = ref(null);
@@ -94,43 +101,16 @@
     const loadingScraping = ref(false)
     window.$message = useMessage()
     const router = useRouter();
-    const candidatoInfo = ref(null);
-    
-
-
-    const getScraping = async (titulo) => {
-  try {
-    const response = await fetch('http://localhost:7000/scraping', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'text/plain',
-      },
-      body: titulo,
-    });
-
-      
-      const data = await response.json();
-    loadingScraping.value = true; 
-      handleScrapingResponse(data);
-
-  } catch (error) {
-    console.error('Erro ao enviar a requisição para o backend:', error);
-  }
-};
-
-const handleScrapingResponse = (data) => {
-  if (data && data.sobre_profissao && data.sobre_profissao.length > 1) {
-    candidatoInfo.value = data.sobre_profissao[1]; 
-    console.log("Informações do candidato", candidatoInfo.value);
-    loadingScraping.value = false;
-  } else {
-    console.error('Dados do candidato não encontrados.');
-  }
-};
-
-
-
-
+    const cargo = ref('');
+    const conhecimento = ref('');
+    const habilidade = ref(''); 
+    const atitude = ref(''); 
+    const conhecimentos = ref([]);
+    const habilidades = ref([]); 
+    const atitudes = ref([]); 
+    const candidatoInfo = ref([]);
+    const offset = [-17, 17];
+    // candidatoInfo é uma variável reativa com os códigos
 
 
     const fetchJobDetails = async () => {
@@ -139,9 +119,17 @@ const handleScrapingResponse = (data) => {
         const jobId = route.params.id;
         console.log("Fetching job details for ID:", jobId);
         job.value = await getJobById(jobId);
-        const titulo = job.value.jobTitle;
-        console.log("titulo", titulo)
+        cargo.value = job.value.jobTitle;
+        conhecimento.value = job.value.cha.conhecimento.content;
+        habilidade.value = job.value.cha.habilidade.content;
+        atitude.value = job.value.cha.atitude.content;
+
+        console.log("cargo", cargo)
+        console.log("conhecimentos", conhecimento)
+        console.log("habilidades", habilidade)
+        console.log("atitudes", atitude)
         console.log("Job details obtained:", job.value);
+        
       } catch (error) {
         console.error('Erro ao obter os detalhes do trabalho:', error);
       }
@@ -151,16 +139,16 @@ const handleScrapingResponse = (data) => {
 
     const onPositiveClick = async () =>{
       try {
-      const jobId = route.params.id; // Get the job ID from route params
+      const jobId = route.params.id;
       await deleteJob(jobId);
       window.$message.success('Vaga excluída com sucesso!');
-      showModalDelete.value = false;  // Update the ref directly
+      showModalDelete.value = false;
 
-    router.push({ name: 'dashboard-page' });
-    } catch (error) {
-      console.error('Erro ao excluir a vaga:', error);
-    } 
-  };
+      router.push({ name: 'dashboard-page' });
+      } catch (error) {
+        console.error('Erro ao excluir a vaga:', error);
+      } 
+    };
 
   const redirectToEditJob = (jobId) => {
     router.push({ name: 'job-edit'});
@@ -173,30 +161,121 @@ const handleScrapingResponse = (data) => {
       loadingScraping,
       onPositiveClick,
       redirectToEditJob,
-      getScraping,
+      cargo,
+      conhecimento,
+      habilidade,
+      atitude,
+      conhecimentos,
+      habilidades,
+      atitudes,
+      candidatoInfo,
+      offset
+      
     };
   },
     methods:{
-      /*
-      async getScraping() {
+
+    async sendMessage () {
+    this.loadingScraping = true; 
+     //   console.log(`PERGUNTA AO CHATGPT (${this.cargo})${this.conhecimento}, ${this.habilidade}, ${this.atitude}`)
       try {
-        const response = await fetch('http://localhost:7000/scraping', {
+        const userMessage = 
+        `Poderia por favor separar as plavras chaves separadament dos Conhecimento, Habilidades e Atitudes dessa vaga (${this.cargo}) :
+          ${this.conhecimento}, 
+          ${this.habilidade}, 
+          ${this.atitude},
+
+          no seguinte formato:
+          {"conhecimentos": ["palavra chave", "palavra chave" ...], "habilidades":  ["palavra chave", "palavra chave" ...], "atitudes": ["palavra chave", "palavra chave" ...]}
+          `;
+
+        await this.askToChat(userMessage);
+        
+        this.userMessage = '';
+
+      } catch (error) {
+        console.error('Erro ao enviar descrição:', error);
+      }
+    },
+
+    async askToChat(message) {
+      try {
+        const response = await fetch('http://localhost:5000/ask', {
           method: 'POST',
           headers: {
-            'Content-Type': 'text/plain',
+            'Content-Type': 'application/json',
           },
-          body: this.job.jobTitle
+          body: JSON.stringify({ user_message: message }),
         });
+
         if (response) {
-          console.log(response)                    
+          const data = await response.json();
+          const responseMessage = data.response;
+
+         console.log("RESPOSTA CHATGPT : \n", responseMessage)
+
+        const parsedResponse = JSON.parse(responseMessage);
+
+        console.log("RESPOSTA EM JSON : \n", parsedResponse )
+
+        this.conhecimentos = parsedResponse.conhecimentos;
+        this.habilidades = parsedResponse.habilidades;
+        this.atitudes = parsedResponse.atitudes;
+
+        console.log("CARGO: \n", this.cargo);
+        console.log("CONHECIMENTOS: \n", this.conhecimentos);
+        console.log("HABILIDADES: \n", this.habilidades);
+        console.log("ATITUDES: \n", this.atitudes);
+
+        // formatação dos arrays como strings
+        const conhecimentosStr = JSON.stringify(this.conhecimentos);
+        const habilidadesStr = JSON.stringify(this.habilidades);
+        const atitudesStr = JSON.stringify(this.atitudes);
+
+        this.getScraping(this.cargo, conhecimentosStr, habilidadesStr, atitudesStr);
+
         } else {
-          console.error('Erro ao enviar mensagem para o backend:', response.statusText);
+          console.error('Erro ao enviar mensagem para o backend(chat push):', response.statusText);
         }
       } catch (error) {
         console.error('Erro ao enviar mensagem para o backend:', error);
-    }
+      } 
     },
-*/
+
+    async getScraping  (cargo,conhecimentosStr,habilidadesStr,atitudesStr) {
+      try {
+        const requestObject = {
+          cargo: `${cargo}`,
+          conhecimentos: `${conhecimentosStr}`,
+          habilidades: `${habilidadesStr}`,
+          atitudes: `${atitudesStr}`
+        };
+
+        console.log(" REQUEST :", requestObject);
+
+        const response = await fetch('http://localhost:7000/scraping', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json', 
+          },
+          body: JSON.stringify(requestObject),
+        });
+
+          const data = await response.json();
+          console.log("RESPONSE DATA SCRAPING: \n", data);
+          
+          this.candidatoInfo = data;
+
+          console.log("CANDIDATO: ", this.candidatoInfo);
+          
+
+      } catch (error) {
+        console.error('Erro ao enviar a requisição para o backend:', error);
+      } finally {
+        this.loadingScraping = false;
+      }
+    },
+
     async deleteJ (jobId) {
       try {
         await deleteJob(jobId);
@@ -239,5 +318,22 @@ button{
   border-radius: 4px;
 
 }
-
+.candidate-container {
+  display: flex; /* Usando flex para organizar o círculo e o texto */
+  align-items: center; /* Alinhar verticalmente ao centro */
+  margin-bottom: 16px; /* Espaçamento entre candidatos */
+}
+.circle {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: #52A352;
+  font-size: 32px;
+  color: #fff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 18px;
+  margin-right: 16px;
+}
 </style>
