@@ -56,15 +56,25 @@
     </div>
 
     <div v-if="candidatoInfo.length > 0">
-      <n-h1>Candidatos:</n-h1>
+      <n-h1>Candidatos</n-h1>
         <n-card>
-            <n-card v-for="(codigo, index) in candidatoInfo" :key="index">
-              <n-space class="candidate-container"  horizontal>
-              <div class="circle">
-              {{ index + 1 }}
+            <n-card v-for="(codigo, index) in candidatoInfo.slice(0, 8)" :key="index">
+              <div class="candidate-container">
+                <div class="circle">
+                {{ index + 1 }}º
+                </div>
+                <div>
+                <n-text class="candidate"><strong>{{ `Código: ` }}</strong> {{ codigo[0] }}</n-text>
+                </div>
+                <div class="match">
+                  <n-progress
+                  type="line"
+                  :percentage="parseFloat(codigo[1])"
+                  :indicator-placement="'inside'"
+                  :height="24"
+                  />
+                </div>
               </div>
-                <n-text><strong>{{ `Candidato ${index+1} - Código: ` }}</strong> {{ codigo }}</n-text>
-              </n-space>
             </n-card>
         </n-card>
     </div>
@@ -81,7 +91,7 @@
   import { ref, onMounted } from 'vue';
   import { useRoute } from 'vue-router';
   import { useRouter } from 'vue-router';
-  import { Trash as TrashIcon, PencilSharp as PenIcon, Search as SearchIcon} from "@vicons/ionicons5";
+  import { PersonTrash as TrashIcon, PencilSharp as PenIcon, Search as SearchIcon} from "@vicons/ionicons5";
 
   export default {
     components: {
@@ -109,9 +119,6 @@
     const habilidades = ref([]); 
     const atitudes = ref([]); 
     const candidatoInfo = ref([]);
-    const offset = [-17, 17];
-    // candidatoInfo é uma variável reativa com os códigos
-
 
     const fetchJobDetails = async () => {
       try {
@@ -124,11 +131,11 @@
         habilidade.value = job.value.cha.habilidade.content;
         atitude.value = job.value.cha.atitude.content;
 
-        console.log("cargo", cargo)
-        console.log("conhecimentos", conhecimento)
-        console.log("habilidades", habilidade)
-        console.log("atitudes", atitude)
-        console.log("Job details obtained:", job.value);
+        // console.log("cargo", cargo)
+        // console.log("conhecimentos", conhecimento)
+        // console.log("habilidades", habilidade)
+        // console.log("atitudes", atitude)
+        // console.log("Job details obtained:", job.value);
         
       } catch (error) {
         console.error('Erro ao obter os detalhes do trabalho:', error);
@@ -168,9 +175,7 @@
       conhecimentos,
       habilidades,
       atitudes,
-      candidatoInfo,
-      offset
-      
+      candidatoInfo,      
     };
   },
     methods:{
@@ -212,20 +217,20 @@
           const data = await response.json();
           const responseMessage = data.response;
 
-         console.log("RESPOSTA CHATGPT : \n", responseMessage)
+        //console.log("RESPOSTA CHATGPT : \n", responseMessage)
 
         const parsedResponse = JSON.parse(responseMessage);
 
-        console.log("RESPOSTA EM JSON : \n", parsedResponse )
+        //console.log("RESPOSTA EM JSON : \n", parsedResponse )
 
         this.conhecimentos = parsedResponse.conhecimentos;
         this.habilidades = parsedResponse.habilidades;
         this.atitudes = parsedResponse.atitudes;
 
-        console.log("CARGO: \n", this.cargo);
-        console.log("CONHECIMENTOS: \n", this.conhecimentos);
-        console.log("HABILIDADES: \n", this.habilidades);
-        console.log("ATITUDES: \n", this.atitudes);
+        // console.log("CARGO: \n", this.cargo);
+        // console.log("CONHECIMENTOS: \n", this.conhecimentos);
+        // console.log("HABILIDADES: \n", this.habilidades);
+        // console.log("ATITUDES: \n", this.atitudes);
 
         // formatação dos arrays como strings
         const conhecimentosStr = JSON.stringify(this.conhecimentos);
@@ -262,13 +267,12 @@
         });
 
           const data = await response.json();
-          console.log("RESPONSE DATA SCRAPING: \n", data);
+          //console.log("RESPONSE DATA SCRAPING: \n", data);
           
           this.candidatoInfo = data;
 
-          console.log("CANDIDATO: ", this.candidatoInfo);
+          //console.log("CANDIDATOS: ", this.candidatoInfo);
           
-
       } catch (error) {
         console.error('Erro ao enviar a requisição para o backend:', error);
       } finally {
@@ -316,16 +320,16 @@ h1 {
 button{
   border: none;
   border-radius: 4px;
-
 }
 .candidate-container {
-  display: flex; /* Usando flex para organizar o círculo e o texto */
-  align-items: center; /* Alinhar verticalmente ao centro */
-  margin-bottom: 16px; /* Espaçamento entre candidatos */
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
 }
 .circle {
-  width: 40px;
-  height: 40px;
+  width: 56px;
+  height: 56px;
   border-radius: 50%;
   background-color: #52A352;
   font-size: 32px;
@@ -333,7 +337,14 @@ button{
   display: flex;
   justify-content: center;
   align-items: center;
-  font-size: 18px;
-  margin-right: 16px;
+  font-size: 24px;
+  margin-left: 56px;
+}
+.candidate {
+  font-size: 20px;
+  margin-right: 10px;
+}
+.match{
+  width: 50%;
 }
 </style>

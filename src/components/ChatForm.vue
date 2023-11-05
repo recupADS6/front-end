@@ -496,9 +496,10 @@ export default defineComponent({
           ${this.model.jobLevel}, 
           ${this.model.jobDescription}`;
 
-         this.userMessage = '';
 
         await this.askConhecimentoToChat(userMessage);
+
+        this.userMessage = '';
 
       } catch (error) {
         console.error('Erro ao enviar descrição:', error);
@@ -694,7 +695,7 @@ export default defineComponent({
         console.log("Erro ao gerar Habilidades", error)
       }
     },
-
+    
     //UPGRADE
 
     async sendUpgradeHabilidade () {
