@@ -58,7 +58,7 @@
 
       </n-form>
       <div class="button-group">
-        <n-button color="#B04141"  @click="backHome">Voltar</n-button>
+        <n-button color="#B04141" @click="backHome">Voltar</n-button>
         <n-button color="#5380b8" @click="saveChanges">Editar</n-button>
       </div>
     </div>
@@ -68,9 +68,9 @@
   import { NButton, NForm, NFormItemGi, NInput, NSelect, useMessage } from 'naive-ui';
   import { ref, onMounted } from 'vue';
   import { useRoute, useRouter } from 'vue-router';
-  import { getJobById } from '../services/jobsService';
+  //import { getJobById } from '../services/jobsService';
   import axios from 'axios';
-import baseURL from '../services/chatService.js';
+  import baseURL from '../services/chatService.js';
   
   export default {
     components: {
@@ -82,7 +82,7 @@ import baseURL from '../services/chatService.js';
     },
   
     setup() {
-      const job = ref(null);
+      //const job = ref(null);
       const formRef = ref(null);
       const model = ref({
         jobTitle: '',
@@ -108,55 +108,106 @@ import baseURL from '../services/chatService.js';
 
         console.log("Fetching job details for ID:", jobId);
 
-        job.value = await getJobById(jobId);
-        const titulo = job.value.jobTitle;
+        const response = await axios.get(`http://localhost:8090/job/${jobId}`);
+        
+        const job = response.data;
+        console.log("JOB VALUE: ", response)
+                
+        const titulo = job.jobTitle;
 
-        model.value = job.value;
+        model.value = job;
 
-        model.value.jobTitle = job.value.jobTitle;
-        model.value.jobDescription = job.value.jobDescription;
-        model.value.jobLevel = job.value.jobLevel;
-        model.value.cha.conhecimento = job.value.cha.conhecimento.content;
-        model.value.cha.habilidade = job.value.cha.habilidade.content;
-        model.value.cha.atitude = job.value.cha.atitude.content;
-        model.value.jobStatus = job.value.jobStatus;
+        model.value.jobTitle = job.jobTitle;
+        model.value.jobDescription = job.jobDescription;
+        model.value.jobLevel = job.jobLevel;
+        model.value.cha.conhecimento = job.cha.conhecimento.content;
+        model.value.cha.habilidade = job.cha.habilidade.content;
+        model.value.cha.atitude = job.cha.atitude.content;
+        model.value.jobStatus = job.jobStatus;
 
-            console.log('Conhecimentos:',  job.value.cha.conhecimento);
-    console.log('Habilidades:',  job.value.cha.habilidade);
-    console.log('Atitudes:',  job.value.cha.atitude);
+        const chaId = job.cha.id;
 
+        const responseCha = await axios.get(`http://localhost:8090/cha/${chaId}`);
+        
+        const ChaData = responseCha.data;
+        console.log("CHAA VALUE: ", ChaData)
+
+        const conhecimentoId = ChaData.conhecimento.id;
+        const habilidadeId = ChaData.habilidade.id;
+        const atitudeId = ChaData.atitude.id;
+
+
+        console.log("TESTE : \n", conhecimentoId, habilidadeId,atitudeId,chaId)
 
         console.log("titulo", titulo)
-        console.log("Job details obtained:", job.value);
+        console.log("Job details obtained:", job);
       } catch (error) {
         console.error('Erro ao obter os detalhes do trabalho:', error);
       }
-    };
+      };
 
-    onMounted(fetchJobDetails);
+      onMounted(fetchJobDetails);
 
-  
-      const saveChanges = async () => {
+      const saveChanges = async (conhecimentoId, habilidadeId, atitudeId) => {
+        console.log("CHA ID: ", this.chaId)
         try {
-          const jobId = route.params.id; // Assuming this gets the correct job ID
-          const updatedModel = { 
-            id: jobId, // Make sure to include the job ID in the model
-      jobTitle: model.value.jobTitle,
-      jobLevel: model.value.jobLevel,
-      jobDescription: model.value.jobDescription,
-      cha: {
-        conhecimento: model.value.cha.conhecimento.content,
-        habilidade: model.value.cha.habilidade.content,
-        atitude: model.value.cha.atitude.content
-      },
-      jobStatus: model.value.jobStatus
-    };
-    
-console.log("SAVE CHANGES", updatedModel)
+          const jobId = route.params.id;
 
-const responseJob = await axios.put(`${baseURL}/job/${jobId}`, updatedModel);
-console.log('Resposta do servidor:', responseJob.data);
-    //await jobUpdate(jobId, updatedModel);
+          const updatedConhecimento = {
+            //id: this.conhecimentoId,
+            content: model.value.cha.conhecimento.content
+          };
+
+          const updatedHabilidade = {
+            //id: this.habilidadeId,
+            content: model.value.cha.habilidade.content
+          };
+
+          const updatedAtitude = {
+            //id: this.atitudeId,
+            content: model.value.cha.conhecimento.content
+          }
+
+          const updatedCha = {
+            conhecimento:{
+              id: conhecimentoId
+            },
+            habilidade:{
+              id: habilidadeId
+            },
+            atitude:{
+              id: atitudeId
+            }
+
+          }
+
+          const updatedModel = { 
+            id: jobId,
+            jobTitle: model.value.jobTitle,
+            jobLevel: model.value.jobLevel,
+            jobDescription: model.value.jobDescription,
+            cha: {
+              id: this.chaId
+            },
+            jobStatus: model.value.jobStatus
+          }
+          
+    
+      console.log("SAVE CHANGES", updatedModel)
+
+      const responseConhecimento = await axios.put(`${baseURL}/con/${this.conhecimentoId}`, updatedConhecimento)
+      const responseHabilidade = await axios.put(`${baseURL}/hab/${this.habilidadeId}`, updatedHabilidade)
+      const responseAtitude = await axios.put(`${baseURL}/ati/${this.atitudeId}`, updatedAtitude)
+      const responseCha = await axios.put(`${baseURL}/cha/${this.chaId}`, updatedCha)
+      const responseJob = await axios.put(`${baseURL}/job/${jobId}`, updatedModel);
+
+
+      console.log('Resposta do servidor:', responseJob.data);
+      console.log("Conhecimento Update: \n", responseConhecimento.data);
+      console.log("Habilidade Update: \n", responseHabilidade.data);
+      console.log("Atitude Update: \n", responseAtitude.data);
+      console.log("CHA Update: \n", responseCha.data);
+    
           message.success('Alterações salvas com sucesso!');
           router.push({ name: 'dashboard-page' });
         } catch (error) {
@@ -169,23 +220,24 @@ console.log('Resposta do servidor:', responseJob.data);
         formRef,
         model,
         saveChanges,
+
         rules: {
-        jobTitle: {
-          required: true,
-          trigger: ['blur', 'input'],
-          message: 'Por favor, insira o título da vaga'
+          jobTitle: {
+            required: true,
+            trigger: ['blur', 'input'],
+            message: 'Por favor, insira o título da vaga'
+          },
+          jobDescription: {
+            required: true,
+            trigger: ['blur', 'input'],
+            message: 'Por favor, insira a descrição da vaga'
+          },
+          jobLevel: {
+            required: true,
+            trigger: ['blur', 'change'],
+            message: 'Por favor, selecione o nível da vaga'
+          },
         },
-        jobDescription: {
-          required: true,
-          trigger: ['blur', 'input'],
-          message: 'Por favor, insira a descrição da vaga'
-        },
-        jobLevel: {
-          required: true,
-          trigger: ['blur', 'change'],
-          message: 'Por favor, selecione o nível da vaga'
-        },
-      },
       };
     },
     methods:{

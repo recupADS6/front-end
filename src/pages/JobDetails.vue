@@ -91,7 +91,7 @@
   import { ref, onMounted } from 'vue';
   import { useRoute } from 'vue-router';
   import { useRouter } from 'vue-router';
-  import { PersonTrash as TrashIcon, PencilSharp as PenIcon, Search as SearchIcon} from "@vicons/ionicons5";
+  import { Trash as TrashIcon, PencilSharp as PenIcon, Search as SearchIcon} from "@vicons/ionicons5";
 
   export default {
     components: {
