@@ -26,7 +26,14 @@
         />
       </n-form-item-gi>
       <n-form-item-gi>
-        <n-button class="upgrade-button" color="#F2C94C"  text-color="#607004" :loading="loadingUpgrade" @click="sendDescription" icon-placement="left">
+        <n-button 
+          class="upgrade-button" 
+          color="#F2C94C"  
+          text-color="#607004" 
+          :loading="loadingUpgrade" 
+          @click="sendDescription" 
+          :disabled="model.jobDescription === ''" 
+          icon-placement="left">
         <template #icon>
           <n-icon>
             <sparkles-icon />
@@ -64,7 +71,8 @@
         class="upgrade-button"
         color="#73A79A"  
         @click="sendConhecimento" 
-        :loading="loadingGenerateConhecimento" 
+        :loading="loadingGenerateConhecimento"
+        :disabled="model.cha.conhecimento !== ''"
         icon-placement="left">
         <template #icon>
           <n-icon>
@@ -79,6 +87,7 @@
         text-color="white"
         :loading="loadingUpgradeConhecimento"
         @click="sendUpgradeConhecimento"
+        :disabled="model.cha.conhecimento === ''"
         icon-placement="left"
         >
         <template #icon>
@@ -120,6 +129,7 @@
         color="#73A79A"  
         @click="sendHabilidade" 
         :loading="loadingGenerateHabilidade" 
+        :disabled="model.cha.habilidade !== ''"
         icon-placement="left">
         <template #icon>
           <n-icon>
@@ -135,6 +145,7 @@
         :loading="loadingUpgradeHabilidade"
         @click="sendUpgradeHabilidade"
         icon-placement="left"
+        :disabled="model.cha.habilidade === ''"
         >
         <template #icon>
           <n-icon>
@@ -145,8 +156,6 @@
         </n-button>
         </n-button-group>
       </n-form-item-gi>
-
-
       <n-form-item-gi class="label" :span="24">
       <div>
       Atitudes
@@ -178,6 +187,7 @@
         color="#73A79A"  
         @click="sendAtitude" 
         :loading="loadingGenerateAtitude" 
+        :disabled="model.cha.atitude !== ''"
         icon-placement="left">
         <template #icon>
           <n-icon>
@@ -193,6 +203,7 @@
         :loading="loadingUpgradeAtitude"
         @click="sendUpgradeAtitude"
         icon-placement="left"
+        :disabled="model.cha.atitude === ''"
         >
         <template #icon>
           <n-icon>
@@ -209,6 +220,7 @@
         v-model:show="showModalCancel"
         :mask-closable="false"
         preset="dialog"
+        type="error"
         title="Cancelar"
         content="Tem certeza de que deseja cancelar? Todas as informações não salvas serão perdidas."
         positive-text="Confirmar"
@@ -230,6 +242,7 @@
           attr-type="submit"
           :mask-closable="false"
           preset="dialog"
+          type="warning"
           title="Confirmar Cadastro"
           content="Confirmar o cadastro da vaga?"
           positive-text="Confirmar"
@@ -250,7 +263,7 @@
 </template>
 
 <script>
-import { defineComponent, ref} from 'vue'
+import { defineComponent, ref, watch} from 'vue'
 import { useMessage, useLoadingBar } from 'naive-ui'
 import axios from 'axios';
 import baseURL from '../services/chatService.js';
@@ -289,6 +302,47 @@ export default defineComponent({
     const loadingGenerate = ref(false);
     const showModalSubmit = ref(false)
     const showModalCancel = ref(false);
+    const jobDescription = ref('');
+    const conhecimento = ref('')
+    const habilidade = ref('');
+    const atitude = ref('');
+    const error = ref('')
+
+    watch(jobDescription, async (newJobDescription) => {
+      if (newJobDescription === '') {
+        error.value = 'A Descrição da vaga não pode estar vazia para aprimorá-la!'
+        console.log(error.value)
+      } else {
+        error.value = ''
+      }
+    }),
+
+    watch(conhecimento, async (newConhecimento) => {
+      if (newConhecimento === '') {
+        error.value = 'O Conhecimento não pode estar vazio para aprimorá-lo!'
+        console.log(error.value)
+      } else {
+        error.value = ''
+      }
+    }),
+
+    watch(habilidade, (newHabilidade) => {
+      if (newHabilidade === '') {
+          error.value = 'A Habilidade não pode estar vazia para aprimorá-la!'
+          console.log(error.value)
+        } else {
+          error.value = ''
+        }
+    });
+
+    watch(atitude, (newAtitude) => {
+      if (newAtitude === '') {
+        error.value = 'A Atitude não pode estar vazia para aprimorá-la!'
+        console.log(error.value)
+      } else {
+          error.value = ''
+      }
+    });
 
     return {
       conhecimentoHistory,
@@ -311,11 +365,11 @@ export default defineComponent({
       formRef,
       model: ref({
         jobTitle: null,
-        jobDescription: null,
+        jobDescription: '',
         cha:{
-          conhecimento:null,
-          habilidade:null,
-          atitude:null
+          conhecimento:'',
+          habilidade:'',
+          atitude:''
         },
         jobLevel: null,
         jobStatus: null,
@@ -348,9 +402,11 @@ export default defineComponent({
         }).catch((error) => {
           console.error('Erro na validação:', error);
         });
-      },  
+      }, 
+
     };
   },
+
   methods:{
 
    async sendDescription  () {
