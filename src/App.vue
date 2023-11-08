@@ -1,7 +1,7 @@
 <template>
   <n-loading-bar-provider>
     <n-message-provider>
-      <div id="app">
+      <div id="app" :style="getPageStyle">
         <router-view/>
       </div>
     </n-message-provider>
@@ -12,17 +12,31 @@
 <script>
 export default {
   name: 'App',
+  computed: {
+    getPageStyle() {
+      if (this.$route.name === 'cadastrar-usuario') {
+        return {
+          fontFamily: 'Avenir, Helvetica, Arial, sans-serif',
+          WebkitFontSmoothing: 'antialiased',
+          MozOsxFontSmoothing: 'grayscale',
+          color: '#2c3e50',
+        };
+      } else {
+        return {
+          fontFamily: 'Avenir, Helvetica, Arial, sans-serif',
+          WebkitFontSmoothing: 'antialiased',
+          MozOsxFontSmoothing: 'grayscale',
+          color: '#2c3e50',
+          marginTop: '60px',
+        };
+      }
+    }
 }
+};
 </script>
 
 <style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  color: #2c3e50;
-  margin-top: 60px;
-}
+
 body {
   margin: 0;
   padding: 0;

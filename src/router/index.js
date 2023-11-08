@@ -4,6 +4,7 @@ import CadastroVaga from '../pages/CadastroVaga.vue'
 import VagaChatgpt from '../pages/VagaChatgpt.vue'
 import JobDetails from '../pages/JobDetails.vue'
 import JobEdit from '../pages/JobEdit.vue'
+import UserRegistration from '../pages/UserRegistration.vue'
 
 const routes = [
   {
@@ -30,6 +31,11 @@ const routes = [
     path: '/editar/:id',
     name: 'job-edit',
     component: JobEdit,
+  },
+  {
+    path: '/cadastrar-usuario',
+    name: 'cadastrar-usuario',
+    component: UserRegistration
   }
 ]
 
