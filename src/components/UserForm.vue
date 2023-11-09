@@ -18,11 +18,11 @@
             <n-input v-model:value="userData.userName" placeholder="Nome"/>
           </n-form-item-row>
           <n-form-item-row label="Email" label-style="color: white">
-            <n-input v-model:value="userData.userEmail" placeholder="E-mail"/>
+            <n-input v-model:value="userData.email" placeholder="E-mail"/>
           </n-form-item-row>
           <n-form-item-row label="Password" label-style="color: white">
             <n-input     
-            v-model:value="userData.userPassword" 
+            v-model:value="userData.password" 
             type="password"
             show-password-on="click"
             placeholder="Password"
@@ -32,7 +32,7 @@
             </template>
           </n-form-item-row>
         </n-form>
-        <n-button color="#27AE60" block strong @click="registerUser">
+        <n-button color="#27AE60" block strong type="submit" @click="registerUser">
           Cadastrar
         </n-button>
         </n-card>
@@ -48,9 +48,7 @@
 
     export default defineComponent({
     setup() {
-      var timeInMs = Date.now();
         return {
-          timeInMs,
         GlassesOutline,
         };
     },
@@ -58,12 +56,10 @@
         return {
         userData: {
             userName: '',
-            userEmail: '',
-            userPassword: '',
+            email: '',
+            password: '',
             userRole: 'ROLE_USER',
             userStatus: true,
-            createAt: this.timeInMs,
-            updatedAt: this.timeInMs,
         },
         customContentStyle: {
             background: '#000000',
@@ -76,6 +72,7 @@
     methods: {
         async registerUser() {
         try {
+          console.log("TESTE : ", this.userData)
             const response = await axios.post(`${baseURL}/api/users`, this.userData);
             console.log('Usuário registrado com sucesso', response.data);
         } catch (error) {
