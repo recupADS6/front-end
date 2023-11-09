@@ -14,26 +14,26 @@
         <n-card :content-style="customContentStyle">     
         <n-form>
             <h3>Realize seu cadastro</h3>
-          <n-form-item-row label="Company">
-            <n-input />
+          <n-form-item-row label="Nome" label-style="color: white">
+            <n-input v-model:value="userData.userName" placeholder="Nome"/>
           </n-form-item-row>
-          <n-form-item-row label="Email">
-            <n-input />
+          <n-form-item-row label="Email" label-style="color: white">
+            <n-input v-model:value="userData.userEmail" placeholder="E-mail"/>
           </n-form-item-row>
-          <n-form-item-row label="Password">
-            <n-input       
+          <n-form-item-row label="Password" label-style="color: white">
+            <n-input     
+            v-model:value="userData.userPassword" 
             type="password"
             show-password-on="click"
             placeholder="Password"
             :maxlength="8" />
-
             <template #password-visible-icon>
                 <n-icon :size="16" :component="GlassesOutline" />
             </template>
           </n-form-item-row>
         </n-form>
-        <n-button type="primary" block secondary strong>
-          Sign up
+        <n-button color="#27AE60" block strong @click="registerUser">
+          Cadastrar
         </n-button>
         </n-card>
       </div>
@@ -48,7 +48,9 @@
 
     export default defineComponent({
     setup() {
+      var timeInMs = Date.now();
         return {
+          timeInMs,
         GlassesOutline,
         };
     },
@@ -58,6 +60,10 @@
             userName: '',
             userEmail: '',
             userPassword: '',
+            userRole: 'ROLE_USER',
+            userStatus: true,
+            createAt: this.timeInMs,
+            updatedAt: this.timeInMs,
         },
         customContentStyle: {
             background: '#000000',
@@ -67,13 +73,10 @@
         },
         };
     },
-
-
-
     methods: {
         async registerUser() {
         try {
-            const response = await axios.post(`${baseURL}/user/add`, this.userData);
+            const response = await axios.post(`${baseURL}/api/users`, this.userData);
             console.log('Usuário registrado com sucesso', response.data);
         } catch (error) {
             console.error('Erro ao registrar o usuário', error);
@@ -93,12 +96,10 @@
   
   .left-half {
     flex: 1;
-
     display: flex;
     justify-content: center;
     align-items: center;
   }
-  
   .right-half {
     flex: 1;
     background-color: black;
@@ -111,13 +112,16 @@
     background-color: black;
     border: 0;
   }
-.img-login {
-  width:540px;
-  height: 540px;
-}
-.welcome-text {
+  .img-login {
+    width:480px;
+    height: 480px;
+  }
+  .welcome-text {
     font-size: 24px;
     text-align: center;
+  }
+  n-form-item-row label{
+    color:brown;
   }
 </style>
   
