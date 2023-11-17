@@ -12,15 +12,19 @@
       </div>
       <div class="right-half">
         <n-card :content-style="customContentStyle">     
-        <n-form>
+        <n-form
+        ref="formRef"
+        :rules="rules"
+        :model="userData"
+        >
             <h3>Realize seu cadastro</h3>
-          <n-form-item-row label="Nome" label-style="color: white">
+          <n-form-item-row label="Nome" label-style="color: white" path="userName">
             <n-input v-model:value="userData.userName" placeholder="Nome"/>
           </n-form-item-row>
-          <n-form-item-row label="Email" label-style="color: white">
+          <n-form-item-row label="Email" label-style="color: white" path="email">
             <n-input v-model:value="userData.email" placeholder="E-mail"/>
           </n-form-item-row>
-          <n-form-item-row label="Password" label-style="color: white">
+          <n-form-item-row label="Senha" label-style="color: white" path="password">
             <n-input     
             v-model:value="userData.password" 
             type="password"
@@ -32,7 +36,21 @@
             </template>
           </n-form-item-row>
         </n-form>
-        <n-button color="#27AE60" block strong type="submit" @click="registerUser">
+
+        <n-modal
+          v-model:show="showModalSubmit"
+          attr-type="submit"
+          :mask-closable="false"
+          preset="dialog"
+          type="success"
+          title="Confirmar Cadastro"
+          content="Confirmar o cadastro do usuário?"
+          positive-text="Confirmar"
+          negative-text="Cancelar"
+          @positive-click="registerUser()"
+          @negative-click="cancelForm"
+      />
+        <n-button color="#27AE60" block strong type="submit" @click="handleValidateClick">
           Cadastrar
         </n-button>
         </n-card>
@@ -44,23 +62,54 @@
   import axios from 'axios';
   import baseURL from '../services/chatService.js';
   import { GlassesOutline } from "@vicons/ionicons5";
-  import { defineComponent } from "vue";
+  import { defineComponent, ref } from "vue";
+  import { useMessage } from 'naive-ui'
+  
 
     export default defineComponent({
     setup() {
-        return {
-        GlassesOutline,
-        };
-    },
-    data() {
-        return {
-        userData: {
+      const showModalSubmit = ref(false)
+      const formRef = ref(null);
+      window.$message = useMessage()
+      const message = useMessage();
+  
+    return {
+      GlassesOutline,
+       showModalSubmit,
+       formRef,
+       userData: ref({
             userName: '',
             email: '',
             password: '',
             userRole: 'ROLE_USER',
-            userStatus: true,
-        },
+        }),
+       
+       rules: {
+        userName: [{ required: true, trigger: 'blur', message: 'Por favor, insira o nome do usuário', warningOnly: true, }],
+        email: [{ required: true, trigger: 'change', message: 'Por favor, insira o e-mail!', warningOnly: true, }],
+        password: [{ required: true, trigger: 'blur', message: 'Por favor, insira uma senha' , warningOnly: true,}]
+       },
+    
+    async handleValidateClick(e) {
+            e.preventDefault();
+            formRef.value?.validate((errors) => {
+          if (!errors) {
+            console.log("validado")
+            showModalSubmit.value = true;
+          } else {
+            console.log(errors);
+            message.error("Preencha os campos indicados!");
+          }
+        }).catch((error) => {
+          console.error('Erro na validação:', error);
+        });
+      }, 
+
+    };
+    },
+
+    data() {
+        return {
         customContentStyle: {
             background: '#000000',
             fontSize: '24px', 
@@ -72,15 +121,29 @@
     methods: {
         async registerUser() {
         try {
-          console.log("TESTE : ", this.userData)
             const response = await axios.post(`${baseURL}/api/users`, this.userData);
             console.log('Usuário registrado com sucesso', response.data);
+            this.showModalSubmit = false
+            this.clearModel();
+            window.$message.success('Usuário cadastrado com sucesso!');
         } catch (error) {
             console.error('Erro ao registrar o usuário', error);
+            window.$message.error('Erro ao registrar o usuário');
         }
+        },
+        cancelSubmit () {
+          this.showModalSubmit = false
+        },
+        // limpar model
+        async clearModel (){
+        this.userData = {
+                userName: null,
+                email: null,
+                password: null,
+              };
+        },
         }
-    }
-    })
+        })
 
 </script>
   
