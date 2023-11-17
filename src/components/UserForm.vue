@@ -3,11 +3,16 @@
       <div class="left-half">
         <table>
          <tr>
-          <img src="../assets/sign_in.svg" class="img-login" />
+          <td class="welcome-text">
+          <img src="../assets/logo-recrutatech.svg" class="img-login" />
+        </td>
          </tr>
          <tr>
+          <td>
           <p class="welcome-text">Bem-Vindo(a)!</p>
-         </tr>
+          <p class="register-text">Participe da transformação digital do recrutamento! Registre-se agora para acessar nossa plataforma inovadora para a seleção de candidatos qualificados.</p>
+        </td> 
+        </tr>
         </table>
       </div>
       <div class="right-half">
@@ -159,6 +164,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    padding: 30px;
   }
   .right-half {
     flex: 1;
@@ -173,11 +179,16 @@
     border: 0;
   }
   .img-login {
-    width:480px;
-    height: 480px;
+    width: 400px;
+    height: 400px;
+    margin-bottom: -50px;
   }
   .welcome-text {
     font-size: 24px;
+    text-align: center;
+  }
+  .register-text {
+    font-size: 20px;
     text-align: center;
   }
   n-form-item-row label{
