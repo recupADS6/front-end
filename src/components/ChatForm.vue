@@ -263,7 +263,7 @@
 </template>
 
 <script>
-import { defineComponent, ref, watch} from 'vue'
+import { defineComponent, ref} from 'vue'
 import { useMessage, useLoadingBar } from 'naive-ui'
 import axios from 'axios';
 import baseURL from '../services/chatService.js';
@@ -302,12 +302,14 @@ export default defineComponent({
     const loadingGenerate = ref(false);
     const showModalSubmit = ref(false)
     const showModalCancel = ref(false);
+    /*
     const jobDescription = ref('');
     const conhecimento = ref('')
     const habilidade = ref('');
     const atitude = ref('');
     const error = ref('')
-
+    */
+/*
     watch(jobDescription, async (newJobDescription) => {
       if (newJobDescription === '') {
         error.value = 'A Descrição da vaga não pode estar vazia para aprimorá-la!'
@@ -343,7 +345,7 @@ export default defineComponent({
           error.value = ''
       }
     });
-
+*/
     return {
       conhecimentoHistory,
       habilidadeHistory,
@@ -461,7 +463,7 @@ export default defineComponent({
       };
       console.log("NEW DESCRIPTION ", requestBody);
     },
-
+/*
     async sendMessage () {
       this.loadingGenerate = true;
       const userMessage = 
@@ -494,7 +496,8 @@ export default defineComponent({
       this.askChaToChat(message);
 
     },
-
+    */
+/*
     async sendCha () {
     this.loadingUpgradeCha = true; 
       try {
@@ -534,6 +537,7 @@ export default defineComponent({
         console.error('Erro ao enviar descrição:', error);
       }
     },
+    */
 // ========================================================CONHECIMENTO=============================================
     async sendConhecimento () {
     this.loadingGenerateConhecimento = true; 
@@ -599,7 +603,8 @@ export default defineComponent({
         }
 
       this.model.cha = {
-        conhecimento: conhecimentos.join('\n')
+      ...this.model.cha, 
+      conhecimento: conhecimentos.join('\n')
       };
 
       console.log('Conhecimentos:', conhecimentos);
@@ -742,7 +747,8 @@ export default defineComponent({
       console.log('Habilidades:', habilidades);
 
       this.model.cha = {
-        habilidade: habilidades.join('\n')
+      ...this.model.cha,
+      habilidade: habilidades.join('\n')
       };
 
       console.log("Habilidades", habilidades)
@@ -884,7 +890,8 @@ export default defineComponent({
       console.log('Atitudes:', atitudes);
 
       this.model.cha = {
-        atitude: atitudes.join('\n')
+      ...this.model.cha,
+      atitude: atitudes.join('\n')
       };
 
     console.log("atitudes", atitudes)
@@ -961,6 +968,7 @@ export default defineComponent({
       console.log("NEW ATITUDE ", responseMessageAtitude);
     },
 // ========================================================ATITUDE=============================================
+/*
     async askChaToChat(message) {
       try {
         const response = await fetch('http://localhost:5000/ask', {
@@ -989,6 +997,7 @@ export default defineComponent({
         this.loadingUpgradeAtitude=false;
       }
     },
+    */
 
     async extractCHA(responseMessageCha) {
     const conhecimentos = [""];
@@ -1018,10 +1027,6 @@ export default defineComponent({
         }
       }
     }
-
-    console.log('Conhecimentos:', conhecimentos);
-    console.log('Habilidades:', habilidades);
-    console.log('Atitudes:', atitudes);
 
     this.model.cha = {
       conhecimento: conhecimentos.join('\n'),
