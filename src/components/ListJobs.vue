@@ -7,6 +7,9 @@
     <n-tabs type="line" animated>
       <n-tab-pane name="jobs-open" tab="Abertas">
         <n-space vertical>
+          <div v-if="jobsFilled.length === 0">
+            <n-text>Ops! Parece que ainda não há vagas abertas</n-text>
+          </div>
           <div v-for="job in jobsFilled" :key="job.id">
             <n-card class="jobs-card" :title="job.jobTitle" size="large" content-style="true" :header-style="customHeaderStyle">
               <template #header-extra>
@@ -21,11 +24,10 @@
                  </template>
               <n-space vertical>
                 <n-text><strong>Nível:</strong> {{ job.jobLevel }}</n-text>
-                <n-text><strong>CHA:</strong> </n-text>
+                <n-text><strong>Descrição</strong> {{ job.jobDescription }}</n-text>
                 <n-text><strong>Conhecimentos:</strong> {{ job.cha.conhecimento.content }}</n-text>
                 <n-text><strong>Habilidades:</strong> {{ job.cha.habilidade.content }}</n-text>
                 <n-text><strong>Atitudes:</strong> {{ job.cha.atitude.content }}</n-text>
-                <n-text><strong>Descrição</strong> {{ job.jobDescription }}</n-text>
               </n-space>
             </n-card>
           </div>
@@ -33,15 +35,17 @@
       </n-tab-pane>
       <n-tab-pane name="completed-jobs" tab="Concluídas">
         <n-space vertical>
+          <div v-if="jobsOpen.length === 0">
+            <n-text>Ops! Parece que ainda não há vagas concluídas</n-text>
+          </div>
           <div v-for="job in jobsOpen" :key="job.id">
             <n-card class="jobs-card" :title="job.title" size="large">
               <n-space vertical>
                 <n-text><strong>Nível:</strong> {{ job.jobLevel }}</n-text>
-                <n-text><strong>CHA:</strong> </n-text>
+                <n-text><strong>Descrição</strong> {{ job.jobDescription }}</n-text>
                 <n-text><strong>Conhecimentos:</strong> {{ job.cha.conhecimento.content }}</n-text>
                 <n-text><strong>Habilidades:</strong> {{ job.cha.habilidade.content }}</n-text>
                 <n-text><strong>Atitudes:</strong> {{ job.cha.atitude.content }}</n-text>
-                <n-text><strong>Descrição</strong> {{ job.jobDescription }}</n-text>
               </n-space>
             </n-card>
           </div>
@@ -91,29 +95,33 @@
       console.log("props", props);
 
       onMounted(async () => {
-        jobsList.value = await getAllJobs();
+  jobsList.value = await getAllJobs();
 
-        jobsList.value.map (job => {
-          if (job.status === 'open') {
-            jobsOpen.value.push(job)
-          } else {
-            jobsFilled.value.push(job)
-          }
-        })
-      });
-
-      function updateLists(jobs) {
-        jobsOpen.value = [];
-        jobsFilled.value = [];
-
-        jobs.forEach(job => {
-          if (job.status === 'open') {
-            jobsOpen.value.push(job);
-          } else {
-            jobsFilled.value.push(job);
-          }
-        });
+  if (jobsList.value) {
+    jobsList.value.map(job => {
+      if (job.status === 'open') {
+        jobsOpen.value.push(job);
+      } else {
+        jobsFilled.value.push(job);
       }
+    });
+  }
+});
+
+function updateLists(jobs) {
+  jobsOpen.value = [];
+  jobsFilled.value = [];
+
+  if (jobs) {
+    jobs.forEach(job => {
+      if (job.status === 'open') {
+        jobsOpen.value.push(job);
+      } else {
+        jobsFilled.value.push(job);
+      }
+    });
+  }
+}
     
     watch(
       () => props.jobs,
@@ -151,5 +159,8 @@
   .list-job-content {
     margin-left: 25px;
     margin-right: 5px;
+  }
+  .cha {
+    font-size: 16px;
   }
 </style>
