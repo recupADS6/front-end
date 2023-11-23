@@ -1052,9 +1052,9 @@ export default defineComponent({
         content:  this.model.cha.atitude
       };
       try{
-        const respostaC = await axios.post(`${baseURL}/con/add`, requestBodyC)
-        const respostaH = await axios.post(`${baseURL}/hab/add`, requestBodyH)
-        const respostaA = await axios.post(`${baseURL}/ati/add`, requestBodyA)
+        const respostaC = await axios.post(`${baseURL}/knowledge/add`, requestBodyC)
+        const respostaH = await axios.post(`${baseURL}/ability/add`, requestBodyH)
+        const respostaA = await axios.post(`${baseURL}/attitude/add`, requestBodyA)
 
         const conhecimentoId = respostaC.data.id
         const habilidadeId = respostaH.data.id
@@ -1066,7 +1066,7 @@ export default defineComponent({
           atitude: { id: `${atitudeId}` }
         };
 
-        const respostaCha = await axios.post(`${baseURL}/cha/add`, requestBodyCHA)
+        const respostaCha = await axios.post(`${baseURL}/kaa/add`, requestBodyCHA)
 
         return respostaCha.data.id;
 
