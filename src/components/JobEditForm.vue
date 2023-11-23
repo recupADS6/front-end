@@ -127,7 +127,7 @@
 
         const chaId = job.cha.id;
 
-        const responseCha = await axios.get(`http://localhost:8090/cha/${chaId}`);
+        const responseCha = await axios.get(`http://localhost:8090/kaa/${chaId}`);
         
         const ChaData = responseCha.data;
         console.log("CHAA VALUE: ", ChaData)
@@ -195,10 +195,10 @@
     
       console.log("SAVE CHANGES", updatedModel)
 
-      const responseConhecimento = await axios.put(`${baseURL}/con/${this.conhecimentoId}`, updatedConhecimento)
-      const responseHabilidade = await axios.put(`${baseURL}/hab/${this.habilidadeId}`, updatedHabilidade)
-      const responseAtitude = await axios.put(`${baseURL}/ati/${this.atitudeId}`, updatedAtitude)
-      const responseCha = await axios.put(`${baseURL}/cha/${this.chaId}`, updatedCha)
+      const responseConhecimento = await axios.put(`${baseURL}/knowledge/${this.conhecimentoId}`, updatedConhecimento)
+      const responseHabilidade = await axios.put(`${baseURL}/ability/${this.habilidadeId}`, updatedHabilidade)
+      const responseAtitude = await axios.put(`${baseURL}/attitude/${this.atitudeId}`, updatedAtitude)
+      const responseCha = await axios.put(`${baseURL}/kaa/${this.chaId}`, updatedCha)
       const responseJob = await axios.put(`${baseURL}/job/${jobId}`, updatedModel);
 
 

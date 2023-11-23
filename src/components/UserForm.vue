@@ -126,7 +126,7 @@
     methods: {
         async registerUser() {
         try {
-            const response = await axios.post(`${baseURL}/api/users`, this.userData);
+            const response = await axios.post(`${baseURL}/users`, this.userData);
             console.log('Usuário registrado com sucesso', response.data);
             this.showModalSubmit = false
             this.clearModel();
