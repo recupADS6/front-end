@@ -302,13 +302,18 @@ export default defineComponent({
     const loadingGenerate = ref(false);
     const showModalSubmit = ref(false)
     const showModalCancel = ref(false);
-    /*
-    const jobDescription = ref('');
-    const conhecimento = ref('')
-    const habilidade = ref('');
-    const atitude = ref('');
-    const error = ref('')
-    */
+    const jobId = ref('');
+    const cargo = ref('');
+    const conhecimentoScraping = ref('');
+    const habilidadeScraping = ref(''); 
+    const atitudeScraping = ref(''); 
+    const conhecimentosScraping = ref([]);
+    const habilidadesScraping = ref([]);
+    const atitudesScraping = ref([]);
+    const conhecimentosResult  = ref([]);
+    const habilidadesResult  = ref([]); 
+    const atitudesResult = ref([]);
+    const candidatoInfo = ref([]);
 /*
     watch(jobDescription, async (newJobDescription) => {
       if (newJobDescription === '') {
@@ -365,6 +370,18 @@ export default defineComponent({
       chatMessages,
       userMessage,
       formRef,
+      jobId,
+      cargo,
+      conhecimentoScraping,
+      habilidadeScraping,
+      atitudeScraping,
+      conhecimentosScraping,
+      habilidadesScraping,
+      atitudesScraping,
+      conhecimentosResult,
+      habilidadesResult,
+      atitudesResult,
+      candidatoInfo,
       model: ref({
         jobTitle: null,
         jobDescription: '',
@@ -463,81 +480,7 @@ export default defineComponent({
       };
       console.log("NEW DESCRIPTION ", requestBody);
     },
-/*
-    async sendMessage () {
-      this.loadingGenerate = true;
-      const userMessage = 
-      `Seguindo a estrutura: 
 
-      Conhecimentos:
-      - item 1;
-      - Item2.
-      etc.
-
-      Habilidades:
-      - item 1;
-      - Item2.
-      etc.
-
-      Atitudes:
-      - item 1;
-      - Item2.
-      etc. 
-      
-    Escreva Conhecimentos, Habilidades e Atitudes da seguinte vaga: 
-        ${this.model.jobTitle}, 
-        ${this.model.jobLevel}, 
-        ${this.model.jobDescription}`;
-
-      const message = userMessage;
-      this.chatMessages.push({ role: 'user', content: message });
-      this.userMessage = '';
-
-      this.askChaToChat(message);
-
-    },
-    */
-/*
-    async sendCha () {
-    this.loadingUpgradeCha = true; 
-      try {
-        const userMessage = 
-        `Seguindo a estrutura: 
-
-        Conhecimentos:
-        - item 1;
-        - Item2.
-        etc.
-
-        Habilidades:
-        - item 1;
-        - Item2.
-        etc.
-
-        Atitudes:
-        - item 1;
-        - Item2.
-        etc. 
-
-        Aprimore os Conhecimentos, Habilidades e Atitudes com palavras completamente diferentes:
-        ${this.model.cha.conhecimento},
-        ${this.model.cha.habilidade},
-        ${this.model.cha.atitude},
-        
-        Da seguinte vaga: 
-          ${this.model.jobTitle}, 
-          ${this.model.jobLevel}, 
-          ${this.model.jobDescription}`;
-
-         this.userMessage = '';
-
-        this.askChaToChat(userMessage);
-
-      } catch (error) {
-        console.error('Erro ao enviar descrição:', error);
-      }
-    },
-    */
 // ========================================================CONHECIMENTO=============================================
     async sendConhecimento () {
     this.loadingGenerateConhecimento = true; 
@@ -968,37 +911,6 @@ export default defineComponent({
       console.log("NEW ATITUDE ", responseMessageAtitude);
     },
 // ========================================================ATITUDE=============================================
-/*
-    async askChaToChat(message) {
-      try {
-        const response = await fetch('http://localhost:5000/ask', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ user_message: message }),
-        });
-
-        if (response) {
-          const data = await response.json();
-          const responseMessageCha = data.response;
-          this.chatMessages.push({ role: 'AI', content: responseMessageCha });
-
-        } else {
-          console.error('Erro ao enviar mensagem para o backend:', response.statusText);
-        }
-      } catch (error) {
-        console.error('Erro ao enviar mensagem para o backend:', error);
-      } finally {
-        this.loadingGenerate = false; 
-        this.loadingUpgradeCha=false;
-        this.loadingUpgradeConhecimento=false;
-        this.loadingUpgradeHabilidade=false;
-        this.loadingUpgradeAtitude=false;
-      }
-    },
-    */
-
     async extractCHA(responseMessageCha) {
     const conhecimentos = [""];
     const habilidades = [""];
@@ -1088,6 +1000,10 @@ export default defineComponent({
             };
         const responseJob = await axios.post(`${baseURL}/job/add`, jobData);
         console.log('Resposta do servidor:', responseJob.data);
+
+        this.jobId = responseJob.data.id;
+        console.log('ID do JOB: \n ', responseJob.data.id);
+
         window.$message.success('Vaga cadastrada com sucesso!');
 
         this.clearModel();
@@ -1128,6 +1044,9 @@ export default defineComponent({
 
     onPositiveClick () {
       this.clearModel();
+
+      this.getJobScraping();
+
       this.$router.push({ name: 'dashboard-page' });
       this.showModalCancel = false
       },
@@ -1139,6 +1058,171 @@ export default defineComponent({
       this.clearModel();
       this.$router.push({ name: 'dashboard-page' });
     },
+
+//============================================== SCRAPING =========================================================================
+
+    async getJobScraping (jobId) {
+      try {
+        const responseJobScraping = await axios.get(`${baseURL}/job/${jobId}`);
+        console.log('Resposta do servidor (JOB SCRAPING):', responseJobScraping);
+
+        this.conhecimentoScraping = responseJobScraping.cha.conhecimento;
+        this.habilidadeScraping = responseJobScraping.cha.habilidade;
+        this.atitudeScraping = responseJobScraping.cha.atitude;
+        this.cargo = responseJobScraping.jobTitle;
+
+        await this.sendMessage();
+
+      } catch (error) {
+        console.error('Erro ao enviar requisição:', error);
+        window.$message.error('Erro ao buscar candidatos! Tente novamente.');
+      }
+
+    },
+
+    async sendMessage () { 
+     //console.log(`PERGUNTA AO CHATGPT - SCRAPING (${this.cargo})${this.conhecimento}, ${this.habilidade}, ${this.atitude}`)
+      try {
+        const userMessage = 
+        `Poderia separar as palavras chaves separadamente de Conhecimento, Habilidades e Atitudes dessa vaga (${this.cargo}) :
+          ${this.conhecimentoScraping}, 
+          ${this.habilidadeScraping}, 
+          ${this.atitudeScraping},
+
+          no seguinte formato:
+          {"conhecimentos": ["palavra chave", "palavra chave" ...], "habilidades":  ["palavra chave", "palavra chave" ...], "atitudes": ["palavra chave", "palavra chave" ...]}
+          `;
+
+        await this.askToChat(userMessage);
+        
+        this.userMessage = '';
+
+      } catch (error) {
+        console.error('Erro ao enviar descrição:', error);
+      }
+    },
+
+    async askToChat(message) {
+      try {
+        const response = await fetch('http://localhost:5000/ask', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ user_message: message }),
+        });
+
+        if (response) {
+          const data = await response.json();
+          const responseMessage = data.response;
+
+        //console.log("RESPOSTA CHATGPT : \n", responseMessage)
+
+        const parsedResponse = JSON.parse(responseMessage);
+
+        //console.log("RESPOSTA EM JSON : \n", parsedResponse )
+
+        this.conhecimentosResult = parsedResponse.conhecimentosScraping;
+        this.habilidadesResult = parsedResponse.habilidadesScraping;
+        this.atitudesResult = parsedResponse.atitudesScraping;
+
+        // formatação dos arrays como strings
+        const conhecimentosStr = JSON.stringify(this.conhecimentosResult);
+        const habilidadesStr = JSON.stringify(this.habilidadesResult);
+        const atitudesStr = JSON.stringify(this.atitudesResult);
+
+        this.getScraping(this.cargo, conhecimentosStr, habilidadesStr, atitudesStr);
+
+        } else {
+          console.error('Erro ao enviar mensagem para o backend(chat push):', response.statusText);
+        }
+      } catch (error) {
+        console.error('Erro ao enviar mensagem para o backend:', error);
+      } 
+    },
+
+    async getScraping  (cargo,conhecimentosStr,habilidadesStr,atitudesStr) {
+      try {
+        const requestObject = {
+          cargo: `${cargo}`,
+          conhecimentos: `${conhecimentosStr}`,
+          habilidades: `${habilidadesStr}`,
+          atitudes: `${atitudesStr}`
+        };
+
+       // console.log(" REQUEST :", requestObject);
+
+        const response = await fetch('http://localhost:7000/scraping', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json', 
+          },
+          body: JSON.stringify(requestObject),
+        });
+
+          const data = await response.json();
+          //console.log("ANTES DO JSON :\n", response);
+          //console.log("RESPONSE DATA SCRAPING: \n", data);
+          //const rank = JSON.stringify(data);
+          //console.log("STRING :", rank);
+          
+          this.candidatoInfo = data;
+
+          //console.log("CANDIDATOS: ", this.candidatoInfo);
+          this.saveRank(data);
+          
+      } catch (error) {
+        console.error('Erro ao enviar a requisição para o backend:', error);
+      } finally {
+        this.loadingScraping = false;
+      }
+    },
+
+    async saveRank(candidatoInfo) {
+      const requestBody = {
+        value: candidatoInfo
+      };
+      console.log("REQUEST BODY: \n", requestBody)
+
+      try {
+        const responseRank = await axios.post(`${baseURL}/rank/add`, requestBody);
+        console.log('Resposta do servidor:', responseRank.data);
+
+        const match = responseRank.data.id;
+        console.log(match)
+
+        const responseMatch = await axios.get(`${baseURL}/rank/${match}`);
+        console.log("TESTANDO RANK: \n", responseMatch)
+
+        if (responseMatch.length > 0) {
+          // Exibir a seção de candidatos apenas se houver candidatos no rank
+          this.candidatos = responseMatch;
+          window.$message.success('Rank salvo com sucesso!');
+          await this.scrapingCompleted();
+        } else {
+        console.log("SEM CANDIDATOS COMPATÍVEIS \n", requestBody)
+        window.$message.info('Sem candidatos compatíveis com a vaga!');
+        }
+      } catch (error) {
+        console.error('Erro ao enviar a requisição para o backend:', error);
+      }
+    },
+
+    
+    async scrapingCompleted (jobId) {
+      try {
+        const scrapingData = {
+            jobStatus: 'completed',
+        };
+        const responseScraping = await axios.put(`${baseURL}/job/${jobId}`, scrapingData);
+        console.log('Resposta do servidor (SCRAPING):', responseScraping);
+
+      } catch (error) {
+        console.error('Erro ao enviar requisição:', error);
+        window.$message.error('Erro ao buscar candidatos! Tente novamente.');
+      }
+    },
+    
   },
 });
 </script>
@@ -1164,7 +1248,7 @@ button{
 }
 
 .label {
-  margin-bottom: -40px; /* Reduza a margem inferior entre os elementos do formulário */
+  margin-bottom: -40px; 
   margin-top: -40px;
 }
 </style>

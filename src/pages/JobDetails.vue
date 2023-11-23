@@ -55,10 +55,10 @@
       </n-space>
     </div>
 
-    <div v-if="candidatoInfo.length > 0">
+    <div v-if="candidatos.length > 0">
       <n-h1>Candidatos</n-h1>
         <n-card>
-            <n-card v-for="(codigo, index) in candidatoInfo.slice(0, 8)" :key="index">
+            <n-card v-for="(codigo, index) in candidatos.slice(0, 8)" :key="index">
               <div class="candidate-container">
                 <div class="circle">
                 {{ index + 1 }}º
@@ -77,6 +77,7 @@
               </div>
             </n-card>
         </n-card>
+        <n-button color="#B04141"  @click="saveRank">Salvar Rank</n-button>
     </div>
 
    </div>
@@ -91,6 +92,8 @@
   import { ref, onMounted } from 'vue';
   import { useRoute } from 'vue-router';
   import { useRouter } from 'vue-router';
+  import axios from 'axios';
+  import baseURL from '../services/chatService.js';
   import { Trash as TrashIcon, PencilSharp as PenIcon, Search as SearchIcon} from "@vicons/ionicons5";
 
   export default {
@@ -119,6 +122,7 @@
     const habilidades = ref([]); 
     const atitudes = ref([]); 
     const candidatoInfo = ref([]);
+    const candidatos = ref([]);
 
     const fetchJobDetails = async () => {
       try {
@@ -175,7 +179,8 @@
       conhecimentos,
       habilidades,
       atitudes,
-      candidatoInfo,      
+      candidatoInfo,
+      candidatos   
     };
   },
     methods:{
@@ -185,7 +190,7 @@
      //   console.log(`PERGUNTA AO CHATGPT (${this.cargo})${this.conhecimento}, ${this.habilidade}, ${this.atitude}`)
       try {
         const userMessage = 
-        `Poderia por favor separar as plavras chaves separadament dos Conhecimento, Habilidades e Atitudes dessa vaga (${this.cargo}) :
+        `Poderia por favor separar as palavras chaves separadamente de Conhecimento, Habilidades e Atitudes dessa vaga (${this.cargo}) :
           ${this.conhecimento}, 
           ${this.habilidade}, 
           ${this.atitude},
@@ -256,7 +261,7 @@
           atitudes: `${atitudesStr}`
         };
 
-        console.log(" REQUEST :", requestObject);
+       // console.log(" REQUEST :", requestObject);
 
         const response = await fetch('http://localhost:7000/scraping', {
           method: 'POST',
@@ -267,11 +272,15 @@
         });
 
           const data = await response.json();
+          //console.log("ANTES DO JSON :\n", response);
           //console.log("RESPONSE DATA SCRAPING: \n", data);
+          //const rank =  JSON.stringify(data);
+          //console.log("STRING :", rank);
           
           this.candidatoInfo = data;
 
           //console.log("CANDIDATOS: ", this.candidatoInfo);
+          this.saveRank(data);
           
       } catch (error) {
         console.error('Erro ao enviar a requisição para o backend:', error);
@@ -279,6 +288,39 @@
         this.loadingScraping = false;
       }
     },
+
+    async saveRank(candidatoInfo) {
+      const requestBody = {
+        value: candidatoInfo
+      };
+    console.log("REQUEST BODY: \n", requestBody)
+
+    try {
+      const responseRank = await axios.post(`${baseURL}/rank/add`, requestBody);
+      console.log('Resposta do servidor:', responseRank.data);
+
+      const match = responseRank.data.id;
+      console.log(match)
+
+      const responseMatch = await axios.get(`${baseURL}/rank/${match}`);
+      console.log("TESTANDO RANK: \n", responseMatch)
+
+    
+
+      if (responseMatch.length > 0) {
+        // Exibir a seção de candidatos apenas se houver candidatos no rank
+        this.candidatos = responseMatch;
+        window.$message.success('Rank salvo com sucesso!');
+      } else {
+        console.log("SEM CANDIDATOS COMPATÍVEIS \n", requestBody)
+        window.$message.info('Sem candidatos compatíveis com a vaga!');
+      }
+    } catch (error) {
+      console.error('Erro ao enviar a requisição para o backend:', error);
+    }
+    },
+
+
 
     async deleteJ (jobId) {
       try {
