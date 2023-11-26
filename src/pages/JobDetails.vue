@@ -7,9 +7,9 @@
     <n-card>
       <n-space vertical>
         <n-text><strong>Nível:</strong> {{ job.jobLevel }}</n-text>
-        <n-text><strong>Conhecimentos:</strong> {{ job.cha.conhecimento.content }}</n-text>
-        <n-text><strong>Habilidades:</strong> {{ job.cha.habilidade.content }}</n-text>
-        <n-text><strong>Atitudes:</strong> {{ job.cha.atitude.content }}</n-text>
+        <n-text><strong>Conhecimentos:</strong> {{ job.kaa.knowledge.content }}</n-text>
+        <n-text><strong>Habilidades:</strong> {{ job.kaa.ability.content }}</n-text>
+        <n-text><strong>Atitudes:</strong> {{ job.kaa.attitude.content }}</n-text>
         <n-text><strong>Descrição</strong> {{ job.jobDescription }}</n-text>
       </n-space>
     </n-card>
@@ -115,12 +115,12 @@
     window.$message = useMessage()
     const router = useRouter();
     const cargo = ref('');
-    const conhecimento = ref('');
-    const habilidade = ref(''); 
-    const atitude = ref(''); 
-    const conhecimentos = ref([]);
-    const habilidades = ref([]); 
-    const atitudes = ref([]); 
+    const knowledge = ref('');
+    const ability = ref(''); 
+    const attitude = ref(''); 
+    const knowledges = ref([]);
+    const abilitys = ref([]); 
+    const attitudes = ref([]); 
     const candidatoInfo = ref([]);
     const candidatos = ref([]);
 
@@ -131,14 +131,14 @@
         console.log("Fetching job details for ID:", jobId);
         job.value = await getJobById(jobId);
         cargo.value = job.value.jobTitle;
-        conhecimento.value = job.value.cha.conhecimento.content;
-        habilidade.value = job.value.cha.habilidade.content;
-        atitude.value = job.value.cha.atitude.content;
+        knowledge.value = job.value.kaa.knowledge.content;
+        ability.value = job.value.kaa.ability.content;
+        attitude.value = job.value.kaa.attitude.content;
 
         // console.log("cargo", cargo)
-        // console.log("conhecimentos", conhecimento)
-        // console.log("habilidades", habilidade)
-        // console.log("atitudes", atitude)
+        // console.log("knowledges", knowledge)
+        // console.log("abilitys", ability)
+        // console.log("attitudes", attitude)
         // console.log("Job details obtained:", job.value);
         
       } catch (error) {
@@ -173,12 +173,12 @@
       onPositiveClick,
       redirectToEditJob,
       cargo,
-      conhecimento,
-      habilidade,
-      atitude,
-      conhecimentos,
-      habilidades,
-      atitudes,
+      knowledge,
+      ability,
+      attitude,
+      knowledges,
+      abilitys,
+      attitudes,
       candidatoInfo,
       candidatos   
     };
@@ -187,13 +187,13 @@
 
     async sendMessage () {
     this.loadingScraping = true; 
-     //   console.log(`PERGUNTA AO CHATGPT (${this.cargo})${this.conhecimento}, ${this.habilidade}, ${this.atitude}`)
+     //   console.log(`PERGUNTA AO CHATGPT (${this.cargo})${this.knowledge}, ${this.ability}, ${this.atitude}`)
       try {
         const userMessage = 
         `Poderia por favor separar as palavras chaves separadamente de Conhecimento, Habilidades e Atitudes dessa vaga (${this.cargo}) :
-          ${this.conhecimento}, 
-          ${this.habilidade}, 
-          ${this.atitude},
+          ${this.knowledge}, 
+          ${this.ability}, 
+          ${this.attitude},
 
           no seguinte formato:
           {"conhecimentos": ["palavra chave", "palavra chave" ...], "habilidades":  ["palavra chave", "palavra chave" ...], "atitudes": ["palavra chave", "palavra chave" ...]}
@@ -228,21 +228,21 @@
 
         //console.log("RESPOSTA EM JSON : \n", parsedResponse )
 
-        this.conhecimentos = parsedResponse.conhecimentos;
-        this.habilidades = parsedResponse.habilidades;
-        this.atitudes = parsedResponse.atitudes;
+        this.knowledges = parsedResponse.knowledges;
+        this.abilitys = parsedResponse.abilitys;
+        this.attitudes = parsedResponse.attitudes;
 
         // console.log("CARGO: \n", this.cargo);
-        // console.log("CONHECIMENTOS: \n", this.conhecimentos);
-        // console.log("HABILIDADES: \n", this.habilidades);
-        // console.log("ATITUDES: \n", this.atitudes);
+        // console.log("knowledgeS: \n", this.knowledges);
+        // console.log("abilityS: \n", this.abilitys);
+        // console.log("attitudeS: \n", this.attitudes);
 
         // formatação dos arrays como strings
-        const conhecimentosStr = JSON.stringify(this.conhecimentos);
-        const habilidadesStr = JSON.stringify(this.habilidades);
-        const atitudesStr = JSON.stringify(this.atitudes);
+        const knowledgesStr = JSON.stringify(this.knowledges);
+        const abilitysStr = JSON.stringify(this.abilitys);
+        const attitudesStr = JSON.stringify(this.attitudes);
 
-        this.getScraping(this.cargo, conhecimentosStr, habilidadesStr, atitudesStr);
+        this.getScraping(this.cargo, knowledgesStr, abilitysStr, attitudesStr);
 
         } else {
           console.error('Erro ao enviar mensagem para o backend(chat push):', response.statusText);
@@ -252,13 +252,13 @@
       } 
     },
 
-    async getScraping  (cargo,conhecimentosStr,habilidadesStr,atitudesStr) {
+    async getScraping  (cargo,knowledgesStr,abilitysStr,attitudesStr) {
       try {
         const requestObject = {
           cargo: `${cargo}`,
-          conhecimentos: `${conhecimentosStr}`,
-          habilidades: `${habilidadesStr}`,
-          atitudes: `${atitudesStr}`
+          knowledges: `${knowledgesStr}`,
+          abilitys: `${abilitysStr}`,
+          attitudes: `${attitudesStr}`
         };
 
        // console.log(" REQUEST :", requestObject);

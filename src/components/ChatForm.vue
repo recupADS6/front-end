@@ -57,9 +57,9 @@
       </n-tooltip>
       </div>
       </n-form-item-gi>
-      <n-form-item-gi :span="24" path="cha.conhecimento">
+      <n-form-item-gi :span="24" path="kaa.knowledge">
         <n-input
-          v-model:value="model.cha.conhecimento"
+          v-model:value="model.kaa.knowledge"
           placeholder=""
           type="textarea"
           :autosize="{ minRows: 3, maxRows: 5 }"
@@ -70,9 +70,9 @@
         <n-button 
         class="upgrade-button"
         color="#73A79A"  
-        @click="sendConhecimento" 
-        :loading="loadingGenerateConhecimento"
-        :disabled="model.cha.conhecimento !== ''"
+        @click="sendKnowledge" 
+        :loading="loadingGenerateKnowledge"
+        :disabled="model.kaa.knowledge !== ''"
         icon-placement="left">
         <template #icon>
           <n-icon>
@@ -85,9 +85,9 @@
         class="upgrade-button"
         color="#5380b8"
         text-color="white"
-        :loading="loadingUpgradeConhecimento"
-        @click="sendUpgradeConhecimento"
-        :disabled="model.cha.conhecimento === ''"
+        :loading="loadingUpgradeKnowledge"
+        @click="sendUpgradeKnowledge"
+        :disabled="model.kaa.knowledge === ''"
         icon-placement="left"
         >
         <template #icon>
@@ -114,9 +114,9 @@
       </n-tooltip>
       </div>
       </n-form-item-gi>
-      <n-form-item-gi :span="24" path="cha.habilidade">
+      <n-form-item-gi :span="24" path="kaa.ability">
         <n-input
-          v-model:value="model.cha.habilidade"
+          v-model:value="model.kaa.ability"
           placeholder=""
           type="textarea"
           :autosize="{ minRows: 3, maxRows: 5 }"
@@ -127,9 +127,9 @@
         <n-button 
         class="upgrade-button"
         color="#73A79A"  
-        @click="sendHabilidade" 
-        :loading="loadingGenerateHabilidade" 
-        :disabled="model.cha.habilidade !== ''"
+        @click="sendAbility" 
+        :loading="loadingGenerateAbility" 
+        :disabled="model.kaa.ability !== ''"
         icon-placement="left">
         <template #icon>
           <n-icon>
@@ -142,10 +142,10 @@
         class="upgrade-button"
         color="#5380b8"
         text-color="white"
-        :loading="loadingUpgradeHabilidade"
-        @click="sendUpgradeHabilidade"
+        :loading="loadingUpgradeAbility"
+        @click="sendUpgradeAbility"
         icon-placement="left"
-        :disabled="model.cha.habilidade === ''"
+        :disabled="model.kaa.ability === ''"
         >
         <template #icon>
           <n-icon>
@@ -172,9 +172,9 @@
       </div>
       </n-form-item-gi>
 
-      <n-form-item-gi :span="24" path="cha.atitude">
+      <n-form-item-gi :span="24" path="kaa.attitude">
         <n-input
-          v-model:value="model.cha.atitude"
+          v-model:value="model.kaa.attitude"
           placeholder=""
           type="textarea"
           :autosize="{ minRows: 3, maxRows: 5 }"
@@ -185,9 +185,9 @@
         <n-button 
         class="upgrade-button"
         color="#73A79A"  
-        @click="sendAtitude" 
-        :loading="loadingGenerateAtitude" 
-        :disabled="model.cha.atitude !== ''"
+        @click="sendAttitude" 
+        :loading="loadingGenerateAttitude" 
+        :disabled="model.kaa.attitude !== ''"
         icon-placement="left">
         <template #icon>
           <n-icon>
@@ -200,10 +200,10 @@
         class="upgrade-button"
         color="#5380b8"
         text-color="white"
-        :loading="loadingUpgradeAtitude"
-        @click="sendUpgradeAtitude"
+        :loading="loadingUpgradeAttitude"
+        @click="sendUpgradeAttitude"
         icon-placement="left"
-        :disabled="model.cha.atitude === ''"
+        :disabled="model.kaa.attitude === ''"
         >
         <template #icon>
           <n-icon>
@@ -283,9 +283,9 @@ export default defineComponent({
   },
   setup() {
     const messageHistory = ref('');   
-    const conhecimentoHistory = ref([]);
-    const habilidadeHistory = ref([]);
-    const atitudeHistory = ref([]);
+    const knowledgeHistory = ref([]);
+    const abilityHistory = ref([]);
+    const attitudeHistory = ref([]);
     window.$message = useMessage()
     const message = useMessage();
     const formRef = ref(null);
@@ -293,26 +293,26 @@ export default defineComponent({
     const userMessage = ref('');
     const loadingBar = useLoadingBar();
     const loadingUpgrade = ref(false);
-    const loadingGenerateConhecimento = ref(false);
-    const loadingGenerateHabilidade = ref(false);
-    const loadingGenerateAtitude = ref(false);
-    const loadingUpgradeConhecimento = ref(false)
-    const loadingUpgradeHabilidade = ref(false)
-    const loadingUpgradeAtitude = ref(false)
+    const loadingGenerateKnowledge = ref(false);
+    const loadingGenerateAbility = ref(false);
+    const loadingGenerateAttitude = ref(false);
+    const loadingUpgradeKnowledge = ref(false)
+    const loadingUpgradeAbility = ref(false)
+    const loadingUpgradeAttitude = ref(false)
     const loadingGenerate = ref(false);
     const showModalSubmit = ref(false)
     const showModalCancel = ref(false);
     const jobId = ref('');
     const cargo = ref('');
-    const conhecimentoScraping = ref('');
-    const habilidadeScraping = ref(''); 
-    const atitudeScraping = ref(''); 
-    const conhecimentosScraping = ref([]);
-    const habilidadesScraping = ref([]);
-    const atitudesScraping = ref([]);
-    const conhecimentosResult  = ref([]);
-    const habilidadesResult  = ref([]); 
-    const atitudesResult = ref([]);
+    const knowledgeScraping = ref('');
+    const abilityScraping = ref(''); 
+    const attitudeScraping = ref(''); 
+    const knowledgesScraping = ref([]);
+    const abilitysScraping = ref([]);
+    const attitudesScraping = ref([]);
+    const knowledgesResult  = ref([]);
+    const abilitysResult  = ref([]); 
+    const attitudesResult = ref([]);
     const candidatoInfo = ref([]);
 /*
     watch(jobDescription, async (newJobDescription) => {
@@ -324,17 +324,17 @@ export default defineComponent({
       }
     }),
 
-    watch(conhecimento, async (newConhecimento) => {
-      if (newConhecimento === '') {
-        error.value = 'O Conhecimento não pode estar vazio para aprimorá-lo!'
+    watch(knowledge, async (newKnowledge) => {
+      if (newKnowledge === '') {
+        error.value = 'O Knowledge não pode estar vazio para aprimorá-lo!'
         console.log(error.value)
       } else {
         error.value = ''
       }
     }),
 
-    watch(habilidade, (newHabilidade) => {
-      if (newHabilidade === '') {
+    watch(ability, (newAbility) => {
+      if (newAbility === '') {
           error.value = 'A Habilidade não pode estar vazia para aprimorá-la!'
           console.log(error.value)
         } else {
@@ -342,8 +342,8 @@ export default defineComponent({
         }
     });
 
-    watch(atitude, (newAtitude) => {
-      if (newAtitude === '') {
+    watch(attitude, (newAttitude) => {
+      if (newAttitude === '') {
         error.value = 'A Atitude não pode estar vazia para aprimorá-la!'
         console.log(error.value)
       } else {
@@ -352,19 +352,19 @@ export default defineComponent({
     });
 */
     return {
-      conhecimentoHistory,
-      habilidadeHistory,
-      atitudeHistory,
+      knowledgeHistory,
+      abilityHistory,
+      attitudeHistory,
       messageHistory,
       showModalCancel,
       showModalSubmit,
       loadingUpgrade,
-      loadingGenerateConhecimento,
-      loadingGenerateHabilidade,
-      loadingGenerateAtitude,
-      loadingUpgradeConhecimento,
-      loadingUpgradeHabilidade,
-      loadingUpgradeAtitude,
+      loadingGenerateKnowledge,
+      loadingGenerateAbility,
+      loadingGenerateAttitude,
+      loadingUpgradeKnowledge,
+      loadingUpgradeAbility,
+      loadingUpgradeAttitude,
       loadingGenerate,
       loadingBar,
       chatMessages,
@@ -372,26 +372,29 @@ export default defineComponent({
       formRef,
       jobId,
       cargo,
-      conhecimentoScraping,
-      habilidadeScraping,
-      atitudeScraping,
-      conhecimentosScraping,
-      habilidadesScraping,
-      atitudesScraping,
-      conhecimentosResult,
-      habilidadesResult,
-      atitudesResult,
+      knowledgeScraping,
+      abilityScraping,
+      attitudeScraping,
+      knowledgesScraping,
+      abilitysScraping,
+      attitudesScraping,
+      knowledgesResult,
+      abilitysResult,
+      attitudesResult,
       candidatoInfo,
       model: ref({
         jobTitle: null,
         jobDescription: '',
-        cha:{
-          conhecimento:'',
-          habilidade:'',
-          atitude:''
+        kaa:{
+          knowledge:'',
+          ability:'',
+          attitude:''
         },
         jobLevel: null,
         jobStatus: null,
+        rank: {
+          id: null
+        }
       }),
       selectOptions: ['Júnior', 'Pleno', 'Sênior'].map((v) => ({
         label: v,
@@ -482,8 +485,8 @@ export default defineComponent({
     },
 
 // ========================================================CONHECIMENTO=============================================
-    async sendConhecimento () {
-    this.loadingGenerateConhecimento = true; 
+    async sendKnowledge () {
+    this.loadingGenerateKnowledge = true; 
       try {
         const userMessage = 
         `CHA é o acrônimo de conhecimento, habilidade e atitude, as três dimensões da definição de competência para um determinado cargo ou função.
@@ -500,7 +503,7 @@ export default defineComponent({
           ${this.model.jobDescription}`;
 
 
-        await this.askConhecimentoToChat(userMessage);
+        await this.askKnowledgeToChat(userMessage);
 
         this.userMessage = '';
 
@@ -509,7 +512,7 @@ export default defineComponent({
       }
     },
 
-    async askConhecimentoToChat(message) {
+    async askKnowledgeToChat(message) {
       try {
         const response = await fetch('http://localhost:5000/ask', {
           method: 'POST',
@@ -521,10 +524,10 @@ export default defineComponent({
 
         if (response) {
           const data = await response.json();
-          const responseMessageConhecimento = data.response;
-          this.chatMessages.push({ role: 'AI', content: responseMessageConhecimento });
+          const responseMessageKnowledge = data.response;
+          this.chatMessages.push({ role: 'AI', content: responseMessageKnowledge });
 
-          this.generateConhecimento(responseMessageConhecimento);
+          this.generateKnowledge(responseMessageKnowledge);
 
         } else {
           console.error('Erro ao enviar mensagem para o backend:', response.statusText);
@@ -532,25 +535,25 @@ export default defineComponent({
       } catch (error) {
         console.error('Erro ao enviar mensagem para o backend:', error);
       } finally {
-        this.loadingGenerateConhecimento=false;
+        this.loadingGenerateKnowledge=false;
       }
     },
 
-    async generateConhecimento (responseMessageConhecimento){
-      const conhecimentos = [""];
-      const sections = responseMessageConhecimento.split('\n');
+    async generateKnowledge (responseMessageKnowledge){
+      const knowledges = [""];
+      const sections = responseMessageKnowledge.split('\n');
 
       try{
         for (const section of sections) {
-          conhecimentos.push(section.trim());
+          knowledges.push(section.trim());
         }
 
-      this.model.cha = {
-      ...this.model.cha, 
-      conhecimento: conhecimentos.join('\n')
+      this.model.kaa = {
+      ...this.model.kaa, 
+      knowledge: knowledges.join('\n')
       };
 
-      console.log('Conhecimentos:', conhecimentos);
+      console.log('Conhecimentos:', knowledges);
 
       }  catch(error) {
         console.log("Erro ao gerar Conhecimentos", error)
@@ -559,8 +562,8 @@ export default defineComponent({
 
     //UPGRADE
 
-    async sendUpgradeConhecimento () {
-    this.loadingUpgradeConhecimento = true; 
+    async sendUpgradeKnowledge () {
+    this.loadingUpgradeKnowledge = true; 
       try {
         const userMessage = 
         `CHA é o acrônimo de conhecimento, habilidade e atitude, as três dimensões da definição de competência para um determinado cargo ou função.
@@ -571,7 +574,7 @@ export default defineComponent({
         etc. 
 
         aprimore os Conhecimentos com palavras completamente diferentes:
-        ${this.model.cha.conhecimento},
+        ${this.model.kaa.knowledge},
         
         Da seguinte vaga: 
           ${this.model.jobTitle}, 
@@ -581,14 +584,14 @@ export default defineComponent({
          this.userMessage = '';
          
 
-         await this.askUpgradeConhecimentoToChat(userMessage);
+         await this.askUpgradeKnowledgeToChat(userMessage);
 
       } catch (error) {
         console.error('Erro ao enviar:', error);
       }
     },
 
-    async askUpgradeConhecimentoToChat(message) {
+    async askUpgradeKnowledgeToChat(message) {
       try {
         const response = await fetch('http://localhost:5000/ask', {
           method: 'POST',
@@ -600,13 +603,13 @@ export default defineComponent({
 
         if (response) {
           const data = await response.json();
-          const responseMessageConhecimento = data.response;
-          this.chatMessages.push({ role: 'AI', content: responseMessageConhecimento });
+          const responseMessageKnowledge = data.response;
+          this.chatMessages.push({ role: 'AI', content: responseMessageKnowledge });
           
-        this.conhecimentoHistory += `\n LOG:${responseMessageConhecimento}\n`;
+        this.knowledgeHistory += `\n LOG:${responseMessageKnowledge}\n`;
 
-        console.log(`HISTÓRICO CONHECIMENTO: ${this.conhecimentoHistory}`);
-        this.getUpgradeConhecimento(responseMessageConhecimento);
+        console.log(`HISTÓRICO CONHECIMENTO: ${this.knowledgeHistory}`);
+        this.getUpgradeKnowledge(responseMessageKnowledge);
 
         } else {
           console.error('Erro ao enviar mensagem:', response.statusText);
@@ -614,20 +617,20 @@ export default defineComponent({
       } catch (error) {
         console.error('Erro ao enviar mensagem:', error);
       }  finally {
-        this.loadingUpgradeConhecimento=false;
+        this.loadingUpgradeKnowledge=false;
       }
     },
 
-    async getUpgradeConhecimento (responseMessageConhecimento) {
-      this.model.cha.conhecimento = responseMessageConhecimento;
+    async getUpgradeKnowledge (responseMessageKnowledge) {
+      this.model.kaa.knowledge = responseMessageKnowledge;
 
-      console.log("NEW CONHECIMENTO ", responseMessageConhecimento);
+      console.log("NEW CONHECIMENTO ", responseMessageKnowledge);
     },
 // ========================================================CONHECIMENTO=============================================
 
 // ========================================================HABILIDADE=============================================
-    async sendHabilidade () {
-    this.loadingGenerateHabilidade = true; 
+    async sendAbility () {
+    this.loadingGenerateAbility = true; 
       try {
         const userMessage = 
         `CHA é o acrônimo de conhecimento, habilidade e atitude, as três dimensões da definição de competência para um determinado cargo ou função
@@ -644,14 +647,14 @@ export default defineComponent({
 
          this.userMessage = '';
 
-        await this.askHabilidadeToChat(userMessage);
+        await this.askAbilityToChat(userMessage);
 
       } catch (error) {
         console.error('Erro ao enviar descrição:', error);
       }
     },
 
-    async askHabilidadeToChat(message) {
+    async askAbilityToChat(message) {
       try {
         const response = await fetch('http://localhost:5000/ask', {
           method: 'POST',
@@ -663,10 +666,10 @@ export default defineComponent({
 
         if (response) {
           const data = await response.json();
-          const responseMessageHabilidade = data.response;
-          this.chatMessages.push({ role: 'AI', content: responseMessageHabilidade });
+          const responseMessageAbility = data.response;
+          this.chatMessages.push({ role: 'AI', content: responseMessageAbility });
 
-          this.generateHabilidade(responseMessageHabilidade);
+          this.generateAbility(responseMessageAbility);
 
         } else {
           console.error('Erro ao enviar mensagem para o backend:', response.statusText);
@@ -674,27 +677,27 @@ export default defineComponent({
       } catch (error) {
         console.error('Erro ao enviar mensagem para o backend:', error);
       } finally {
-        this.loadingGenerateHabilidade=false;
+        this.loadingGenerateAbility=false;
       }
     },
 
-    async generateHabilidade (responseMessageHabilidade){
-      const habilidades = [""];
-      const sections = responseMessageHabilidade.split('\n');
+    async generateAbility (responseMessageAbility){
+      const abilitys = [""];
+      const sections = responseMessageAbility.split('\n');
 
       try{
         for (const section of sections) {
-          habilidades.push(section.trim());
+          abilitys.push(section.trim());
         }
 
-      console.log('Habilidades:', habilidades);
+      console.log('Abilitys:', abilitys);
 
-      this.model.cha = {
-      ...this.model.cha,
-      habilidade: habilidades.join('\n')
+      this.model.kaa = {
+      ...this.model.kaa,
+      ability: abilitys.join('\n')
       };
 
-      console.log("Habilidades", habilidades)
+      console.log("Habilidades", abilitys)
 
       }  catch(error) {
         console.log("Erro ao gerar Habilidades", error)
@@ -703,8 +706,8 @@ export default defineComponent({
     
     //UPGRADE
 
-    async sendUpgradeHabilidade () {
-    this.loadingUpgradeHabilidade = true; 
+    async sendUpgradeAbility () {
+    this.loadingUpgradeAbility = true; 
       try {
         const userMessage = 
         `CHA é o acrônimo de conhecimento, habilidade e atitude, as três dimensões da definição de competência para um determinado cargo ou função.
@@ -715,7 +718,7 @@ export default defineComponent({
         etc. 
 
         aprimore as Habilidades com palavras completamente diferentes:
-        ${this.model.cha.habilidade},
+        ${this.model.kaa.ability},
         
         Da seguinte vaga: 
           ${this.model.jobTitle}, 
@@ -724,14 +727,14 @@ export default defineComponent({
 
          this.userMessage = '';
 
-         await this.askUpgradeHabilidadeToChat(userMessage);
+         await this.askUpgradeAbilityToChat(userMessage);
 
       } catch (error) {
         console.error('Erro ao enviar:', error);
       }
     },
 
-    async askUpgradeHabilidadeToChat(message) {
+    async askUpgradeAbilityToChat(message) {
       try {
         const response = await fetch('http://localhost:5000/ask', {
           method: 'POST',
@@ -743,13 +746,13 @@ export default defineComponent({
 
         if (response) {
           const data = await response.json();
-          const responseMessageHabilidade = data.response;
-          this.chatMessages.push({ role: 'AI', content: responseMessageHabilidade });
+          const responseMessageAbility = data.response;
+          this.chatMessages.push({ role: 'AI', content: responseMessageAbility });
           
-        this.habilidadeHistory += `\n LOG:${responseMessageHabilidade}\n`;
+        this.abilityHistory += `\n LOG:${responseMessageAbility}\n`;
 
-        console.log(`HISTÓRICO HABILIDADE: ${this.habilidadeHistory}`);
-        this.getUpgradeHabilidade(responseMessageHabilidade);
+        console.log(`HISTÓRICO HABILIDADE: ${this.abilityHistory}`);
+        this.getUpgradeAbility(responseMessageAbility);
 
         } else {
           console.error('Erro ao enviar mensagem:', response.statusText);
@@ -757,20 +760,20 @@ export default defineComponent({
       } catch (error) {
         console.error('Erro ao enviar mensagem:', error);
       }  finally {
-        this.loadingUpgradeHabilidade=false;
+        this.loadingUpgradeAbility=false;
       }
     },
 
-    async getUpgradeHabilidade (responseMessageHabilidade){
-      this.model.cha.habilidade = responseMessageHabilidade;
+    async getUpgradeAbility (responseMessageAbility){
+      this.model.kaa.ability = responseMessageAbility;
 
-      console.log("NEW HABILIDADE ", responseMessageHabilidade);
+      console.log("NEW HABILIDADE ", responseMessageAbility);
     },
 // ========================================================HABILIDADE=============================================
 
 // ========================================================ATITUDE=============================================
-    async sendAtitude () {
-    this.loadingGenerateAtitude = true; 
+    async sendAttitude () {
+    this.loadingGenerateAttitude = true; 
       try {
         const userMessage = 
         `CHA é o acrônimo de conhecimento, habilidade e atitude, as três dimensões da definição de competência para um determinado cargo ou função.
@@ -787,14 +790,14 @@ export default defineComponent({
 
          this.userMessage = '';
 
-        await this.askAtitudeToChat(userMessage);
+        await this.askAttitudeToChat(userMessage);
 
       } catch (error) {
         console.error('Erro ao enviar descrição:', error);
       }
     },
 
-    async askAtitudeToChat(message) {
+    async askAttitudeToChat(message) {
       try {
         const response = await fetch('http://localhost:5000/ask', {
           method: 'POST',
@@ -806,10 +809,10 @@ export default defineComponent({
 
         if (response) {
           const data = await response.json();
-          const responseMessageAtitude = data.response;
-          this.chatMessages.push({ role: 'AI', content: responseMessageAtitude });
+          const responseMessageAttitude = data.response;
+          this.chatMessages.push({ role: 'AI', content: responseMessageAttitude });
 
-          this.generateAtitude(responseMessageAtitude);
+          this.generateAttitude(responseMessageAttitude);
 
         } else {
           console.error('Erro ao enviar mensagem para o backend:', response.statusText);
@@ -817,27 +820,27 @@ export default defineComponent({
       } catch (error) {
         console.error('Erro ao enviar mensagem para o backend:', error);
       } finally {
-        this.loadingGenerateAtitude=false;
+        this.loadingGenerateAttitude=false;
       }
     },
 
-    async generateAtitude (responseMessageAtitude){
-      const atitudes = [""];
-      const sections = responseMessageAtitude.split('\n');
+    async generateAttitude (responseMessageAttitude){
+      const attitudes = [""];
+      const sections = responseMessageAttitude.split('\n');
 
       try{
         for (const section of sections) {
-          atitudes.push(section.trim());
+          attitudes.push(section.trim());
         }
 
-      console.log('Atitudes:', atitudes);
+      console.log('Attitudes:', attitudes);
 
-      this.model.cha = {
-      ...this.model.cha,
-      atitude: atitudes.join('\n')
+      this.model.kaa = {
+      ...this.model.kaa,
+      attitude: attitudes.join('\n')
       };
 
-    console.log("atitudes", atitudes)
+    console.log("attitudes", attitudes)
 
       }  catch {
     console.log("ERRO")
@@ -846,8 +849,8 @@ export default defineComponent({
 
         //UPGRADE
     
-    async sendUpgradeAtitude () {
-    this.loadingUpgradeAtitude = true; 
+    async sendUpgradeAttitude () {
+    this.loadingUpgradeAttitude = true; 
       try {
         const userMessage = 
         `
@@ -859,7 +862,7 @@ export default defineComponent({
         etc. 
 
         aprimore as Atitudes com palavras completamente diferentes:
-        ${this.model.cha.atitude},
+        ${this.model.kaa.attitude},
         
         Da seguinte vaga: 
           ${this.model.jobTitle}, 
@@ -868,14 +871,14 @@ export default defineComponent({
 
          this.userMessage = '';
 
-         await this.askUpgradeAtitudeToChat(userMessage);
+         await this.askUpgradeAttitudeToChat(userMessage);
 
       } catch (error) {
         console.error('Erro ao enviar:', error);
       }
     },
 
-    async askUpgradeAtitudeToChat(message) {
+    async askUpgradeAttitudeToChat(message) {
       try {
         const response = await fetch('http://localhost:5000/ask', {
           method: 'POST',
@@ -887,13 +890,13 @@ export default defineComponent({
 
         if (response) {
           const data = await response.json();
-          const responseMessageAtitude = data.response;
-          this.chatMessages.push({ role: 'AI', content: responseMessageAtitude });
+          const responseMessageAttitude = data.response;
+          this.chatMessages.push({ role: 'AI', content: responseMessageAttitude });
           
-        this.atitudeHistory += `\n LOG:${responseMessageAtitude}\n`;
+        this.attitudeHistory += `\n LOG:${responseMessageAttitude}\n`;
 
-        console.log(`HISTÓRICO ATITUDE: ${this.atitudeHistory}`);
-        this.getUpgradeAtitude(responseMessageAtitude);
+        console.log(`HISTÓRICO ATITUDE: ${this.attitudeHistory}`);
+        this.getUpgradeAttitude(responseMessageAttitude);
 
         } else {
           console.error('Erro ao enviar mensagem:', response.statusText);
@@ -901,21 +904,21 @@ export default defineComponent({
       } catch (error) {
         console.error('Erro ao enviar mensagem:', error);
       }  finally {
-        this.loadingUpgradeAtitude=false;
+        this.loadingUpgradeAttitude=false;
       }
     },
 
-    async getUpgradeAtitude (responseMessageAtitude){
-      this.model.cha.atitude = responseMessageAtitude;
+    async getUpgradeAttitude (responseMessageAttitude){
+      this.model.kaa.attitude = responseMessageAttitude;
 
-      console.log("NEW ATITUDE ", responseMessageAtitude);
+      console.log("NEW ATITUDE ", responseMessageAttitude);
     },
 // ========================================================ATITUDE=============================================
-    async extractCHA(responseMessageCha) {
-    const conhecimentos = [""];
-    const habilidades = [""];
-    const atitudes = [""];
-    const sections = responseMessageCha.split('\n');
+    async extractKAA(responseMessageKaa) {
+    const knowledges = [""];
+    const abilitys = [""];
+    const attitudes = [""];
+    const sections = responseMessageKaa.split('\n');
 
 
 
@@ -924,29 +927,29 @@ export default defineComponent({
     try{
     for (const section of sections) {
       if (section.startsWith('Conhecimentos:')) {
-        currentCategory = 'conhecimento';
+        currentCategory = 'knowledge';
       } else if (section.startsWith('Habilidades:')) {
-        currentCategory = 'habilidade';
+        currentCategory = 'ability';
       } else if (section.startsWith('Atitudes:')) {
-        currentCategory = 'atitude';
+        currentCategory = 'attitude';
       } else {
-        if (currentCategory === 'conhecimento') {
-          conhecimentos.push(section.trim());
-        } else if (currentCategory === 'habilidade') {
-          habilidades.push(section.trim());
-        } else if (currentCategory === 'atitude') {
-          atitudes.push(section.trim());
+        if (currentCategory === 'knowledge') {
+          knowledges.push(section.trim());
+        } else if (currentCategory === 'ability') {
+          abilitys.push(section.trim());
+        } else if (currentCategory === 'attitude') {
+          attitudes.push(section.trim());
         }
       }
     }
 
-    this.model.cha = {
-      conhecimento: conhecimentos.join('\n'),
-      habilidade: habilidades.join('\n'),
-      atitude: atitudes.join('\n')
+    this.model.kaa = {
+      knowledge: knowledges.join('\n'),
+      ability: abilitys.join('\n'),
+      attitude: attitudes.join('\n')
     };
 
-    console.log("NOVO cha", this.model.cha)
+    console.log("NOVO kaa", this.model.kaa)
 
   } catch {
     console.log("ERRO")
@@ -955,54 +958,55 @@ export default defineComponent({
 // cadastra o cha(um de cada vez) > cadastra os ids na tabela cha > obtem chaId 
     async sendServerResponseToBackend() {
       const requestBodyC = {
-        content:  this.model.cha.conhecimento
+        content:  this.model.kaa.knowledge
       };
       const requestBodyH = {
-        content:  this.model.cha.habilidade
+        content:  this.model.kaa.ability
       };
       const requestBodyA = {
-        content:  this.model.cha.atitude
+        content:  this.model.kaa.attitude
       };
       try{
         const respostaC = await axios.post(`${baseURL}/knowledge/add`, requestBodyC)
         const respostaH = await axios.post(`${baseURL}/ability/add`, requestBodyH)
         const respostaA = await axios.post(`${baseURL}/attitude/add`, requestBodyA)
 
-        const conhecimentoId = respostaC.data.id
-        const habilidadeId = respostaH.data.id
-        const atitudeId = respostaA.data.id
+        const knowledgeId = respostaC.data.id
+        const abilityId = respostaH.data.id
+        const attitudeId = respostaA.data.id
 
-        const requestBodyCHA = {
-          conhecimento: { id: `${conhecimentoId}` },
-          habilidade: { id: `${habilidadeId}` },
-          atitude: { id: `${atitudeId}` }
+        const requestBodyKAA = {
+          knowledge: { id: `${knowledgeId}` },
+          ability: { id: `${abilityId}` },
+          attitude: { id: `${attitudeId}` }
         };
 
-        const respostaCha = await axios.post(`${baseURL}/kaa/add`, requestBodyCHA)
+        const respostaKaa = await axios.post(`${baseURL}/kaa/add`, requestBodyKAA)
 
-        return respostaCha.data.id;
+        return respostaKaa.data.id;
 
       }catch(error ) {
           console.error('Erro ao enviar resposta do servidor para o backend:', error);
         }
     },
 // enviar vaga backend 
-    async sendJobToBackend(chaId){
+    async sendJobToBackend(KaaId){
       try {
         const jobData = {
               jobTitle: this.model.jobTitle,
               jobDescription: this.model.jobDescription,
               jobLevel: this.model.jobLevel,
               jobStatus: this.model.jobStatus,
-              cha:{
-                id: chaId,
-              }
+              kaa:{
+                id: KaaId,
+              },
+              rank: null
             };
         const responseJob = await axios.post(`${baseURL}/job/add`, jobData);
         console.log('Resposta do servidor:', responseJob.data);
 
         this.jobId = responseJob.data.id;
-        console.log('ID do JOB: \n ', responseJob.data.id);
+        //console.log('ID do JOB: \n ', responseJob.data.id);
 
         window.$message.success('Vaga cadastrada com sucesso!');
 
@@ -1011,6 +1015,8 @@ export default defineComponent({
       } catch (error) {
         console.error('Erro ao enviar requisição:', error);
         window.$message.error('Erro ao cadastrar a vaga. Tente novamente.');
+      } finally {
+        await this.getJobScraping(this.jobId);
       }
     },
 // limpar model
@@ -1020,18 +1026,21 @@ export default defineComponent({
               jobDescription: null,
               jobLevel: null,
               jobStatus: "",
-              cha: {
-                conhecimento: "",
-                habilidade:"",
-                atitude:"",
+              kaa: {
+                knowledge: "",
+                ability:"",
+                attitude:""
               },
+              rank : {
+                id: null
+              }
             };
     },
 // chama o cadastro do cha > manda o chaId para cadastrar a vaga
     async submitForm(){
       try {  
-      const chaId = await this.sendServerResponseToBackend();
-      await this.sendJobToBackend(chaId);
+      const KaaId = await this.sendServerResponseToBackend();
+      await this.sendJobToBackend(KaaId);
       this.showModalSubmit = false
       } catch (error) {
         console.error('Erro', error);
@@ -1063,12 +1072,16 @@ export default defineComponent({
 
     async getJobScraping (jobId) {
       try {
-        const responseJobScraping = await axios.get(`${baseURL}/job/${jobId}`);
-        console.log('Resposta do servidor (JOB SCRAPING):', responseJobScraping);
+        const responseJobGet = await axios.get(`${baseURL}/job/${jobId}`);
+        //console.log('Resposta do servidor (JOB SCRAPING):', responseJobGet);
 
-        this.conhecimentoScraping = responseJobScraping.cha.conhecimento;
-        this.habilidadeScraping = responseJobScraping.cha.habilidade;
-        this.atitudeScraping = responseJobScraping.cha.atitude;
+        const responseJobScraping = responseJobGet.data;
+
+        console.log("RESPONSE JOB SCRAPING : \n", responseJobScraping);
+
+        this.knowledgeScraping = responseJobScraping.kaa.knowledge;
+        this.abilityScraping = responseJobScraping.kaa.ability;
+        this.attitudeScraping = responseJobScraping.kaa.attitude;
         this.cargo = responseJobScraping.jobTitle;
 
         await this.sendMessage();
@@ -1081,13 +1094,13 @@ export default defineComponent({
     },
 
     async sendMessage () { 
-     //console.log(`PERGUNTA AO CHATGPT - SCRAPING (${this.cargo})${this.conhecimento}, ${this.habilidade}, ${this.atitude}`)
+     //console.log(`PERGUNTA AO CHATGPT - SCRAPING (${this.cargo})${this.knowledge}, ${this.ability}, ${this.attitude}`)
       try {
         const userMessage = 
         `Poderia separar as palavras chaves separadamente de Conhecimento, Habilidades e Atitudes dessa vaga (${this.cargo}) :
-          ${this.conhecimentoScraping}, 
-          ${this.habilidadeScraping}, 
-          ${this.atitudeScraping},
+          ${this.knowledgeScraping}, 
+          ${this.abilityScraping}, 
+          ${this.attitudeScraping},
 
           no seguinte formato:
           {"conhecimentos": ["palavra chave", "palavra chave" ...], "habilidades":  ["palavra chave", "palavra chave" ...], "atitudes": ["palavra chave", "palavra chave" ...]}
@@ -1122,16 +1135,16 @@ export default defineComponent({
 
         //console.log("RESPOSTA EM JSON : \n", parsedResponse )
 
-        this.conhecimentosResult = parsedResponse.conhecimentosScraping;
-        this.habilidadesResult = parsedResponse.habilidadesScraping;
-        this.atitudesResult = parsedResponse.atitudesScraping;
+        this.knowledgesResult = parsedResponse.knowledgesScraping;
+        this.abilitysResult = parsedResponse.abilitysScraping;
+        this.attitudesResult = parsedResponse.attitudesScraping;
 
         // formatação dos arrays como strings
-        const conhecimentosStr = JSON.stringify(this.conhecimentosResult);
-        const habilidadesStr = JSON.stringify(this.habilidadesResult);
-        const atitudesStr = JSON.stringify(this.atitudesResult);
+        const knowledgesStr = JSON.stringify(this.knowledgesResult);
+        const abilitysStr = JSON.stringify(this.abilitysResult);
+        const attitudesStr = JSON.stringify(this.attitudesResult);
 
-        this.getScraping(this.cargo, conhecimentosStr, habilidadesStr, atitudesStr);
+        this.getScraping(this.cargo, knowledgesStr, abilitysStr, attitudesStr);
 
         } else {
           console.error('Erro ao enviar mensagem para o backend(chat push):', response.statusText);
@@ -1141,13 +1154,13 @@ export default defineComponent({
       } 
     },
 
-    async getScraping  (cargo,conhecimentosStr,habilidadesStr,atitudesStr) {
+    async getScraping  (cargo,knowledgesStr,abilitysStr,attitudesStr) {
       try {
         const requestObject = {
           cargo: `${cargo}`,
-          conhecimentos: `${conhecimentosStr}`,
-          habilidades: `${habilidadesStr}`,
-          atitudes: `${atitudesStr}`
+          conhecimentos: `${knowledgesStr}`,
+          habilidades: `${abilitysStr}`,
+          atitudes: `${attitudesStr}`
         };
 
        // console.log(" REQUEST :", requestObject);
@@ -1161,14 +1174,14 @@ export default defineComponent({
         });
 
           const data = await response.json();
-          //console.log("ANTES DO JSON :\n", response);
-          //console.log("RESPONSE DATA SCRAPING: \n", data);
-          //const rank = JSON.stringify(data);
-          //console.log("STRING :", rank);
+          console.log("ANTES DO JSON :\n", response);
+          console.log("RESPONSE DATA SCRAPING: \n", data);
+          const rank = JSON.stringify(data);
+          console.log("STRING :", rank);
           
           this.candidatoInfo = data;
 
-          //console.log("CANDIDATOS: ", this.candidatoInfo);
+          console.log("CANDIDATOS:\n ", this.candidatoInfo);
           this.saveRank(data);
           
       } catch (error) {
@@ -1196,7 +1209,7 @@ export default defineComponent({
 
         if (responseMatch.length > 0) {
           // Exibir a seção de candidatos apenas se houver candidatos no rank
-          this.candidatos = responseMatch;
+          this.candidatos = responseMatch.data.value;
           window.$message.success('Rank salvo com sucesso!');
           await this.scrapingCompleted();
         } else {
