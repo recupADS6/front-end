@@ -1,5 +1,5 @@
-import axios from 'axios';
+const axios = require('axios');
 
 const baseURL = axios.defaults.baseURL = 'http://localhost:8090';
 
-export default baseURL;
+module.exports = baseURL;

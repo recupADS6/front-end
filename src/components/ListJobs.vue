@@ -21,8 +21,12 @@
                   </template>
                   Mais Informações
                 </n-button>
-                <n-alert title="Match em processo" type="warning" :bordered="false" size="small">
-                </n-alert>
+                <n-tag type="info" :bordered="false" size="large">
+                  Matching ...
+                  <template #icon>
+                    <n-icon :component="OutIcon" />
+                  </template>
+                </n-tag>
                 </template>
               <n-space vertical>
                 <n-text><strong>Nível:</strong> {{ job.jobLevel }}</n-text>
@@ -52,8 +56,12 @@
                   </template>
                   Mais Informações
                 </n-button>
-                <n-alert title="Match" type="success">
-                </n-alert>
+                <n-tag type="success" :bordered="false" size="large">
+                  Match Concluído
+                  <template #icon>
+                    <n-icon :component="CheckIcon" />
+                  </template>
+                </n-tag>
               </template>
 
               <n-space vertical>
@@ -72,54 +80,77 @@
 </template>
 
 <script>
-  import { NH1, NCard, NText } from 'naive-ui'
-  import { onMounted, ref, watch } from 'vue'
-  import axios from "axios";
-  //import { getAllJobs } from '../services/jobsService.js'
-  import {AddCircleOutline as AddIcon } from "@vicons/ionicons5";
-  import { useRouter } from 'vue-router';
+import { NH1, NCard, NText, NTabs, NTabPane, NButton, NSpace } from 'naive-ui'
+import { onMounted, ref, watch } from 'vue'
+import axios from "axios";
+import { AddCircleOutline as AddIcon} from "@vicons/ionicons5";
+import { DownloadingOutlined as OutIcon, CheckCircleOutlineFilled as CheckIcon } from '@vicons/material';
+import { useRouter } from 'vue-router';
 
-  export default {
-    name: "ListJobs",
-    components: {
-      NCard,
-      NH1,
-      NText,
-      AddIcon,
+export default {
+  name: "ListJobs",
+  components: {
+    NCard,
+    NH1,
+    NText,
+    NTabs,
+    NTabPane,
+    NButton,
+    NSpace,
+    AddIcon
+  },
+  props: {
+    filteredOptions: {
+      type: Array,
+      required: true
     },
-    props: {
-      filteredOptions: {
-        type: Array,
-        required: true
-      },
-      jobs: {
-        type: Array,
-        required: true
+    jobs: {
+      type: Array,
+      required: true
+    }
+  },
+
+  setup(props) {
+    const router = useRouter();
+    const redirectToJobDetailsPage = (id) => {
+      router.push({ name: 'job-details', params: { id: id } });
+      console.log("TESTE ID", id)
+    };
+
+    const jobsOpen = ref([]);
+    const jobsFilled = ref([]);
+
+    const customHeaderStyle = {
+      background: '#e1f2e1',
+      fontSize: '24px',
+      marginBottom: '10px'
+    };
+
+    onMounted(async () => {
+      try {
+        const response = await axios.get(`http://localhost:8090/job/`);
+        const jobsList = response.data;
+
+        if (jobsList) {
+          jobsList.forEach(job => {
+            if (job.jobStatus === 'open') {
+              jobsOpen.value.push(job);
+            } else {
+              jobsFilled.value.push(job);
+            }
+          });
+        }
+      } catch (error) {
+        console.error('Erro ao obter vagas:', error);
       }
-    },
+    });
 
-    setup (props) {
-      const router = useRouter(); 
-      const redirectToJobDetailsPage = (id) => {
-    router.push({ name: 'job-details', params: { id: id } });
-    console.log("TESTE ID", id)
-  };
+    function updateLists(newJobs) {
+      jobsOpen.value = [];
+      jobsFilled.value = [];
 
-      const jobsList = ref([]);
-      const jobsOpen = ref([]);
-      const jobsFilled = ref([]);
-
-      console.log("props", props);
-
-      onMounted(async () => {
-        //jobsList.value = await getAllJobs();
-
-        const jobsList =  await axios.get(`http://localhost:8090/job/`);
-
-        console.log("JOBS STATUS", jobsList.data);
-
-      if (jobsList) {
-        jobsList.data.map(job => {
+      if (newJobs) {
+        newJobs.forEach(job => {
           if (job.jobStatus === 'open') {
             jobsOpen.value.push(job);
           } else {
@@ -127,23 +158,8 @@
           }
         });
       }
-      });
+    }
 
-function updateLists(jobs) {
-  jobsOpen.value = [];
-  jobsFilled.value = [];
-
-  if (jobs) {
-    jobs.forEach(job => {
-      if (job.jobStatus === 'open') {
-        jobsOpen.value.push(job);
-      } else {
-        jobsFilled.value.push(job);
-      }
-    });
-  }
-}
-    
     watch(
       () => props.jobs,
       (newJobs) => {
@@ -152,21 +168,18 @@ function updateLists(jobs) {
       { immediate: true }
     );
 
-
-      return {
-        redirectToJobDetailsPage,
-        jobsList,
-        jobsOpen,
-        jobsFilled,
-        customHeaderStyle: {
-        background: '#e1f2e1',
-        fontSize: '24px', 
-        marginBottom: '10px'
-      },
-      }
-    },
-  };
+    return {
+      redirectToJobDetailsPage,
+      jobsOpen,
+      jobsFilled,
+      customHeaderStyle,
+      OutIcon,
+      CheckIcon
+    }
+  },
+};
 </script>
+
 
 <style>
   .jobs-section {

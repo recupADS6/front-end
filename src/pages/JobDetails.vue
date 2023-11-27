@@ -44,40 +44,56 @@
         </template>
         Excluir
       </n-button>
-      <n-button  :loading="loadingScraping" color="#5380b8"  @click="sendMessage">
-        <template #icon>
-          <n-icon>
-            <search-icon />
-          </n-icon>
-        </template>
-        Scraping
-      </n-button>
       </n-space>
     </div>
 
-    <div v-if="candidatos.length > 0">
+    <div v-if="candidatos && Array.isArray(candidatos)">
       <n-h1>Candidatos</n-h1>
-        <n-card>
-            <n-card v-for="(codigo, index) in candidatos.slice(0, 8)" :key="index">
-              <div class="candidate-container">
-                <div class="circle">
-                {{ index + 1 }}º
-                </div>
-                <div>
-                <n-text class="candidate"><strong>{{ `Código: ` }}</strong> {{ codigo[0] }}</n-text>
-                </div>
-                <div class="match">
-                  <n-progress
-                  type="line"
-                  :percentage="parseFloat(codigo[1])"
-                  :indicator-placement="'inside'"
-                  :height="24"
-                  />
-                </div>
-              </div>
-            </n-card>
+
+      <n-card >
+      <n-collapse>
+        <n-collapse-item title="Filtro" name="1" >
+          <template #header >
+            <div class="header">
+              Filtro
+            </div>
+          </template>
+          <div>    
+            <n-text>Porcentagem Mínima:</n-text>
+            <n-slider v-model:value="minPercentage" :step="1" :max="100" />
+            <n-input-number v-model:value="minPercentage" size="small" />
+        
+            <n-text>Porcentagem Máxima:</n-text>
+            <n-slider v-model:value="maxPercentage" :step="1" :min="0" :max="100" />
+            <n-input-number v-model:value="maxPercentage" size="small" />
+          </div>
+        </n-collapse-item>
+      </n-collapse>
+      </n-card>
+      <n-space vertical>
+
+      <n-card >
+        <n-card v-for="(codigo, index) in filteredCandidatos" :key="index">
+          <div class="candidate-container" >
+            <div class="circle">
+              {{ index + 1 }}º
+            </div>
+          <div>
+            <n-text class="candidate"><strong>{{ `Código: ` }}</strong> {{ codigo[0] }}</n-text>
+          </div>
+          <div class="match">
+            <n-progress
+              type="line"
+              :percentage="parseFloat(codigo[1])"
+              :indicator-placement="'inside'"
+              :height="24"
+            />
+          </div>
+          </div>
         </n-card>
-        <n-button color="#B04141"  @click="saveRank">Salvar Rank</n-button>
+
+      </n-card>
+      </n-space>
     </div>
 
    </div>
@@ -89,12 +105,12 @@
   import HeaderMenu from '../components/HeaderMenu.vue';
   import { NButton, NCard, NText, NH1,useMessage } from 'naive-ui';
   import { getJobById, deleteJob } from '../services/jobsService.js';
-  import { ref, onMounted } from 'vue';
+  import { ref, onMounted, computed } from 'vue';
   import { useRoute } from 'vue-router';
   import { useRouter } from 'vue-router';
   import axios from 'axios';
   import baseURL from '../services/chatService.js';
-  import { Trash as TrashIcon, PencilSharp as PenIcon, Search as SearchIcon} from "@vicons/ionicons5";
+  import { Trash as TrashIcon, PencilSharp as PenIcon} from "@vicons/ionicons5";
 
   export default {
     components: {
@@ -105,10 +121,10 @@
       NH1,
       TrashIcon,
       PenIcon,
-      SearchIcon,
     },
     setup() {
     const job = ref(null);
+    const jobId = ref(null);
     const route = useRoute()
     const showModalDelete = ref(false);
     const loadingScraping = ref(false)
@@ -120,26 +136,51 @@
     const attitude = ref(''); 
     const knowledges = ref([]);
     const abilitys = ref([]); 
-    const attitudes = ref([]); 
+    const attitudes = ref([]);
+    const rank  = ref('');
     const candidatoInfo = ref([]);
     const candidatos = ref([]);
+
+    const minPercentage = ref(0);
+    const maxPercentage = ref(100);
+
+    const filteredCandidatos = computed(() => {
+      return candidatos.value.filter(candidato => {
+        const percentage = parseFloat(candidato[1]);
+        return percentage >= minPercentage.value && percentage <= maxPercentage.value;
+      });
+    });
 
     const fetchJobDetails = async () => {
       try {
         console.log("Tentando obter o trabalho com o ID:", route.params.id);
-        const jobId = route.params.id;
-        console.log("Fetching job details for ID:", jobId);
-        job.value = await getJobById(jobId);
+        jobId.value = route.params.id;
+        console.log("Fetching job details for ID:", jobId.value);
+        job.value = await getJobById(jobId.value);
         cargo.value = job.value.jobTitle;
         knowledge.value = job.value.kaa.knowledge.content;
         ability.value = job.value.kaa.ability.content;
         attitude.value = job.value.kaa.attitude.content;
+        rank.value = job.value.rank.id;
 
-        // console.log("cargo", cargo)
-        // console.log("knowledges", knowledge)
-        // console.log("abilitys", ability)
-        // console.log("attitudes", attitude)
-        // console.log("Job details obtained:", job.value);
+    try {
+      const responseRank = await axios.get(`${baseURL}/job/${jobId.value}`);
+      console.log('JOB:', responseRank.data);
+
+      const match = responseRank.data.rank.id;
+      console.log(" MATCH" , match)
+
+      const responseMatch = await axios.get(`${baseURL}/rank/${match}`);
+      console.log("TESTANDO RANK: \n", responseMatch.data)
+      
+        candidatos.value = responseMatch.data.value;
+        console.log("Tipo de candidatos:", Array.isArray(candidatos.value));
+        console.log("Candidatos:", candidatos.value);
+
+    } catch (error) {
+      console.error('Erro ao enviar a requisição para o backend:', error);
+    }
+       console.log("RANK:", rank);
         
       } catch (error) {
         console.error('Erro ao obter os detalhes do trabalho:', error);
@@ -150,7 +191,7 @@
 
     const onPositiveClick = async () =>{
       try {
-      const jobId = route.params.id;
+        jobId.value = route.params.id;
       await deleteJob(jobId);
       window.$message.success('Vaga excluída com sucesso!');
       showModalDelete.value = false;
@@ -180,147 +221,15 @@
       abilitys,
       attitudes,
       candidatoInfo,
-      candidatos   
+      candidatos,
+      rank,
+      jobId,
+      minPercentage,
+      maxPercentage,
+      filteredCandidatos
     };
   },
     methods:{
-
-    async sendMessage () {
-    this.loadingScraping = true; 
-     //   console.log(`PERGUNTA AO CHATGPT (${this.cargo})${this.knowledge}, ${this.ability}, ${this.atitude}`)
-      try {
-        const userMessage = 
-        `Poderia por favor separar as palavras chaves separadamente de Conhecimento, Habilidades e Atitudes dessa vaga (${this.cargo}) :
-          ${this.knowledge}, 
-          ${this.ability}, 
-          ${this.attitude},
-
-          no seguinte formato:
-          {"conhecimentos": ["palavra chave", "palavra chave" ...], "habilidades":  ["palavra chave", "palavra chave" ...], "atitudes": ["palavra chave", "palavra chave" ...]}
-          `;
-
-        await this.askToChat(userMessage);
-        
-        this.userMessage = '';
-
-      } catch (error) {
-        console.error('Erro ao enviar descrição:', error);
-      }
-    },
-
-    async askToChat(message) {
-      try {
-        const response = await fetch('http://localhost:5000/ask', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ user_message: message }),
-        });
-
-        if (response) {
-          const data = await response.json();
-          const responseMessage = data.response;
-
-        //console.log("RESPOSTA CHATGPT : \n", responseMessage)
-
-        const parsedResponse = JSON.parse(responseMessage);
-
-        //console.log("RESPOSTA EM JSON : \n", parsedResponse )
-
-        this.knowledges = parsedResponse.knowledges;
-        this.abilitys = parsedResponse.abilitys;
-        this.attitudes = parsedResponse.attitudes;
-
-        // console.log("CARGO: \n", this.cargo);
-        // console.log("knowledgeS: \n", this.knowledges);
-        // console.log("abilityS: \n", this.abilitys);
-        // console.log("attitudeS: \n", this.attitudes);
-
-        // formatação dos arrays como strings
-        const knowledgesStr = JSON.stringify(this.knowledges);
-        const abilitysStr = JSON.stringify(this.abilitys);
-        const attitudesStr = JSON.stringify(this.attitudes);
-
-        this.getScraping(this.cargo, knowledgesStr, abilitysStr, attitudesStr);
-
-        } else {
-          console.error('Erro ao enviar mensagem para o backend(chat push):', response.statusText);
-        }
-      } catch (error) {
-        console.error('Erro ao enviar mensagem para o backend:', error);
-      } 
-    },
-
-    async getScraping  (cargo,knowledgesStr,abilitysStr,attitudesStr) {
-      try {
-        const requestObject = {
-          cargo: `${cargo}`,
-          knowledges: `${knowledgesStr}`,
-          abilitys: `${abilitysStr}`,
-          attitudes: `${attitudesStr}`
-        };
-
-       // console.log(" REQUEST :", requestObject);
-
-        const response = await fetch('http://localhost:7000/scraping', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json', 
-          },
-          body: JSON.stringify(requestObject),
-        });
-
-          const data = await response.json();
-          //console.log("ANTES DO JSON :\n", response);
-          //console.log("RESPONSE DATA SCRAPING: \n", data);
-          //const rank =  JSON.stringify(data);
-          //console.log("STRING :", rank);
-          
-          this.candidatoInfo = data;
-
-          //console.log("CANDIDATOS: ", this.candidatoInfo);
-          this.saveRank(data);
-          
-      } catch (error) {
-        console.error('Erro ao enviar a requisição para o backend:', error);
-      } finally {
-        this.loadingScraping = false;
-      }
-    },
-
-    async saveRank(candidatoInfo) {
-      const requestBody = {
-        value: candidatoInfo
-      };
-    console.log("REQUEST BODY: \n", requestBody)
-
-    try {
-      const responseRank = await axios.post(`${baseURL}/rank/add`, requestBody);
-      console.log('Resposta do servidor:', responseRank.data);
-
-      const match = responseRank.data.id;
-      console.log(match)
-
-      const responseMatch = await axios.get(`${baseURL}/rank/${match}`);
-      console.log("TESTANDO RANK: \n", responseMatch)
-
-    
-
-      if (responseMatch.length > 0) {
-        // Exibir a seção de candidatos apenas se houver candidatos no rank
-        this.candidatos = responseMatch;
-        window.$message.success('Rank salvo com sucesso!');
-      } else {
-        console.log("SEM CANDIDATOS COMPATÍVEIS \n", requestBody)
-        window.$message.info('Sem candidatos compatíveis com a vaga!');
-      }
-    } catch (error) {
-      console.error('Erro ao enviar a requisição para o backend:', error);
-    }
-    },
-
-
 
     async deleteJ (jobId) {
       try {
@@ -388,5 +297,10 @@ button{
 }
 .match{
   width: 50%;
+}
+
+.header {
+      font-size : 20px;
+      margin-bottom: 10px
 }
 </style>
