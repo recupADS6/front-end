@@ -7,10 +7,10 @@
     :show-placeholder="false"
   >
     <n-grid :span="100" :x-gap="12">
-      <n-form-item-gi :span="12" label="Título da Vaga" prop="jobTitle" path="jobTitle">
+      <n-form-item-gi :span="12" class="text" label="Título da Vaga" prop="jobTitle" path="jobTitle">
         <n-input v-model:value="model.jobTitle" placeholder="" />
       </n-form-item-gi>
-      <n-form-item-gi :span="12" label="Nível da Vaga" prop="jobLevel" path="jobLevel">
+      <n-form-item-gi :span="12" class="text" label="Nível da Vaga" prop="jobLevel" path="jobLevel">
         <n-select
           v-model:value="model.jobLevel"
           placeholder=""
@@ -1248,7 +1248,7 @@ export default defineComponent({
 }
 button{
   border: none;
-  border-radius: 4px;
+  border-radius: 10px;
   padding: 10px 20px;
   cursor: pointer;
   margin-right: 10px;

@@ -1,75 +1,72 @@
 <template>
-  <n-layout >
-      <n-layout-header class="nav-bar">
-        <p class="welcome">Olá, Fulano</p>
-        <n-menu
-          id="menu-item"
-          v-model:value="activeKey"
-          mode="horizontal"
-          :options="menuOptions"
-        />
-      </n-layout-header>
-  </n-layout>
-
+	<n-layout>
+		<n-layout-header class="nav-bar">
+			<p class="welcome">Olá, Fulano</p>
+				<n-menu
+					id="menu-item"
+					v-model:value="activeKey"
+					mode="horizontal"
+					:options="menuOptions"
+				/>
+		</n-layout-header>
+	</n-layout>
 </template>
 
 <script>
-  import { defineComponent, ref, h } from "vue";
-  import { RouterLink } from "vue-router";
+import { defineComponent, ref, h } from "vue";
+import { RouterLink } from "vue-router";
 
-  const menuOptions = [
-    {
-      label: () => h(
-        RouterLink,
-        {
-          to: {
-            name: "dashboard-page",
-          }
-        },
-        { default: () => "Home" }
-      ),
-      key: "home",
-      route: "/"
-    },
-    {
-      label: () => h(
-        RouterLink,
-        {
-          to: {
-            name: "chatgpt",
-          }
-        },
-        { default: () => "Cadastro de Vagas" }
-      ),
-      key: "cha",
-      route: "/vaga-chatgpt"
-    },
-    // {
-    //   label: "Minha Conta",
-    //   key: "account",
-    // },
-    // {
-    //   label: "Privacidade e Segurança",
-    //   key: "security",
-    // },
-    // {
-    //   label: "Notificações",
-    //   key: "notification",
-    // },
-    // {
-    //   label: "Sair",
-    //   key: "logout",
-    // },
-  ];
+export default defineComponent({
+  setup() {
+    const activeKey = ref(null);
 
-  export default defineComponent({
-    setup() {
-      return {
-        activeKey: ref(null),
-        menuOptions
-      };
+    const menuOptions = [
+      {
+        label: () =>
+          h(
+            RouterLink,
+            {
+              to: {
+                name: "dashboard-page",
+              },
+            },
+            { default: () => "Home" }
+          ),
+        key: "home",
+        route: "/",
+      },
+      {
+        label: () =>
+          h(
+            RouterLink,
+            {
+              to: {
+                name: "chatgpt",
+              },
+            },
+            { default: () => "Cadastro de Vagas" }
+          ),
+        key: "cha",
+        route: "/vaga-chatgpt",
+      },
+      {
+        label: "Sair",
+        key: "logout",
+        onClick: handleLogout,
+      },
+    ];
+
+    function handleLogout() {
+					console.log("Logout realizado");
+     this.$router.push("/login");
     }
-  });
+
+    return {
+      activeKey,
+      menuOptions,
+    };
+  },
+});
 </script>
 
 <style>
